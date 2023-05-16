@@ -1,6 +1,19 @@
 const express = require('express');
-
 const app = express();
+
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
+
+const runDB = async () => {
+    const { connectDB } = require('./db/db');
+    await connectDB();
+};
+runDB();
+
+let indexRouter = require('./routes/index');
+app.use('/', indexRouter);
+
+
 const PORT = 3000;
 
 app.listen(PORT, (error) => {
