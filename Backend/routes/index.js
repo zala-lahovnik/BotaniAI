@@ -28,12 +28,31 @@ router.post('/upload', upload.any(), async (req, res, next) => {
       }
     }
   )
-    .then(() => {
-      res.status(200).send(`Image saved to MongoDB, user: ${userId}`);
-    })
-    .catch(err => {
-      console.error('Failed to save image to MongoDB:', err);
-      res.status(500).send('Failed to save image to MongoDB');
+  .then(() => {
+    res.status(200).send(`Image saved to MongoDB, user: ${userId}`);
+  })
+  .catch(err => {
+    console.error('Failed to save image to MongoDB:', err);
+    res.status(500).send('Failed to save image to MongoDB');
+  });
+});
+
+router.get('/plants/:userId', (req, res) => {
+  const userId = req.params.userId;
+
+  const db = getDB();
+  const collection = db.collection('user');
+
+  collection.findOne({ _id: userId })
+  .then(user => {
+    if (!user || !user.plants) {
+      return res.status(404).send('User or plants not found');
+    }
+    res.status(200).json(user.plants);
+  })
+  .catch(err => {
+    console.error('Failed to retrieve plants from MongoDB:', err);
+    res.status(500).send('Failed to retrieve plants from MongoDB');
   });
 });
 
