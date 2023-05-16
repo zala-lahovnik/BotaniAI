@@ -21,4 +21,18 @@ router.get('/latin/:plantName', (req, res) => {
     });
 });
 
+router.get('/', (req, res) => {
+    const db = getDB();
+    const collection = db.collection('plant');
+    
+    collection.find({}).toArray()
+    .then(plants => {
+      res.status(200).json(plants);
+    })
+    .catch(err => {
+      console.error('Failed to retrieve plants from MongoDB:', err);
+      res.status(500).send('Failed to retrieve plants from MongoDB');
+    });
+});
+
 module.exports = router;
