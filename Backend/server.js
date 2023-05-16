@@ -10,7 +10,7 @@ const runDB = async () => {
 };
 runDB();
 
-let userRouter = require('./routes/userPlant');
+let userRouter = require('./routes/user');
 let userPlantRouter = require('./routes/userPlant');
 let plantRouter = require('./routes/plant');
 
