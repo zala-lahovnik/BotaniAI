@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
+const { ObjectId } = require('mongodb');
 const multer = require('multer');
 const { getDB } = require('../db/db');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.post('/upload', upload.any(), async (req, res, next) => {
+router.post('/add', upload.any(), async (req, res, next) => {
   const userId = req.body.userId; // userId => id userja iz firebasa
   const { originalname, mimetype, buffer } = req.files[0];
-  const { title } = req.body;
+  const { title, plantId } = req.body;
 
   const db = getDB();
   const collection = db.collection('user');
@@ -24,20 +25,20 @@ router.post('/upload', upload.any(), async (req, res, next) => {
     { _id: userId },
     {
       $push: {
-        plants: { title: title, image: newImage }
+        plants: { plantId: new ObjectId(plantId), title: title, image: newImage }
       }
     }
   )
   .then(() => {
-    res.status(200).send(`Image saved to MongoDB, user: ${userId}`);
+    res.status(200).send(`Plant added, user: ${userId}`);
   })
   .catch(err => {
-    console.error('Failed to save image to MongoDB:', err);
-    res.status(500).send('Failed to save image to MongoDB');
+    console.error('Failed to add plant to MongoDB:', err);
+    res.status(500).send('Failed to add plant to MongoDB');
   });
 });
 
-router.get('/plants/:userId', (req, res) => {
+router.get('/:userId', (req, res) => {
   const userId = req.params.userId;
 
   const db = getDB();
