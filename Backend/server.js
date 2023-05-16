@@ -10,9 +10,13 @@ const runDB = async () => {
 };
 runDB();
 
-let indexRouter = require('./routes/index');
-app.use('/', indexRouter);
+let userRouter = require('./routes/userPlant');
+let userPlantRouter = require('./routes/userPlant');
+let plantRouter = require('./routes/plant');
 
+app.use('/user', userRouter);
+app.use('/user/plant', userPlantRouter);
+app.use('/plant', plantRouter);
 
 const PORT = 3000;
 
