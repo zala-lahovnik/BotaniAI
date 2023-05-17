@@ -1,4 +1,6 @@
 /data
+/data_augmented
 /.ipynb_checkpoints
 /exported_models
 gpu.bat
+/old_versions
