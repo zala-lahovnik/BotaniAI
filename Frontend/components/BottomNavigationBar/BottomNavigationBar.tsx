@@ -51,8 +51,15 @@ const NavigationItem = ({
 export const BottomNavigationBar = ({ navigation }: NavigationProps) => {
   return (
     <View style={[global.spacing.margin, styles.container]}>
+      {/*<View style={styles.container}>*/}
       <View style={styles.circle} />
-      <TouchableOpacity style={styles.scanButton} activeOpacity={0.8}>
+      <TouchableOpacity
+        style={styles.scanButton}
+        activeOpacity={0.8}
+        onPress={() => {
+          navigation.navigate('CameraScreen');
+        }}
+      >
         <MdScanSharp name="scan-sharp" size={30} color="white" />
       </TouchableOpacity>
 
