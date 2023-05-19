@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { styles } from './BottomNavigationBarStyles';
-import { global } from '../../styles/globals';
 import MdScanSharp from 'react-native-vector-icons/Ionicons';
 import User from 'react-native-vector-icons/FontAwesome';
 import History from 'react-native-vector-icons/FontAwesome';
@@ -50,14 +49,14 @@ const NavigationItem = ({
 
 export const BottomNavigationBar = ({ navigation }: NavigationProps) => {
   return (
-    <View style={[global.spacing.margin, styles.container]}>
+    <View style={[styles.container]}>
       {/*<View style={styles.container}>*/}
       <View style={styles.circle} />
       <TouchableOpacity
         style={styles.scanButton}
         activeOpacity={0.8}
         onPress={() => {
-          navigation.navigate('CameraScreen');
+          navigation.navigate('PhotoInputScreen');
         }}
       >
         <MdScanSharp name="scan-sharp" size={30} color="white" />

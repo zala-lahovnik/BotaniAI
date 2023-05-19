@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -54,6 +54,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
           />
         </View>
       </View>
+
       <BottomNavigationBar navigation={navigation} route={route} />
     </View>
   );

@@ -28,7 +28,7 @@ export const FilterOptions = ({
         marginVertical: 5,
       }}
     >
-      {plant_categories ? (
+      {plant_categories?.length > 0 ? (
         plant_categories.map((item: string, index: number) => (
           <TouchableOpacity
             key={index}
@@ -51,7 +51,7 @@ export const FilterOptions = ({
                   color:
                     item === selectedCategory
                       ? global.color.secondary.color
-                      : 'black',
+                      : global.color.primary.backgroundColor,
                 }}
               >
                 {item}

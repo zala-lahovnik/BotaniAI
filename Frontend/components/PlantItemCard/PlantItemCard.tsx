@@ -80,7 +80,7 @@ export const PlantItemCard = ({
   return (
     <View style={[global.color.primary, styles.plantItemCard__container]}>
       <PlantNextWatering waterNeededInDays={2} />
-      <PlantNextWatering waterNeededInDays={12} />
+      <PlantNextWatering waterNeededInDays={2} />
       <PlantItemCardOverlay
         plantName={plantName}
         plantImage={plantImage}

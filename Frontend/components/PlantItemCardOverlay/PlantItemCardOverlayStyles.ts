@@ -81,7 +81,7 @@ export const styles = StyleSheet.create({
   overlay_container: {
     position: 'absolute',
     top: 0,
-    left: '2%',
+    left: '2.2%',
     width: '102%',
     height: '100%',
     borderRadius: 20,
