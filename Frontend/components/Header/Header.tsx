@@ -14,7 +14,11 @@ type HeaderProps = NativeStackScreenProps<any> & {
 
 const Heading = ({ text }: { text: string }) => {
   return (
-    <View>
+    <View
+      style={{
+        marginVertical: 10,
+      }}
+    >
       <Text style={styles['heading-1']}>{text.toUpperCase()}</Text>
     </View>
   );
@@ -27,10 +31,10 @@ const HeaderWithLinks = ({
   rightAction,
   text,
 }: HeaderProps) => {
-  if (leftAction && rightAction) {
+  if (rightAction && leftAction) {
     return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      <View style={[styles.container, { paddingVertical: 10 }]}>
+        <TouchableOpacity onPress={() => leftAction()}>
           <ArrowBack
             name="arrow-back-outline"
             size={25}
@@ -49,8 +53,8 @@ const HeaderWithLinks = ({
     );
   } else {
     return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+      <View style={[styles.container, { paddingVertical: 10 }]}>
+        <TouchableOpacity onPress={() => leftAction!()}>
           <ArrowBack
             name="arrow-back"
             size={25}
