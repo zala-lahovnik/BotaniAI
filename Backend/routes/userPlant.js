@@ -87,4 +87,45 @@ router.get('/personalGarden/:userId', (req, res) => {
   });
 });
 
+
+router.get('/history/:userId', (req, res) => {
+  const userId = req.params.userId;
+
+  const db = getDB();
+  const userCollection = db.collection('user');
+  const plantCollection = db.collection('plant');
+
+    userCollection.findOne({ _id: userId })
+    .then(user => {
+
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+
+      const plantIds = user.history.map(obj => new ObjectId(obj.plantId));
+
+      plantCollection.find({ _id: { $in: plantIds } }).toArray()
+      .then(plants => {
+
+        const userPlants = user.history.map(obj => {
+          const plant = plants.find(p => p._id.equals(obj.plantId));
+          return {
+            plantId: obj.plantId,
+            customName: obj.customName,
+            intervalZalivanja: obj.intervalZalivanja,
+            prviDanZalivanja: obj.prviDanZalivanja,
+            date: obj.date,
+            image: obj.image,
+            plant: plant || null
+          };
+        });
+        res.status(200).json(userPlants);
+      });
+    })
+    .catch(err => {
+      console.error('Failed to retrieve user\'s plants:', err);
+      res.status(500).send('Failed to retrieve user\'s plants');
+    });
+});
+
 module.exports = router;
