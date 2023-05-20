@@ -1,21 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { ObjectId } = require('mongodb');
 const { getDB } = require('../db/db');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.post('/add', upload.none(), (req, res, next) => {
-    const userId = req.body.userId;
+    const { userId, name, surname, email } = req.body;
   
     const db = getDB();
     const collection = db.collection('user');
 
     const newUser = {
         _id: userId,
-        plants: []
+        name: name,
+        surname: surname,
+        email: email,
+        history: [],
+        personalGarden: []
     };
 
     collection.insertOne(newUser)
