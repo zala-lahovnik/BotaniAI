@@ -1,3 +1,6 @@
 /* exporting screens from single place */
 
-export * from './SampleScreen/SampleScreen';
+export * from './PlantListScreen/PlantListScreen';
+export * from './CameraScreen/CameraScreen';
+export * from './PhotoInputScreen/PhotoInputScreen';
+export * from './CameraScreen/CameraPreviewScreen';

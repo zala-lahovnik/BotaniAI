@@ -1,10 +1,17 @@
-import { StyleSheet } from 'react-native';
+import { ImageStyle, TextStyle, ViewStyle } from 'react-native';
 // accent color: red
-export const global: Record<string, StyleSheet.NamedStyles<any>> = {
+export const global: Record<
+  string,
+  Record<string, ViewStyle & ImageStyle & TextStyle>
+> = {
   // spacing
   spacing: {
     margin: {
       marginHorizontal: 10,
+    },
+    container: {
+      marginHorizontal: 20,
+      marginVertical: 10,
     },
   },
   // colors
@@ -19,7 +26,7 @@ export const global: Record<string, StyleSheet.NamedStyles<any>> = {
       color: 'rgba(255, 255, 255, 0.7)',
     },
     text: {
-      color: 'rgba(255, 255, 255, 0.5)',
+      color: 'rgba(255, 255, 255, 0.2)',
     },
     'button-dark': {
       color: '#30312C',
