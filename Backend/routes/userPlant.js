@@ -68,7 +68,7 @@ router.post('/add-history', upload.any(), (req, res, next) => {
   });
 });
 
-router.get('/:userId', (req, res) => {
+router.get('/personalGarden/:userId', (req, res) => {
   const userId = req.params.userId;
 
   const db = getDB();
@@ -76,10 +76,10 @@ router.get('/:userId', (req, res) => {
 
   collection.findOne({ _id: userId })
   .then(user => {
-    if (!user || !user.plants) {
+    if (!user || !user.personalGarden) {
       return res.status(404).send('User or plants not found');
     }
-    res.status(200).json(user.plants);
+    res.status(200).json(user.personalGarden);
   })
   .catch(err => {
     console.error('Failed to retrieve plants from MongoDB:', err);
