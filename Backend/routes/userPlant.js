@@ -7,10 +7,9 @@ const { getDB } = require('../db/db');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.post('/add', upload.any(), async (req, res, next) => {
-  const userId = req.body.userId; // userId => id userja iz firebasa
+router.post('/add', upload.any(), (req, res, next) => {
   const { originalname, mimetype, buffer } = req.files[0];
-  const { title, plantId } = req.body;
+  const { userId, latin, common, description, intervalZalivanja, prviDanZalivanja } = req.body;
 
   const db = getDB();
   const collection = db.collection('user');
@@ -25,7 +24,38 @@ router.post('/add', upload.any(), async (req, res, next) => {
     { _id: userId },
     {
       $push: {
-        plants: { plantId: new ObjectId(plantId), title: title, image: newImage }
+        personalGarden: { _id: new ObjectId, latin: latin, common: common, description: description, intervalZalivanja: intervalZalivanja, prviDanZalivanja: prviDanZalivanja, image: newImage }
+      }
+    }
+  )
+  .then(() => {
+    res.status(200).send(`Plant added, user: ${userId}`);
+  })
+  .catch(err => {
+    console.error('Failed to add plant to MongoDB:', err);
+    res.status(500).send('Failed to add plant to MongoDB');
+  });
+});
+
+
+router.post('/add-history', upload.any(), (req, res, next) => {
+  const { originalname, mimetype, buffer } = req.files[0];
+  const { userId, plantId, customName, intervalZalivanja, prviDanZalivanja, date } = req.body;
+
+  const db = getDB();
+  const collection = db.collection('user');
+
+  const newImage = {
+    originalname,
+    mimetype,
+    buffer
+  };
+
+  collection.updateOne(
+    { _id: userId },
+    {
+      $push: {
+        history: { _id: new ObjectId, plantId: plantId, customName: customName, intervalZalivanja: intervalZalivanja, prviDanZalivanja: prviDanZalivanja, date: date, image: newImage }
       }
     }
   )
