@@ -160,5 +160,46 @@ router.delete('/personalGarden/:userId/:plantId', (req, res) => {
   });
 });
 
+router.put('/personalGarden/:userId/:plantId', upload.none(), (req, res) => {
+  const db = getDB();
+  const userId = req.params.userId;
+  const plantId = req.params.plantId;
+  const common = req.body.common;
+
+  const userCollection = db.collection('user');
+
+  userCollection.findOne({ _id: userId })
+    .then(user => {
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+
+      const personalGarden = user.personalGarden;
+      const updatedGarden = personalGarden.map(obj => {
+        if (obj._id.toString() === plantId) {
+          obj.common = common;
+        }
+        return obj;
+      });
+
+      userCollection.updateOne(
+        { _id: userId },
+        { $set: { personalGarden: updatedGarden } }
+      )
+        .then(() => {
+          res.status(200).send('Plant common attribute updated');
+        })
+        .catch(err => {
+          console.error('Failed to update plant common attribute:', err);
+          res.status(500).send('Failed to update plant common attribute');
+        });
+    })
+    .catch(err => {
+      console.error('Failed to find user:', err);
+      res.status(500).send('Failed to find user');
+    });
+});
+
+
 
 module.exports = router;
