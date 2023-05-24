@@ -7,3 +7,7 @@ export * from './PlantItemsList/PlantItemsList';
 export * from './PlantItemCard/PlantItemCard';
 export * from './PlantItemCardOverlay/PlantItemCardOverlay';
 export * from './PhotoInputCard/PhotoInputCard';
+export * from './RecentCapturedPlantCard/RecentPlantCard';
+export * from './RecentCapturedPlantCard/RecentPlantDetails';
+export * from './PlantWateringInfoCard/PlantWateringInfoCard';
+export { BackButton as default } from '../screens/CameraScreen/CameraScreen';

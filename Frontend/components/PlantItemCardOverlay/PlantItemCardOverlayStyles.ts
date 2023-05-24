@@ -14,6 +14,18 @@ export const styles = StyleSheet.create({
     position: 'relative',
     opacity: 0.7,
   },
+  plantImage__container__small: {
+    width: 60,
+    height: 75,
+    top: '10%',
+    borderRadius: 20,
+    left: '5%',
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    opacity: 0.7,
+  },
   plantImage__topLeftShadow: {
     position: 'absolute',
     top: -65,

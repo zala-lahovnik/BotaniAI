@@ -1,21 +1,18 @@
 import {
+  Animated,
+  Dimensions,
   Image,
   ImageSourcePropType,
-  Text,
-  View,
-  Animated,
-  TouchableOpacity,
   PanResponder,
-  Dimensions,
-  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { global } from '../../styles/globals';
-import { ScrollView } from 'react-native-gesture-handler';
-import Svg, { G, Circle } from 'react-native-svg';
+import Svg, { Circle, G } from 'react-native-svg';
 import WaterIcon from 'react-native-vector-icons/Ionicons';
-import { useRef, useState } from 'react';
 import OpenSvg from 'react-native-vector-icons/Ionicons';
-import { NavigationScreenProp } from 'react-navigation';
+import { useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './PlantItemCardOverlayStyles';
 
@@ -28,9 +25,21 @@ type Props = NativeStackScreenProps<any> & {
   setIsVerticalScroll: (isVerticalScroll: boolean) => void;
 };
 
-const PlantImage = ({ imageSrc }: { imageSrc: ImageSourcePropType }) => {
+export const PlantImage = ({
+  imageSrc,
+  small = false,
+}: {
+  imageSrc: ImageSourcePropType;
+  small?: boolean;
+}) => {
   return (
-    <View style={styles.plantImage__container}>
+    <View
+      style={
+        !small
+          ? styles.plantImage__container
+          : styles.plantImage__container__small
+      }
+    >
       <View style={styles.plantImage__topLeftShadow} />
       <View style={styles.plantImage__bottomRightShadow} />
       <Image source={imageSrc} style={styles.plantImage__image} />
@@ -173,7 +182,22 @@ export const PlantItemCardOverlay = ({
       <WateringInformation plantWaterPercent={plantWaterPercent} />
       <TouchableOpacity
         style={styles.showPlantButton__container}
-        onPress={() => console.log('pressed')}
+        onPress={() =>
+          // TODO: CHANGE THIS NAVIGATION
+          navigation.navigate('PlantDetails', {
+            latin: 'Papaver Somniferum',
+            common: 'Opium Poppy',
+            image: require('../../assets/sample_plant.png'),
+            description:
+              'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam a quia voluptatem, quod, voluptatum, quas voluptate quos quibusdam voluptatibus quae dolorum. Quisquam a quia voluptatem, quod, voluptatum, quas voluptate quos quibusdam voluptatibus quae dolorum.',
+            watering: 'Once a week',
+            sunlight: 'Full sun',
+            plantingTime: ['Spring', 'Summer'],
+            soil: 'Well-drained',
+            fertilizer: 'Once a month',
+            toxicity: 'Toxic to pets',
+          })
+        }
         activeOpacity={0.8}
       >
         <View style={styles.showPlantButton__button}>
