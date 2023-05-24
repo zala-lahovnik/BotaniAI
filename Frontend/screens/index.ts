@@ -7,3 +7,4 @@ export * from './CameraScreen/CameraPreviewScreen';
 export * from './LoginScreen/LoginScreen';
 export * from './ChangePasswordScreen/ChangePasswordScreen'
 export * from './RegisterScreen/RegisterScreen';
+export * from './PlantViewScreen/PlantViewScreen';

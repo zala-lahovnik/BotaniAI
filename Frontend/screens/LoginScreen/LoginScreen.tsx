@@ -23,6 +23,9 @@ export const LoginScreen = ({ navigation, route }: Props) => {
     function handlePassword() {
         navigation.navigate('ChangePasswordScreen')
     }
+    function handleHome() {
+        navigation.navigate('Home')
+    }
     function handleBack() {
         navigation.goBack()
     }
@@ -82,6 +85,10 @@ export const LoginScreen = ({ navigation, route }: Props) => {
             </Pressable>
             <Pressable onPress={handlePassword}>
                 <Text style={[styles.text, styles.lined]}> FORGOT YOUR PASSWORD?</Text>
+            </Pressable>
+
+            <Pressable onPress={handleHome}>
+                <Text style={[styles.text, { paddingTop: 20, fontSize: 14 }]}> Continue without registration</Text>
             </Pressable>
         </View >
     );
