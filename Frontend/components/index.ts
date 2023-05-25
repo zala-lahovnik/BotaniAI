@@ -12,3 +12,7 @@ export * from './RecentCapturedPlantCard/RecentPlantCard';
 export * from './RecentCapturedPlantCard/RecentPlantDetails';
 export * from './PlantWateringInfoCard/PlantWateringInfoCard';
 export { BackButton as default } from '../screens/CameraScreen/CameraScreen';
+export * from './Drawer/DrawerLayout';
+export * from './BottomModal/BottomModal';
+export * from './ModalPlantCard/ModalPlantCard';
+export * from './ExplorePlantCard/ExplorePlantCard';

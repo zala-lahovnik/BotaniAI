@@ -8,7 +8,8 @@ export * from './HistoryScreen/RecentCaptures';
 export * from './WateringScreen/WateringScreen';
 // export * from './PlantDetailsScreen/PlantDetailsScreen';
 export * from './LoginScreen/LoginScreen';
-export * from './ChangePasswordScreen/ChangePasswordScreen'
+export * from './ChangePasswordScreen/ChangePasswordScreen';
 export * from './RegisterScreen/RegisterScreen';
 export * from './PlantViewScreen/PlantViewScreen';
+export * from './ExploringScreen/ExploringScreen';
 export * from './IntroScreen/IntroScreen';
