@@ -201,5 +201,31 @@ router.put('/personalGarden/:userId/:plantId', upload.none(), (req, res) => {
 });
 
 
+router.put('/personalGarden/:userId/:plantId/watered', (req, res) => {
+  const userId = req.params.userId;
+  const plantId = req.params.plantId;
+  const watered = req.body.watered;
+  
+  const db = getDB();
+  const userCollection = db.collection('user');
+
+  userCollection.findOneAndUpdate(
+    { _id: userId, 'personalGarden._id': plantId },
+    { $set: { 'personalGarden.$.watered': watered } }
+  )
+    .then(result => {
+      if (!result.value) {
+        return res.status(404).send('User or plant not found');
+      }
+      res.status(200).send('Plant watered status updated');
+    })
+    .catch(err => {
+      console.error('Failed to update plant watered status:', err);
+      res.status(500).send('Failed to update plant watered status');
+    });
+});
+
+
+
 
 module.exports = router;
