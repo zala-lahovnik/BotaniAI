@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { CameraScreen, LoginScreen, PhotoInputScreen, PlantListScreen, ChangePasswordScreen, RegisterScreen, PlantViewScreen } from './screens';
+import { CameraScreen, LoginScreen, PhotoInputScreen, PlantListScreen, ChangePasswordScreen, RegisterScreen, PlantViewScreen, IntroScreen } from './screens';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator();
@@ -14,7 +14,8 @@ export default function RootNavigation() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={'Home'} screenOptions={screenOptions}>
+        <Stack.Navigator initialRouteName={'IntroScreen'} screenOptions={screenOptions}>
+          <Stack.Screen name={'IntroScreen'} component={IntroScreen} />
           <Stack.Screen name={'PlantListScreen'} component={PlantListScreen} />
           <Stack.Screen name={'PhotoInputScreen'} component={PhotoInputScreen} />
           <Stack.Screen name={'CameraScreen'} component={CameraScreen} />

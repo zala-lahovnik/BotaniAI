@@ -5,8 +5,9 @@ import { auth } from "../../firebase/firebase";
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './LoginScreenStyles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 type Props = NativeStackScreenProps<any>;
-export const LoginScreen = ({ navigation, route }: Props) => {
+export const LoginScreen = ({ navigation }: Props) => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

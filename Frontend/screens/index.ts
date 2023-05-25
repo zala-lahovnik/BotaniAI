@@ -8,3 +8,4 @@ export * from './LoginScreen/LoginScreen';
 export * from './ChangePasswordScreen/ChangePasswordScreen'
 export * from './RegisterScreen/RegisterScreen';
 export * from './PlantViewScreen/PlantViewScreen';
+export * from './IntroScreen/IntroScreen';

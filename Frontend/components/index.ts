@@ -7,3 +7,4 @@ export * from './PlantItemsList/PlantItemsList';
 export * from './PlantItemCard/PlantItemCard';
 export * from './PlantItemCardOverlay/PlantItemCardOverlay';
 export * from './PhotoInputCard/PhotoInputCard';
+export * from './Onboarding/Onboarding'
