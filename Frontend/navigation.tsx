@@ -6,7 +6,7 @@ import {
   ChangePasswordScreen,
   LoginScreen,
   PhotoInputScreen,
-  PlantDetailsScreen,
+  // PlantDetailsScreen,
   PlantListScreen,
   PlantViewScreen,
   RecentCaptures,
@@ -44,7 +44,7 @@ export default function RootNavigation() {
           <Stack.Screen name={'PlantViewScreen'} component={PlantViewScreen} />
           <Stack.Screen name={'History'} component={RecentCaptures} />
           <Stack.Screen name={'Water'} component={WateringScreen} />
-          <Stack.Screen name={'PlantDetails'} component={PlantDetailsScreen} />
+          {/*<Stack.Screen name={'PlantDetails'} component={PlantDetailsScreen} />*/}
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
