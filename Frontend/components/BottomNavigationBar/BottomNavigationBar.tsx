@@ -31,7 +31,7 @@ const navigationItems: NavigationItemProps[] = [
     icon: <History name="history" size={20} color="white" />,
   },
   {
-    name: 'User',
+    name: 'Explore',
     icon: <Search name="search1" size={20} color="white" />,
   },
 ];

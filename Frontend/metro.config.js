@@ -5,6 +5,7 @@ module.exports = (() => {
   const config = getDefaultConfig(__dirname);
 
   const { transformer, resolver } = config;
+  const { assetExts } = config.resolver;
 
   config.transformer = {
     ...transformer,
@@ -12,7 +13,7 @@ module.exports = (() => {
   };
   config.resolver = {
     ...resolver,
-    assetExts: resolver.assetExts.filter((ext) => ext !== 'svg'),
+    assetExts: [...resolver.assetExts.filter((ext) => ext !== 'svg'), 'bin'],
     sourceExts: [...resolver.sourceExts, 'svg'],
   };
 

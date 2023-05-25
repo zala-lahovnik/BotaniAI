@@ -5,11 +5,13 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import Edit from 'react-native-vector-icons/FontAwesome5';
 import { global } from '../../styles/globals';
 import { styles } from './HeaderStyles';
+import Menu from 'react-native-vector-icons/Feather';
 
 type HeaderProps = NativeStackScreenProps<any> & {
   text?: string;
   leftAction?: () => void;
   rightAction?: () => void;
+  home?: boolean;
 };
 
 const Heading = ({ text }: { text: string }) => {
@@ -30,7 +32,9 @@ const HeaderWithLinks = ({
   leftAction,
   rightAction,
   text,
+  home,
 }: HeaderProps) => {
+  // 3 elements in a row
   if (rightAction && leftAction) {
     return (
       <View style={[styles.container, { paddingVertical: 10 }]}>
@@ -52,27 +56,60 @@ const HeaderWithLinks = ({
       </View>
     );
   } else {
-    return (
-      <View style={[styles.container, { paddingVertical: 10 }]}>
-        <TouchableOpacity onPress={() => leftAction!()}>
-          <ArrowBack
-            name="arrow-back"
-            size={25}
-            color={global.color.primary.backgroundColor}
-          />
-        </TouchableOpacity>
-        <Text
-          style={{
-            color: global.color.primary.backgroundColor,
-            fontSize: 16,
-            fontWeight: 'bold',
-          }}
-        >
-          {text}
-        </Text>
-        <View style={{ width: 25 }} />
-      </View>
-    );
+    // 2 elements in a row
+    if (home) {
+      return (
+        <View style={[styles.container, { paddingVertical: 10 }]}>
+          <TouchableOpacity onPress={() => leftAction!()}>
+            {home ? (
+              <Menu
+                name={'menu'}
+                size={34}
+                color={global.color.primary.backgroundColor}
+              />
+            ) : (
+              <ArrowBack
+                name="arrow-back"
+                size={25}
+                color={global.color.primary.backgroundColor}
+              />
+            )}
+          </TouchableOpacity>
+          <Text
+            style={{
+              color: global.color.primary.backgroundColor,
+              fontSize: 30,
+              fontWeight: 'bold',
+            }}
+          >
+            {text}
+          </Text>
+          <View style={{ width: 25 }} />
+        </View>
+      );
+    } else {
+      return (
+        <View style={[styles.container, { paddingVertical: 10 }]}>
+          <TouchableOpacity onPress={() => leftAction!()}>
+            <ArrowBack
+              name="arrow-back"
+              size={25}
+              color={global.color.primary.backgroundColor}
+            />
+          </TouchableOpacity>
+          <Text
+            style={{
+              color: global.color.primary.backgroundColor,
+              fontSize: 16,
+              fontWeight: 'bold',
+            }}
+          >
+            {text}
+          </Text>
+          <View style={{ width: 25 }} />
+        </View>
+      );
+    }
   }
 };
 export const Header = ({
@@ -81,6 +118,7 @@ export const Header = ({
   leftAction,
   rightAction,
   text,
+  home = false,
 }: HeaderProps) => {
   if (leftAction && rightAction) {
     return (
@@ -99,6 +137,7 @@ export const Header = ({
         navigation={navigation}
         route={route}
         leftAction={leftAction}
+        home={home}
       />
     );
   } else {

@@ -184,19 +184,7 @@ export const PlantItemCardOverlay = ({
         style={styles.showPlantButton__container}
         onPress={() =>
           // TODO: CHANGE THIS NAVIGATION
-          navigation.navigate('PlantDetails', {
-            latin: 'Papaver Somniferum',
-            common: 'Opium Poppy',
-            image: require('../../assets/sample_plant.png'),
-            description:
-              'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam a quia voluptatem, quod, voluptatum, quas voluptate quos quibusdam voluptatibus quae dolorum. Quisquam a quia voluptatem, quod, voluptatum, quas voluptate quos quibusdam voluptatibus quae dolorum.',
-            watering: 'Once a week',
-            sunlight: 'Full sun',
-            plantingTime: ['Spring', 'Summer'],
-            soil: 'Well-drained',
-            fertilizer: 'Once a month',
-            toxicity: 'Toxic to pets',
-          })
+          {}
         }
         activeOpacity={0.8}
       >
