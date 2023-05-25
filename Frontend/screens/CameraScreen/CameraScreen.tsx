@@ -95,7 +95,7 @@ export const CameraScreen = ({ navigation, route }: Props) => {
 
   async function takePicture() {
     if (!camera) return;
-    const photo = await camera.takePictureAsync();
+    const photo = await camera.takePictureAsync({ base64: true });
     setPreviewVisible(true);
     setCapturedImage(photo);
     setCameraReady(false);
