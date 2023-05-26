@@ -10,7 +10,7 @@ router.get('/:userId', (req, res) => {
     const db = getDB();
     const collection = db.collection('user');
     
-    collection.findOne({ _id: new ObjectId(userId) })
+    collection.findOne({ _id: userId })
     .then(user => {
       if (!user) {
         return res.status(404).send('User not found');
