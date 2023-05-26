@@ -1,6 +1,6 @@
-import { Text, View, TextInput, Pressable, Button } from 'react-native';
+import { Text, View, TextInput, Pressable } from 'react-native';
 import { useState, useEffect } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './LoginScreenStyles';
@@ -8,14 +8,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { GOOGLE_EXPO, GOOGLE_ANDROID, GOOGLE_IOS } from '../../firebase/firebase-config';
-
-
-WebBrowser.maybeCompleteAuthSession();
-
-
-
-
-
 type Props = NativeStackScreenProps<any>;
 export const LoginScreen = ({ navigation }: Props) => {
     const [token, setToken] = useState("");
@@ -26,7 +18,6 @@ export const LoginScreen = ({ navigation }: Props) => {
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
-
     function handleRegister() {
         navigation.navigate('RegisterScreen')
     }
@@ -34,7 +25,7 @@ export const LoginScreen = ({ navigation }: Props) => {
         navigation.navigate('ChangePasswordScreen')
     }
     function handleHome() {
-        navigation.navigate('Home')
+        navigation.navigate('PlantListScreen')
     }
     function handleBack() {
         navigation.goBack()
@@ -48,42 +39,39 @@ export const LoginScreen = ({ navigation }: Props) => {
             }).then(() => navigation.navigate('PlantListScreen'))
             .catch((error: { message: any; }) => alert(error.message));
     }
-
+    WebBrowser.maybeCompleteAuthSession();
     const [request, response, promptAsync] = Google.useAuthRequest({
         androidClientId: GOOGLE_ANDROID,
         iosClientId: GOOGLE_IOS,
         expoClientId: GOOGLE_EXPO
     });
-
     useEffect(() => {
         if (response?.type === "success") {
             setToken(response.authentication.accessToken);
-            getUserInfo();
-        }
+            getUserInfo(response.authentication.accessToken);
+        } else { }
     }, [response, token]);
-
-
-    const getUserInfo = async () => {
+    const getUserInfo = async (accessToken: any) => {
         try {
             const response = await fetch(
                 "https://www.googleapis.com/userinfo/v2/me",
                 { headers: { Authorization: `Bearer ${token}` }, }
             );
-            const user = await response.json().then();
+            const user = await response.json();
             setUserInfo(user);
-
-            navigation.navigate('Home');
+            const googleCredential = GoogleAuthProvider.credential(null, accessToken);
+            signInWithCredential(auth, googleCredential)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    navigation.navigate('PlantListScreen');
+                })
+                .catch((error) => {
+                    console.log(error)
+                });
         } catch (error) {
             console.log(error)
         }
     };
-
-
-    if (userInfo) {
-        navigation.navigate('Home');
-    }
-
-
     return (
         <View style={styles.container}>
             <Pressable style={styles.puscica} onPress={handleBack}>
@@ -124,30 +112,18 @@ export const LoginScreen = ({ navigation }: Props) => {
             <Pressable style={styles.button2} onPress={handleRegister}>
                 <Text style={styles.buttonText}>Create an account</Text>
             </Pressable>
-            <Pressable style={styles.button2} onPress={
-                () => { promptAsync(); }}>
+            <Pressable style={styles.button2} onPress={() => { promptAsync(); }}>
                 <View style={styles.googleButtonContainer}>
                     <Ionicons name="logo-google" size={21} color="white" style={styles.icon2} />
                     <Text style={styles.buttonText}>Continue with Google</Text>
                 </View>
-
-
-
-
-
-
-
-
-
             </Pressable>
             <Pressable onPress={handlePassword}>
                 <Text style={[styles.text, styles.lined]}> FORGOT YOUR PASSWORD?</Text>
             </Pressable>
-
             <Pressable onPress={handleHome}>
                 <Text style={[styles.text, { paddingTop: 20, fontSize: 14 }]}> Continue without registration</Text>
             </Pressable>
         </View >
     );
 }
-
