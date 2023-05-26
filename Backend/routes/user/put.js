@@ -89,4 +89,69 @@ router.put('/:userId/personal-garden/:plantId', upload.none(), (req, res) => {
         });
 });
 
+
+/**
+ * Update user notifications
+ * @swagger
+ * /user/{userId}:
+ *   put:
+ *     summary: Update user notifications
+ *     description: Update the notification settings for a user.
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: The ID of the user.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               notifications:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Notifications updated
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Failed to update notifications
+ */
+router.put('/:userId', upload.none(), (req, res) => {
+    const db = getDB();
+    const userId = req.params.userId;
+    const { notifications } = req.body;
+
+    const userCollection = db.collection('user');
+
+    userCollection.findOne({ _id: userId })
+        .then(user => {
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+
+            userCollection.updateOne(
+                { _id: userId },
+                { $set: { notifications: notifications } }
+            )
+            .then(() => {
+                res.status(200).send('Notifications updated');
+            })
+            .catch(err => {
+                console.error('Failed to update notifications:', err);
+                res.status(500).send('Failed to update notifications');
+            });
+        })
+        .catch(err => {
+            console.error('Failed to find user:', err);
+            res.status(500).send('Failed to find user');
+        });
+});
+
 module.exports = router;
