@@ -8,7 +8,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.post('/add-user', upload.none(), (req, res, next) => {
-    const { userId, name, surname, email } = req.body;
+    const { userId, name, surname, email, notifications } = req.body;
   
     const db = getDB();
     const collection = db.collection('user');
@@ -18,6 +18,7 @@ router.post('/add-user', upload.none(), (req, res, next) => {
         name: name,
         surname: surname,
         email: email,
+        notifications: notifications,
         history: [],
         personalGarden: []
     };
@@ -34,7 +35,7 @@ router.post('/add-user', upload.none(), (req, res, next) => {
 
 router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     const { originalname, mimetype, buffer } = req.files[0];
-    const { userId, latin, common, description, intervalZalivanja, prviDanZalivanja } = req.body;
+    const { userId, latin, common, description, watering } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
@@ -49,7 +50,7 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     { _id: userId },
     {
         $push: {
-            personalGarden: { _id: new ObjectId, latin: latin, common: common, description: description, intervalZalivanja: intervalZalivanja, prviDanZalivanja: prviDanZalivanja, image: newImage }
+            personalGarden: { _id: new ObjectId, latin: latin, common: common, description: description, watering: watering, image: newImage }
         }
     }
     )
