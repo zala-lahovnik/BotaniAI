@@ -3,6 +3,26 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../../db/db');
 
+
+router.get('/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    const db = getDB();
+    const collection = db.collection('user');
+    
+    collection.findOne({ _id: new ObjectId(userId) })
+    .then(user => {
+      if (!user) {
+        return res.status(404).send('User not found');
+      }
+      res.status(200).json(user);
+    })
+    .catch(err => {
+      console.error('Failed to retrieve user from MongoDB:', err);
+      res.status(500).send('Failed to retrieve user from MongoDB');
+    });
+});
+
 router.get('/:userId/personal-garden', (req, res) => {
     const userId = req.params.userId;
   
