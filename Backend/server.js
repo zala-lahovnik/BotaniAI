@@ -10,13 +10,17 @@ const runDB = async () => {
 };
 runDB();
 
-let userRouter = require('./routes/user');
-let userPlantRouter = require('./routes/userPlant');
-let plantRouter = require('./routes/plant');
+const plantGetRoutes = require('./routes/plant/get');
+const userGetRoutes = require('./routes/user/get');
+const userPostRoutes = require('./routes/user/post');
+const userPutRoutes = require('./routes/user/put');
+const userDeleteRoutes = require('./routes/user/delete');
 
-app.use('/user', userRouter);
-app.use('/user/plant', userPlantRouter);
-app.use('/plant', plantRouter);
+app.use('/plant', plantGetRoutes);
+app.use('/user', userGetRoutes);
+app.use('/user', userPostRoutes);
+app.use('/user', userPutRoutes);
+app.use('/user', userDeleteRoutes);
 
 const PORT = 3000;
 

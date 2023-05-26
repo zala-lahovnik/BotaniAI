@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
-const { getDB } = require('../db/db');
+const { getDB } = require('../../db/db');
 
 router.get('/latin/:plantName', (req, res) => {
     const latinName = decodeURIComponent(req.params.plantName);
