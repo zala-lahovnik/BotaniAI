@@ -129,7 +129,11 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     })
     .catch(err => {
         console.error('Failed to add plant to MongoDB:', err);
-        res.status(500).send('Failed to add plant to MongoDB');
+        if (err == 'RangeError: offset is out of bounds') {
+            res.send('choose smaller image');
+        } else {
+            res.status(500).send('Failed to add plant to MongoDB');
+        }
     });
 });
 
@@ -192,7 +196,11 @@ router.post('/add-history', upload.any(), (req, res, next) => {
     })
     .catch(err => {
         console.error('Failed to add plant to MongoDB:', err);
-        res.status(500).send('Failed to add plant to MongoDB');
+        if (err == 'RangeError: offset is out of bounds') {
+            res.send('choose smaller image');
+        } else {
+            res.status(500).send('Failed to add plant to MongoDB');
+        }
     });
 });
 
