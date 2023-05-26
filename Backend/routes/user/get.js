@@ -3,7 +3,30 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../../db/db');
 
-
+/**
+ * Get a specific user by ID
+ * @swagger
+ * /user/{userId}:
+ *   get:
+ *     summary: Get user by ID
+ *     description: Retrieve a user based on their ID.
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         description: User ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/:userId', (req, res) => {
     const userId = req.params.userId;
 
@@ -23,6 +46,30 @@ router.get('/:userId', (req, res) => {
     });
 });
 
+/**
+ * Get personal garden of a specific user
+ * @swagger
+ * /user/{userId}/personal-garden:
+ *   get:
+ *     summary: Get personal garden of a user
+ *     description: Retrieve the personal garden of a user based on their ID.
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         description: User ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User or plants not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/:userId/personal-garden', (req, res) => {
     const userId = req.params.userId;
   
@@ -42,7 +89,30 @@ router.get('/:userId/personal-garden', (req, res) => {
     });
 });
   
-  
+/**
+ * Get history of a specific user
+ * @swagger
+ * /user/{userId}/history:
+ *   get:
+ *     summary: Get history of a user
+ *     description: Retrieve the history of a user based on their ID.
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         description: User ID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *       404:
+ *         description: User or plants not found
+ *       500:
+ *         description: Internal server error
+ */
 router.get('/:userId/history', (req, res) => {
     const userId = req.params.userId;
 

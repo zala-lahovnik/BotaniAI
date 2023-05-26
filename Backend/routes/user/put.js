@@ -6,6 +6,48 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+
+/**
+ * Update a plant in user's personal garden
+ * @swagger
+ * /user/{userId}/personal-garden/{plantId}:
+ *   put:
+ *     summary: Update a plant in user's personal garden
+ *     description: Update the custom name and watering attributes of a plant in the personal garden of a user.
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: The ID of the user.
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: plantId
+ *         required: true
+ *         description: The ID of the plant.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               customName:
+ *                 type: string
+ *               watering:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Plant attributes updated successfully
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Failed to update plant attributes
+ */
 router.put('/:userId/personal-garden/:plantId', upload.none(), (req, res) => {
     const db = getDB();
     const userId = req.params.userId;
