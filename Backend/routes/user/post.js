@@ -18,7 +18,7 @@ router.post('/add-user', upload.none(), (req, res, next) => {
         name: name,
         surname: surname,
         email: email,
-        notifications: notifications,
+        notifications: (notifications === "true"),
         history: [],
         personalGarden: []
     };
@@ -35,7 +35,7 @@ router.post('/add-user', upload.none(), (req, res, next) => {
 
 router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     const { originalname, mimetype, buffer } = req.files[0];
-    const { userId, latin, common, description, watering } = req.body;
+    const { userId, latin, common, customName, description, watering } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
@@ -50,7 +50,7 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     { _id: userId },
     {
         $push: {
-            personalGarden: { _id: new ObjectId, latin: latin, common: common, description: description, watering: watering, image: newImage }
+            personalGarden: { _id: new ObjectId, latin: latin, common: common, customName: customName, description: description, watering: watering, image: newImage }
         }
     }
     )
@@ -66,7 +66,7 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
 
 router.post('/add-history', upload.any(), (req, res, next) => {
     const { originalname, mimetype, buffer } = req.files[0];
-    const { userId, plantId, customName, intervalZalivanja, prviDanZalivanja, date } = req.body;
+    const { userId, plantId, customName, date } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
@@ -81,7 +81,7 @@ router.post('/add-history', upload.any(), (req, res, next) => {
     { _id: userId },
     {
         $push: {
-            history: { _id: new ObjectId, plantId: plantId, customName: customName, intervalZalivanja: intervalZalivanja, prviDanZalivanja: prviDanZalivanja, date: date, image: newImage }
+            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date).toISOString(), image: newImage }
         }
     }
     )
