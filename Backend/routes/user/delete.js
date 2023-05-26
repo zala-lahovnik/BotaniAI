@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const { ObjectId } = require('mongodb');
 const { getDB } = require('../../db/db');
 
 router.delete('/:userId/personal-garden/:plantId', (req, res) => {
