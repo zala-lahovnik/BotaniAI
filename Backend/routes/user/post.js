@@ -7,9 +7,8 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.post('/:userId/add-user', upload.none(), (req, res, next) => {
-    const userId = req.params.userId;
-    const { name, surname, email } = req.body;
+router.post('/add-user', upload.none(), (req, res, next) => {
+    const { userId, name, surname, email } = req.body;
   
     const db = getDB();
     const collection = db.collection('user');
@@ -33,10 +32,9 @@ router.post('/:userId/add-user', upload.none(), (req, res, next) => {
     });
 });
 
-router.post('/:userId/add-personal-garden', upload.any(), (req, res, next) => {
-    const userId = req.params.userId;
+router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     const { originalname, mimetype, buffer } = req.files[0];
-    const { latin, common, description, intervalZalivanja, prviDanZalivanja } = req.body;
+    const { userId, latin, common, description, intervalZalivanja, prviDanZalivanja } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
@@ -65,10 +63,9 @@ router.post('/:userId/add-personal-garden', upload.any(), (req, res, next) => {
 });
 
 
-router.post('/:userId/add-history', upload.any(), (req, res, next) => {
-    const userId = req.params.userId;
+router.post('/add-history', upload.any(), (req, res, next) => {
     const { originalname, mimetype, buffer } = req.files[0];
-    const { plantId, customName, intervalZalivanja, prviDanZalivanja, date } = req.body;
+    const { userId, plantId, customName, intervalZalivanja, prviDanZalivanja, date } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
