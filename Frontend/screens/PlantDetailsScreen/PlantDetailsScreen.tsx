@@ -1,11 +1,9 @@
-import React from 'react';
-import { ImageBackground, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
 import { Divider } from 'react-native-elements';
-import Water from 'react-native-vector-icons/Ionicons';
 import Sun from 'react-native-vector-icons/Ionicons';
-import Shovel from 'react-native-vector-icons/MaterialCommunityIcons';
 import Bookmark from 'react-native-vector-icons/Feather';
 import BackButton from '../../components/index';
 import { styles } from './PlantDetailsScreenStyles';
@@ -27,7 +25,15 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     toxicity,
   } = route.params as any;
 
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const truncatedDescription =
+    description.split('').slice(0, 200).join('') + '...';
+  const isLongerThan200 = description.split('').length > 200;
+
+  const handleExpand = () => {
+    setExpanded(!expanded);
+  };
+
   return (
     <View
       style={{
@@ -46,7 +52,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         }}
       />
       <BackButton navigation={navigation} />
-      <View style={styles.container}>
+      <View style={[styles.container]}>
         <Text style={styles.latinPlantName}>{latin}</Text>
         <View
           style={{
@@ -54,26 +60,35 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             gap: 15,
           }}
         >
-          <View style={styles.plantCategoryPill}>
-            <Text
-              style={{
-                fontSize: 12,
-              }}
-            >
-              {toxicity}
-            </Text>
-          </View>
+          {toxicity && (
+            <View style={styles.plantCategoryPill}>
+              <Text
+                style={{
+                  fontSize: 12,
+                }}
+              >
+                {toxicity}
+              </Text>
+            </View>
+          )}
         </View>
         <View>
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: 'bold',
-            }}
-          >
-            Description
+          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Description</Text>
+          <Text style={styles.plantDescription}>
+            {expanded ? description : truncatedDescription}
           </Text>
-          <Text style={styles.plantDescription}>{description}</Text>
+          {isLongerThan200 && (
+            <TouchableOpacity onPress={handleExpand}>
+              <Text
+                style={{
+                  color: global.color.primary.backgroundColor,
+                  fontWeight: 'bold',
+                }}
+              >
+                {expanded ? 'Show less' : 'Read more'}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <Divider
           style={{ marginHorizontal: 20, marginVertical: 10, opacity: 0.5 }}
@@ -125,6 +140,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
                     <Text
                       style={{
                         fontStyle: 'italic',
+                        maxWidth: 150,
                       }}
                     >
                       {Object.values(text)[0]}

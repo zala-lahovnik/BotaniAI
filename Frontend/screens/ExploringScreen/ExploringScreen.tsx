@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, View, Image, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   BottomNavigationBar,
@@ -8,9 +8,8 @@ import {
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
-import { temp_data } from '../HistoryScreen/RecentCaptures';
-import { styles } from '../../components/PlantWateringInfoCard/PlantWateringInfoCardStyles';
-import ArrowRight from 'react-native-vector-icons/AntDesign';
+import { QueryClient, useQuery } from '@tanstack/react-query';
+import { getAllPlants } from '../../api/_plant';
 
 export const ExploringScreen = ({
   navigation,
@@ -18,7 +17,9 @@ export const ExploringScreen = ({
 }: NativeStackScreenProps<any>) => {
   const insets = useSafeAreaInsets();
 
-  // TODO: FETCH DATA FROM BACKEND
+  const { isLoading, isError, data } = useQuery(['plants'], () =>
+    getAllPlants()
+  );
 
   return (
     <View
@@ -34,6 +35,16 @@ export const ExploringScreen = ({
         leftAction={() => navigation.goBack()}
       />
       <View style={{ flex: 1 }}>
+        {isLoading && (
+          <View
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          >
+            <ActivityIndicator
+              size="large"
+              color={global.color.primary.backgroundColor}
+            />
+          </View>
+        )}
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{ marginBottom: 30 }}
@@ -46,13 +57,15 @@ export const ExploringScreen = ({
               },
             ]}
           >
-            {temp_data.map((plant, index) => (
-              <ExplorePlantCard
-                plant={plant}
-                key={plant._id}
-                navigation={navigation}
-              />
-            ))}
+            {data &&
+              data?.map((plant, index) => (
+                <ExplorePlantCard
+                  plant={plant}
+                  key={plant._id}
+                  navigation={navigation}
+                  route={route}
+                />
+              ))}
           </View>
         </ScrollView>
       </View>
