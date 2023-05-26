@@ -4,6 +4,9 @@ const app = express();
 const dotenv = require('dotenv');
 dotenv.config({ path: './.env' });
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const runDB = async () => {
     const { connectDB } = require('./db/db');
     await connectDB();
