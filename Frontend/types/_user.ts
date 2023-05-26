@@ -1,16 +1,12 @@
 // Interface for user object from Firebase
 import { HistoryPlant } from './_plant';
 
-export interface IUser {}
-
-// Type for user object added to user collection in MongoDB
-export type User = IUser & {
-  userId: string;
+export interface User {
+  _id: string;
   name: string;
   surname: string;
   email: string;
-  // TODO: Define type for history
+  notifications: boolean;
   history: Array<HistoryPlant>;
-  // TODO: Define type for personalGarden
   personalGarden: Array<any>;
-};
+}
