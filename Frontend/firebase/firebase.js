@@ -1,13 +1,14 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFunctions } from 'firebase/functions';
 import {
   API_KEY,
   AUTH_DOMAIN,
   PROJECT_ID,
   STORAGE_BUCKET,
   MESSAGING_SENDER_ID,
-  APP_ID,
-} from './firebase-config';
+  APP_ID, FUNCTIONS_REGION
+} from "./firebase-config";
 
 const firebaseConfig = {
   apiKey: API_KEY,
@@ -17,6 +18,8 @@ const firebaseConfig = {
   messagingSenderId: MESSAGING_SENDER_ID,
   appId: APP_ID,
 };
-console.log(firebaseConfig);
+
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+export const functionsPython = getFunctions(app, FUNCTIONS_REGION);

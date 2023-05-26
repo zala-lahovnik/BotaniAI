@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { styles } from './BottomNavigationBarStyles';
 import MdScanSharp from 'react-native-vector-icons/Ionicons';
-import User from 'react-native-vector-icons/FontAwesome';
+import Search from 'react-native-vector-icons/AntDesign';
 import History from 'react-native-vector-icons/FontAwesome';
 import Home from 'react-native-vector-icons/Entypo';
 import Water from 'react-native-vector-icons/Entypo';
@@ -31,8 +31,8 @@ const navigationItems: NavigationItemProps[] = [
     icon: <History name="history" size={20} color="white" />,
   },
   {
-    name: 'User',
-    icon: <User name="user" size={20} color="white" />,
+    name: 'Explore',
+    icon: <Search name="search1" size={20} color="white" />,
   },
 ];
 
@@ -50,7 +50,6 @@ const NavigationItem = ({
 export const BottomNavigationBar = ({ navigation }: NavigationProps) => {
   return (
     <View style={[styles.container]}>
-      {/*<View style={styles.container}>*/}
       <View style={styles.circle} />
       <TouchableOpacity
         style={styles.scanButton}

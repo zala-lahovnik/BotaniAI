@@ -15,9 +15,8 @@ export const styles = StyleSheet.create({
         left: 10,
         top: 10,
         marginTop: "10%",
-        marginLeft: "1%"
+        marginLeft:11
     },
-
     lined: {
         textDecorationLine: 'underline',
     },
@@ -40,8 +39,8 @@ export const styles = StyleSheet.create({
     icon: {
         borderBottomWidth: 1,
         borderBottomColor: '#648983',
-        paddingVertical: 3,
-        paddingHorizontal: 5,
+        paddingVertical: 2,
+        paddingRight:20,
     },
     container: {
 

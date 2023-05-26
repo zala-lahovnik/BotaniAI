@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
         left: 10,
         top: 10,
         marginTop: "10%",
-        marginLeft: "1%"
+        marginLeft:11
     },
     input: {
         borderBottomWidth: 1,
