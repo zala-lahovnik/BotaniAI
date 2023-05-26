@@ -7,6 +7,32 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+router.post('/:userId/add-user', upload.none(), (req, res, next) => {
+    const userId = req.params.userId;
+    const { name, surname, email } = req.body;
+  
+    const db = getDB();
+    const collection = db.collection('user');
+
+    const newUser = {
+        _id: userId,
+        name: name,
+        surname: surname,
+        email: email,
+        history: [],
+        personalGarden: []
+    };
+
+    collection.insertOne(newUser)
+    .then(() => {
+      res.status(200).send('New user added to MongoDB');
+    })
+    .catch(err => {
+      console.error('Failed to add new user to MongoDB:', err);
+      res.status(500).send('Failed to add new user to MongoDB');
+    });
+});
+
 router.post('/:userId/add-personal-garden', upload.any(), (req, res, next) => {
     const userId = req.params.userId;
     const { originalname, mimetype, buffer } = req.files[0];
