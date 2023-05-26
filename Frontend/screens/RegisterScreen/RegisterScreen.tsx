@@ -5,7 +5,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { styles } from './RegisterScreenStyles';
 import { useNavigation } from '@react-navigation/native';
-
 export const RegisterScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
@@ -22,12 +21,12 @@ export const RegisterScreen = () => {
         setShowPassword2(!showPassword2);
     };
     function handleBack() { navigation.goBack() }
+
     function handleRegister() {
         if (password == confirm) {
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredentials) => {
                     const user = userCredentials.user;
-                    console.log("Registered with: ", user.email);
                 }).then(() => navigation.navigate('PlantListScreen'))
         }
     }
