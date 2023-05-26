@@ -7,7 +7,7 @@ const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.put('/userId:/personal-garden/:plantId', upload.none(), (req, res) => {
+router.put('/:userId/personal-garden/:plantId', upload.none(), (req, res) => {
     const db = getDB();
     const userId = req.params.userId;
     const plantId = req.params.plantId;
@@ -24,7 +24,8 @@ router.put('/userId:/personal-garden/:plantId', upload.none(), (req, res) => {
             const personalGarden = user.personalGarden;
             const updatedGarden = personalGarden.map(obj => {
                 if (obj._id.toString() === plantId) {
-                    obj = plant;
+                    obj.customName = plant.customName;
+                    obj.watering = plant.watering;
                 }
                 return obj;
             });
