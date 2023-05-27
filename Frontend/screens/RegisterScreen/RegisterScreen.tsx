@@ -21,7 +21,6 @@ export const RegisterScreen = () => {
         setShowPassword2(!showPassword2);
     };
     function handleBack() { navigation.goBack() }
-
     function handleRegister() {
         if (password == confirm) {
             createUserWithEmailAndPassword(auth, email, password)
@@ -30,6 +29,7 @@ export const RegisterScreen = () => {
                 }).then(() => navigation.navigate('PlantListScreen'))
         }
     }
+    if (auth.currentUser?.email) { navigation.navigate("PlantListScreen") }
     return (
         <View style={styles.container}>
             <Pressable style={styles.puscica}>

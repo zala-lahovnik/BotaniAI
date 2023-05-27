@@ -72,6 +72,7 @@ export const LoginScreen = ({ navigation }: Props) => {
             console.log(error)
         }
     };
+    if (auth.currentUser?.email) { navigation.navigate("PlantListScreen") }
     return (
         <View style={styles.container}>
             <Pressable style={styles.puscica} onPress={handleBack}>
