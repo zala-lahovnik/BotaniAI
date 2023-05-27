@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   BottomNavigationBar,
@@ -8,8 +8,10 @@ import {
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
-import { QueryClient, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
+import { auth } from "../../firebase/firebase";
+import { NotLoggedIn } from '../../components';
 
 export const ExploringScreen = ({
   navigation,
@@ -22,54 +24,53 @@ export const ExploringScreen = ({
   );
 
   return (
-    <View
-      style={{
-        flex: 1,
-        paddingTop: insets.top,
-      }}
-    >
-      <Header
-        navigation={navigation}
-        route={route}
-        text={'Explore'}
-        leftAction={() => navigation.goBack()}
-      />
-      <View style={{ flex: 1 }}>
-        {isLoading && (
-          <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          >
-            <ActivityIndicator
-              size="large"
-              color={global.color.primary.backgroundColor}
-            />
-          </View>
-        )}
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          style={{ marginBottom: 30 }}
+    <>
+      {auth.currentUser?.email ? (
+        <View
+          style={{
+            flex: 1,
+            paddingTop: insets.top,
+          }}
         >
-          <View
-            style={[
-              global.spacing.container,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {data &&
-              data?.map((plant, index) => (
+          <Header
+            navigation={navigation}
+            route={route}
+            text={'Explore'}
+            leftAction={() => navigation.goBack()}
+          />
+          <View style={{ flex: 1 }}>
+            {isLoading && (
+              <View
+                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+              >
+                <ActivityIndicator
+                  size="large"
+                  color={global.color.primary.backgroundColor}
+                />
+              </View>
+            )}
+            <FlatList
+              data={data?.slice(0, 10)}
+              renderItem={({ item }) => (
                 <ExplorePlantCard
-                  plant={plant}
-                  key={plant._id}
+                  plant={item}
+                  key={item._id}
                   navigation={navigation}
                   route={route}
                 />
-              ))}
+              )}
+              keyExtractor={(item) => item._id}
+              showsVerticalScrollIndicator={false}
+              style={{ marginBottom: 30, marginHorizontal: 20 }}
+              onEndReachedThreshold={0.5}
+              // TODO: add pagination
+              onEndReached={() => {
+                console.log('end reached');
+              }}
+            />
           </View>
-        </ScrollView>
-      </View>
-      <BottomNavigationBar navigation={navigation} route={route} />
-    </View>
+          <BottomNavigationBar navigation={navigation} route={route} />
+        </View>) : (<NotLoggedIn />)}
+    </>
   );
 };

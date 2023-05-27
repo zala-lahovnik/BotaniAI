@@ -1,7 +1,7 @@
-import { PropsWithChildren, useState } from 'react';
+import * as React from 'react';
+import { PropsWithChildren } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import Close from 'react-native-vector-icons/AntDesign';
-import * as React from 'react';
 import { global } from '../../styles/globals';
 
 type Props = PropsWithChildren<{
@@ -16,7 +16,7 @@ export const BottomModal = ({ children, isVisible, onClose }: Props) => {
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Watering needed!</Text>
           <Pressable onPress={onClose}>
-            <Close name="close" color={global.color.heading.color} size={22} />
+            <Close name="close" color={global.color.heading.color} size={25} />
           </Pressable>
         </View>
         {children}
@@ -27,16 +27,24 @@ export const BottomModal = ({ children, isVisible, onClose }: Props) => {
 
 const styles = StyleSheet.create({
   modalContent: {
-    height: '25%',
+    height: '28%',
     width: '100%',
     backgroundColor: global.color.primary.backgroundColor,
     borderTopRightRadius: 18,
     borderTopLeftRadius: 18,
     position: 'absolute',
     bottom: 0,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   titleContainer: {
-    height: '18%',
+    height: '20%',
     backgroundColor: global.color.primary.backgroundColor,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
@@ -49,7 +57,9 @@ const styles = StyleSheet.create({
   },
   title: {
     color: global.color.heading.color,
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
+    letterSpacing: 1,
   },
   pickerContainer: {
     flexDirection: 'row',
