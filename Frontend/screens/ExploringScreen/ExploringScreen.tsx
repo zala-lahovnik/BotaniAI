@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   BottomNavigationBar,
@@ -8,7 +8,7 @@ import {
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
-import { QueryClient, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
 
 export const ExploringScreen = ({
@@ -45,29 +45,25 @@ export const ExploringScreen = ({
             />
           </View>
         )}
-        <ScrollView
+        <FlatList
+          data={data?.slice(0, 10)}
+          renderItem={({ item }) => (
+            <ExplorePlantCard
+              plant={item}
+              key={item._id}
+              navigation={navigation}
+              route={route}
+            />
+          )}
+          keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
-          style={{ marginBottom: 30 }}
-        >
-          <View
-            style={[
-              global.spacing.container,
-              {
-                flex: 1,
-              },
-            ]}
-          >
-            {data &&
-              data?.map((plant, index) => (
-                <ExplorePlantCard
-                  plant={plant}
-                  key={plant._id}
-                  navigation={navigation}
-                  route={route}
-                />
-              ))}
-          </View>
-        </ScrollView>
+          style={{ marginBottom: 30, marginHorizontal: 20 }}
+          onEndReachedThreshold={0.5}
+          // TODO: add pagination
+          onEndReached={() => {
+            console.log('end reached');
+          }}
+        />
       </View>
       <BottomNavigationBar navigation={navigation} route={route} />
     </View>
