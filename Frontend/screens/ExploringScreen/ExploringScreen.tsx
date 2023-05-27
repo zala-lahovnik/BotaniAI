@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
 import { auth } from "../../firebase/firebase";
 import { NotLoggedIn } from '../../components';
+
 export const ExploringScreen = ({
   navigation,
   route,
@@ -69,6 +70,7 @@ export const ExploringScreen = ({
             />
           </View>
           <BottomNavigationBar navigation={navigation} route={route} />
-        </View>) : <NotLoggedIn />}</>
+        </View>) : (<NotLoggedIn />)}
+    </>
   );
 };
