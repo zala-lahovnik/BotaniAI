@@ -23,9 +23,13 @@ export const styles = StyleSheet.create({
   latinPlantName: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 10,
     letterSpacing: 1.2,
     color: global.color.primary.backgroundColor,
+  },
+  commonName: {
+    marginBottom: 10,
+    fontStyle: 'italic',
+    fontSize: 16,
   },
   plantCategoryPill: {
     paddingVertical: 5,

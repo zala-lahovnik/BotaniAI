@@ -12,6 +12,7 @@ export interface Plant {
   fertilizing: string;
   toxicity: string;
   folder_num: number;
+  fertilization: string;
 }
 
 export interface HistoryPlant {
