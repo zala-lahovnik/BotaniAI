@@ -49,7 +49,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         //save new description, water, name, days, date
         setEdit(false)
     }
-
     return (
         <View style={{ flex: 1, }}>
             <ScrollView>
@@ -134,14 +133,9 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
                                 <Text style={styles.text1}>Custom name</Text>
                                 <Text style={styles.text2}>{name}</Text>
                             </View>
-
-
-
                             <View style={styles.middleContainer}>
                                 <Text style={styles.text1}>Water every</Text>
                                 <Text style={styles.text2}>{days} days</Text></View>
-
-
                             <View style={styles.rightContainer}>
                                 <Text style={styles.text1}>Amount of water</Text>
                                 <Text style={styles.text2}>{water} ml</Text>

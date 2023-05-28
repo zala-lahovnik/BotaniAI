@@ -18,6 +18,7 @@ export const ChangePasswordScreen = () => {
             .catch((error) => alert(error.message));
     }
     function handleBack() { navigation.goBack() }
+    if (auth.currentUser?.email) { console.log(auth.currentUser?.email); navigation.navigate("PlantListScreen") }
     return (
         <View style={styles.container}>
             <Pressable style={styles.puscica} onPress={handleBack}>

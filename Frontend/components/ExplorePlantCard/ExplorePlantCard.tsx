@@ -1,52 +1,39 @@
 import React from 'react';
 import { styles } from '../PlantWateringInfoCard/PlantWateringInfoCardStyles';
-import { Image, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ArrowRight from 'react-native-vector-icons/AntDesign';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { type Plant } from '../../types/_plant';
 
 type Props = NativeStackScreenProps<any> & {
-  plant: any;
+  plant: Plant;
 };
 
 export const ExplorePlantCard = ({ plant, navigation }: Props) => {
-  // TODO: FETCH DATA FROM BACKEND
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() =>
         navigation.navigate('PlantDetails', {
-          plantId: plant._id,
-          latin: 'Papaver Somniferum',
-          common: 'Opium Poppy',
-          image: require('../../assets/sample_plant.png'),
-          description:
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam a quia voluptatem, quod, voluptatum, quas voluptate quos quibusdam voluptatibus quae dolorum. Quisquam a quia voluptatem, quod, voluptatum, quas voluptate quos quibusdam voluptatibus quae dolorum.',
-          watering: 'Once a week',
-          sunlight: 'Full sun',
-          plantingTime: ['Spring', 'Summer'],
-          soil: 'Well-drained',
-          fertilizer: 'Once a month',
-          toxicity: 'Toxic to pets',
+          plantId: plant?._id,
+          ...plant,
         })
       }
-      key={plant._id}
       style={[styles.card, style.card]}
     >
+      {/*  TODO: CHANGE WITH URI*/}
       <Image
         source={require('../../assets/sample_plant.png')}
         style={style.image}
       />
       <View style={{ flex: 1, height: '100%' }}>
-        <Text style={styles.cardTitle}>{plant.customName}</Text>
-        <Text style={style.description}>
-          {plant?.description ??
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}
-        </Text>
+        <Text style={styles.cardTitle}>{plant?.latin}</Text>
+        <Text style={style.description}>{plant?.common}</Text>
       </View>
       <ArrowRight
         name={'right'}
-        size={24}
-        style={{ paddingHorizontal: 10, opacity: 0.6 }}
+        size={22}
+        style={{ marginRight: 10, opacity: 0.6 }}
       />
     </TouchableOpacity>
   );
@@ -57,7 +44,7 @@ const style = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     gap: 10,
-    height: 80,
+    height: 90,
     alignItems: 'center',
   },
   image: {

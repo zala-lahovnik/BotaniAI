@@ -16,3 +16,4 @@ export * from './Drawer/DrawerLayout';
 export * from './BottomModal/BottomModal';
 export * from './ModalPlantCard/ModalPlantCard';
 export * from './ExplorePlantCard/ExplorePlantCard';
+export * from './NotLoggedIn/NotLoggedIn';
