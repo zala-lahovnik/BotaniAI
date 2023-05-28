@@ -52,7 +52,6 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
       <View
         style={{
           paddingTop: insets.top,
-          paddingBottom: insets.bottom,
           flex: 1,
         }}
       >

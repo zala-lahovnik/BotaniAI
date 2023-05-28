@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Platform, TouchableOpacity, View } from "react-native";
 import { styles } from './BottomNavigationBarStyles';
 import MdScanSharp from 'react-native-vector-icons/Ionicons';
 import Search from 'react-native-vector-icons/AntDesign';
@@ -49,7 +49,7 @@ const NavigationItem = ({
 
 export const BottomNavigationBar = ({ navigation }: NavigationProps) => {
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container, Platform.OS === 'ios' ? {height: 80} : null]}>
       <View style={styles.circle} />
       <TouchableOpacity
         style={styles.scanButton}
