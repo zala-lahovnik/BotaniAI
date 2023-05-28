@@ -8,6 +8,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import { GOOGLE_EXPO, GOOGLE_ANDROID, GOOGLE_IOS } from '../../firebase/firebase-config';
+import { addUser } from '../../api/_user';
+
 type Props = NativeStackScreenProps<any>;
 export const LoginScreen = ({ navigation }: Props) => {
     const [token, setToken] = useState("");
@@ -47,8 +49,10 @@ export const LoginScreen = ({ navigation }: Props) => {
     });
     useEffect(() => {
         if (response?.type === "success") {
-            setToken(response.authentication.accessToken);
-            getUserInfo(response.authentication.accessToken);
+            if (response.authentication) {
+                setToken(response.authentication.accessToken);
+                getUserInfo(response.authentication.accessToken);
+            }
         } else { }
     }, [response, token]);
     const getUserInfo = async (accessToken: any) => {
@@ -63,6 +67,22 @@ export const LoginScreen = ({ navigation }: Props) => {
             signInWithCredential(auth, googleCredential)
                 .then((userCredential) => {
                     const user = userCredential.user;
+
+                    if (auth.currentUser) {
+                        const displayName = auth.currentUser.displayName;
+                        const name = displayName ? displayName.split(" ")[0] || " " : " ";
+                        const surname = displayName ? displayName.split(" ")[1] || " " : " ";
+                        const email = auth.currentUser.email || " ";
+                        const newUser = {
+                            name: name,
+                            surname: surname,
+                            email: email,
+                            notifications: false,
+                            userId: auth.currentUser.uid
+                        };
+                        addUser(newUser)
+                        //TODO
+                    }
                     navigation.navigate('PlantListScreen');
                 })
                 .catch((error) => {
@@ -93,7 +113,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                     secureTextEntry={!showPassword}
                     onChangeText={setPassword}
                     value={password}
-                /><Pressable onPress={toggleShowPassword} style={styles.icon}>
+                /><Pressable onPress={toggleShowPassword}>
                     <Ionicons
                         name={showPassword ? 'eye-off' : 'eye'}
                         size={24}

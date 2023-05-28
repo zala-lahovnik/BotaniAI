@@ -91,3 +91,23 @@ export const updateUserNotifications = async (
   const response = await instance.put(`/user/${userId}`, data);
   return response.data;
 };
+
+type UpdatePlant = {
+  customName: string;
+  firstDay: string;
+  numberOfDays: number;
+  amountOfWater: number;
+  description: string;
+};
+
+export const updatePlant = async (
+  userId: string,
+  plantId: string,
+  data: UpdatePlant
+) => {
+  const response = await instance.put(
+    `/user/${userId}/personal-garden/${plantId}`,
+    data
+  );
+  return response.data;
+};
