@@ -96,6 +96,8 @@ router.post('/add-user', upload.none(), (req, res, next) => {
  *                  type: string
  *               numberOfDays:
  *                  type: number
+ *               amountOfWater:
+ *                  type: number
  *               wateringArray:
  *                  type: array
  *                  items:
@@ -104,8 +106,6 @@ router.post('/add-user', upload.none(), (req, res, next) => {
  *                              type: string
  *                          watered:
  *                              type: boolean
- *                          amountOfWater:
- *                              type: number
  *               image:
  *                 type: file
  *     responses:
@@ -119,7 +119,7 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     if (req.files.length == 0) {
         res.send('No image');
     }
-    const { userId, latin, common, customName, description, firstDay, numberOfDays, wateringArray } = req.body;
+    const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
@@ -127,6 +127,7 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
     const watering = {
         firstDay: firstDay,
         numberOfDays: numberOfDays,
+        amountOfWater: amountOfWater,
         wateringArray: wateringArray
     }
 
