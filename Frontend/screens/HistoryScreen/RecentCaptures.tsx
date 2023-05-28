@@ -1,12 +1,14 @@
 import React, { useRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { BottomNavigationBar, Header, RecentPlantCard } from '../../components';
+import { BottomNavigationBar, Header, NotLoggedIn, RecentPlantCard } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { type VirtualPlant } from '../../types/_plant';
 import { global } from '../../styles/globals';
 import { getImageCaptureTime } from '../../utils/plant-watering-calculations';
 import { Divider } from 'react-native-elements';
+import { auth } from "../../firebase/firebase";
+
 
 export const temp_data: VirtualPlant[] = [
   {
@@ -74,81 +76,84 @@ export const RecentCaptures = ({ navigation, route }: Props) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={{ paddingTop: insets.top, flex: 1 }}>
-      <Header
-        navigation={navigation}
-        route={route}
-        text={'Recent Captures'}
-        leftAction={() => navigation.goBack()}
-      />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{ marginBottom: 30 }}
-      >
-        <View style={[global.spacing.container, { flex: 1 }]}>
-          {temp_data.map((plant, index) => {
-            const date = plant.date;
-            const captureTime = getImageCaptureTime(date);
-            if (prev_captured_ref.current !== captureTime) {
-              prev_captured_ref.current = captureTime;
-              return (
-                <View key={plant._id}>
-                  {index !== 0 && (
-                    <Divider
-                      style={[
-                        {
-                          marginVertical: 20,
-                          marginHorizontal: 10,
-                        },
-                      ]}
-                      orientation="horizontal"
-                      width={2}
-                      color={global.color.primary.backgroundColor as string}
+    <>
+      {auth.currentUser?.email ? (
+        <View style={{ paddingTop: insets.top, flex: 1 }}>
+          <Header
+            navigation={navigation}
+            route={route}
+            text={'Recent Captures'}
+            leftAction={() => navigation.goBack()}
+          />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={{ marginBottom: 30 }}
+          >
+            <View style={[global.spacing.container, { flex: 1 }]}>
+              {temp_data.map((plant, index) => {
+                const date = plant.date;
+                const captureTime = getImageCaptureTime(date);
+                if (prev_captured_ref.current !== captureTime) {
+                  prev_captured_ref.current = captureTime;
+                  return (
+                    <View key={plant._id}>
+                      {index !== 0 && (
+                        <Divider
+                          style={[
+                            {
+                              marginVertical: 20,
+                              marginHorizontal: 10,
+                            },
+                          ]}
+                          orientation="horizontal"
+                          width={2}
+                          color={global.color.primary.backgroundColor as string}
+                        />
+                      )}
+                      <Text
+                        style={[
+                          {
+                            fontSize: 18,
+                            fontWeight: 'bold',
+                            fontStyle: 'italic',
+                            color: global.color.primary.backgroundColor,
+                          },
+                        ]}
+                      >
+                        {captureTime}
+                      </Text>
+                      <RecentPlantCard
+                        plant={plant}
+                        captureTime={captureTime}
+                        date={date}
+                        navigation={navigation}
+                        route={route}
+                        watering={'Every 1-2 days'}
+                        latin={'Lorem ipsum '}
+                        classificationPercent={80}
+                      />
+                    </View>
+                  );
+                } else {
+                  return (
+                    <RecentPlantCard
+                      key={plant._id}
+                      plant={plant}
+                      captureTime={captureTime}
+                      date={date}
+                      navigation={navigation}
+                      route={route}
+                      watering={'Every 1-2 days'}
+                      latin={'Lorem ipsum '}
+                      classificationPercent={80}
                     />
-                  )}
-                  <Text
-                    style={[
-                      {
-                        fontSize: 18,
-                        fontWeight: 'bold',
-                        fontStyle: 'italic',
-                        color: global.color.primary.backgroundColor,
-                      },
-                    ]}
-                  >
-                    {captureTime}
-                  </Text>
-                  <RecentPlantCard
-                    plant={plant}
-                    captureTime={captureTime}
-                    date={date}
-                    navigation={navigation}
-                    route={route}
-                    watering={'Every 1-2 days'}
-                    latin={'Lorem ipsum '}
-                    classificationPercent={80}
-                  />
-                </View>
-              );
-            } else {
-              return (
-                <RecentPlantCard
-                  key={plant._id}
-                  plant={plant}
-                  captureTime={captureTime}
-                  date={date}
-                  navigation={navigation}
-                  route={route}
-                  watering={'Every 1-2 days'}
-                  latin={'Lorem ipsum '}
-                  classificationPercent={80}
-                />
-              );
-            }
-          })}
+                  );
+                }
+              })}
+            </View>
+          </ScrollView>
+          <BottomNavigationBar navigation={navigation} route={route} />
         </View>
-      </ScrollView>
-      <BottomNavigationBar navigation={navigation} route={route} />
-    </View>
+      ) : (<NotLoggedIn />)}</>
   );
 };

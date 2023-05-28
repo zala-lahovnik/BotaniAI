@@ -10,7 +10,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
 import { useQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
-import { auth } from "../../firebase/firebase";
 
 export const ExploringScreen = ({
   navigation,
@@ -24,52 +23,52 @@ export const ExploringScreen = ({
 
   return (
     <>
-      {auth.currentUser?.email ? (
-        <View
-          style={{
-            flex: 1,
-            paddingTop: insets.top,
-          }}
-        >
-          <Header
-            navigation={navigation}
-            route={route}
-            text={'Explore'}
-            leftAction={() => navigation.goBack()}
-          />
-          <View style={{ flex: 1 }}>
-            {isLoading && (
-              <View
-                style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-              >
-                <ActivityIndicator
-                  size="large"
-                  color={global.color.primary.backgroundColor}
-                />
-              </View>
+
+      <View
+        style={{
+          flex: 1,
+          paddingTop: insets.top,
+        }}
+      >
+        <Header
+          navigation={navigation}
+          route={route}
+          text={'Explore'}
+          leftAction={() => navigation.goBack()}
+        />
+        <View style={{ flex: 1 }}>
+          {isLoading && (
+            <View
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+            >
+              <ActivityIndicator
+                size="large"
+                color={global.color.primary.backgroundColor}
+              />
+            </View>
+          )}
+          <FlatList
+            data={data?.slice(0, 10)}
+            renderItem={({ item }) => (
+              <ExplorePlantCard
+                plant={item}
+                key={item._id}
+                navigation={navigation}
+                route={route}
+              />
             )}
-            <FlatList
-              data={data?.slice(0, 10)}
-              renderItem={({ item }) => (
-                <ExplorePlantCard
-                  plant={item}
-                  key={item._id}
-                  navigation={navigation}
-                  route={route}
-                />
-              )}
-              keyExtractor={(item) => item._id}
-              showsVerticalScrollIndicator={false}
-              style={{ marginBottom: 30, marginHorizontal: 20 }}
-              onEndReachedThreshold={0.5}
-              // TODO: add pagination
-              onEndReached={() => {
-                console.log('end reached');
-              }}
-            />
-          </View>
-          <BottomNavigationBar navigation={navigation} route={route} />
-        </View>) : (<NotLoggedIn />)}
+            keyExtractor={(item) => item._id}
+            showsVerticalScrollIndicator={false}
+            style={{ marginBottom: 30, marginHorizontal: 20 }}
+            onEndReachedThreshold={0.5}
+            // TODO: add pagination
+            onEndReached={() => {
+              console.log('end reached');
+            }}
+          />
+        </View>
+        <BottomNavigationBar navigation={navigation} route={route} />
+      </View>
     </>
   );
 };
