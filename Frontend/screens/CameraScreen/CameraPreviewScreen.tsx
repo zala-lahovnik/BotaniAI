@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   Image,
   ImageBackground,
   Pressable,
-  View,
   Text,
-  ActivityIndicator,
+  View,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CameraCapturedPicture } from 'expo-camera/src/Camera.types';
@@ -13,7 +13,13 @@ import { Header } from '../../components';
 import { functionsPython } from '../../firebase/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { species } from '../../constants/species';
-import { previewStyles } from "./CameraPreviewScreenStyles";
+import { previewStyles } from './CameraPreviewScreenStyles';
+import { instance } from '../../api/_axios_base_url';
+import { getPlantByLatin } from '../../api/_plant';
+import { Plant } from '../../types/_plant';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import { global } from "../../styles/globals";
+import { addPlantToHistory } from "../../api/_user";
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -25,6 +31,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
   const [predictionResults, setPredictionsResults] = useState('');
   const [predictionPercent, setPredictionPercent] = useState('');
   const [predictedKey, setPredictedKey] = useState('');
+  const [fetchedPlantData, setFetchedPlantData] = useState<Plant | null>(null)
 
   async function onPressOnUsePhotoButton() {
     setShowClassResultView(false);
@@ -48,17 +55,59 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
 
         setPredictionsResults(predictedClass);
         setPredictionPercent((maxPrediction * 100).toFixed(2));
+
         setPredictedKey(predictedClassKey);
         setShowClassResultView(true);
         setLoading(false);
+        saveIntoUserHistory(predictedClass);
       })
       .catch((err: any) => {
         console.log(err);
       });
   }
 
+  const saveIntoUserHistory = async (predicted: string) => {
+    const plantData = await getPlantByLatin(predicted)
+    setFetchedPlantData(plantData)
+
+    try {
+      let manipulatedPhoto = photo
+      if (photo.hasOwnProperty('uri')) {
+        const manipulateResult = await manipulateAsync(
+          photo.uri,
+          [],
+          { compress: 0.2, format: SaveFormat.JPEG, base64: true } // from 0 to 1 "1 for best quality"
+        );
+        manipulatedPhoto = manipulateResult;
+      }
+
+      //TODO: save result percent to DB
+      await addPlantToHistory({
+        userId: 'GVJoNX0geGO47y4B19twgrwM99A3',
+        plantId: plantData._id,
+        customName: plantData.common,
+        date: Date.now().toString(),
+        image: manipulatedPhoto.base64
+      })
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const onPressOnContinueButton = () => {
-    //TODO: set in Context or somewhere and navigate
+    if(fetchedPlantData)
+      navigation.navigate('PlantDetails', {
+        latin: fetchedPlantData?.latin,
+        common: fetchedPlantData?.common,
+        description: fetchedPlantData?.description,
+        watering: fetchedPlantData?.watering,
+        sunlight: fetchedPlantData?.sunlight,
+        plantingTime: fetchedPlantData?.plantingTime,
+        soil: fetchedPlantData?.soil,
+        wateringDetail: fetchedPlantData?.wateringDetail,
+        fertilization: fetchedPlantData?.fertilization,
+        toxicity: fetchedPlantData?.toxicity,
+      })
   };
 
   return (
@@ -79,12 +128,12 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
           <>
             <ActivityIndicator
               size="large"
-              color="black"
+              color='#124A3F'
               style={{ marginBottom: '10%', marginTop: '20%' }}
             />
             <Text
               style={{
-                color: 'black',
+                color: global.color.primary.backgroundColor,
                 fontSize: 22,
                 textAlign: 'center',
                 margin: 10,
@@ -94,7 +143,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
             </Text>
             <Text
               style={{
-                color: 'black',
+                color: global.color.primary.backgroundColor,
                 fontSize: 22,
                 textAlign: 'center',
                 margin: 10,
@@ -114,41 +163,35 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
             {!showClassResultView && (
               <View style={previewStyles.photoButtonsContainer}>
                 <Pressable
-                  onPress={() => {navigation.goBack()}}
+                  onPress={() => {
+                    navigation.goBack();
+                  }}
                   style={previewStyles.usePhotoButton}
                 >
-                  <Text style={{ color: 'black', fontSize: 16 }}>Retake</Text>
+                  <Text style={{ color: global.color.primary.backgroundColor, fontSize: 16 }}>Retake</Text>
                 </Pressable>
                 <Pressable
                   onPress={onPressOnUsePhotoButton}
                   style={previewStyles.usePhotoButton}
                 >
-                  <Text style={{ color: 'black', fontSize: 16 }}>Use this photo</Text>
+                  <Text style={{ color: global.color.primary.backgroundColor, fontSize: 16 }}>
+                    Use this photo
+                  </Text>
                 </Pressable>
               </View>
             )}
             {showClassResultView && (
-              <View
-                style={previewStyles.resultsContainer}
-              >
-                <View
-                  style={previewStyles.resultsContent}
-                >
-                  <View
-                    style={previewStyles.predictionsContainer}
-                  >
-                    <Text
-                      style={previewStyles.predictionTitle}
-                    >
+              <View style={previewStyles.resultsContainer}>
+                <View style={previewStyles.resultsContent}>
+                  <View style={previewStyles.predictionsContainer}>
+                    <Text style={previewStyles.predictionTitle}>
                       {predictionResults}
                     </Text>
                     <Text style={previewStyles.predictionDescription}>
                       Predicted with a confidence level of {predictionPercent}%
                     </Text>
                   </View>
-                  <View
-                    style={previewStyles.continueButtonContainer}
-                  >
+                  <View style={previewStyles.continueButtonContainer}>
                     <Pressable
                       style={previewStyles.continueButton}
                       onPress={onPressOnContinueButton}

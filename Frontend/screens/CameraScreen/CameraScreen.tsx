@@ -59,7 +59,7 @@ const AnimatedBarCodeScanner = () => {
   );
 };
 
-const BackButton = ({
+export const BackButton = ({
   navigation,
 }: Pick<NativeStackScreenProps<any>, 'navigation'>) => {
   return (
