@@ -12,6 +12,6 @@ export const getPlantById = async (plantId: string) => {
 };
 
 export const getPlantByLatin = async (latin: string) => {
-  const response = instance.get(`/plant/latin/${latin}`);
+  const response = instance.get(`/plant/latin/${encodeURIComponent(latin)}`);
   return (await response).data as Plant;
 };
