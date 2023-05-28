@@ -1,11 +1,10 @@
-import { Text, View, TextInput, Pressable, ActivityIndicator } from 'react-native';
+import { Text, View, TextInput, Pressable, KeyboardAvoidingView } from 'react-native';
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { styles } from './RegisterScreenStyles';
 import { useNavigation } from '@react-navigation/native';
-import { useQuery } from '@tanstack/react-query';
 import { addUser } from '../../api/_user';
 
 export const RegisterScreen = () => {
@@ -40,7 +39,7 @@ export const RegisterScreen = () => {
                         userId: user.uid
                     };
                     addUser(newUser)
-
+                    //TODO
                 }).then(() => {
                     setDisabled(false);
                     navigation.navigate('PlantListScreen')
@@ -84,7 +83,7 @@ export const RegisterScreen = () => {
                     secureTextEntry={!showPassword1}
                     onChangeText={setPassword}
                     value={password} />
-                <Pressable onPress={toggleShowPassword1} style={styles.icon}>
+                <Pressable onPress={toggleShowPassword1}>
                     <Ionicons
                         name={showPassword1 ? 'eye-off' : 'eye'}
                         size={24}
@@ -99,7 +98,7 @@ export const RegisterScreen = () => {
                     secureTextEntry={!showPassword2}
                     onChangeText={setConfirm}
                     value={confirm} />
-                <Pressable onPress={toggleShowPassword2} style={styles.icon}>
+                <Pressable onPress={toggleShowPassword2}>
                     <Ionicons
                         name={showPassword2 ? 'eye-off' : 'eye'}
                         size={24}
