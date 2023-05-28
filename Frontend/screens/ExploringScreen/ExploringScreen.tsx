@@ -4,14 +4,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   BottomNavigationBar,
   ExplorePlantCard,
-  Header,
+  Header, NotLoggedIn
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
 import { useQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
 import { auth } from "../../firebase/firebase";
-import { NotLoggedIn } from '../../components';
 
 export const ExploringScreen = ({
   navigation,

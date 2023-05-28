@@ -50,6 +50,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  disabledButton: {
+    color: 'white',
+    backgroundColor: '#adc487',
+    width: '70%',
+    height: 45,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   buttonText: {
     textTransform: 'uppercase',
     fontSize: 10,

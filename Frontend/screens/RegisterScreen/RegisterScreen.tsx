@@ -1,10 +1,13 @@
-import { Text, View, TextInput, Pressable } from 'react-native';
+import { Text, View, TextInput, Pressable, ActivityIndicator } from 'react-native';
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { styles } from './RegisterScreenStyles';
 import { useNavigation } from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { addUser } from '../../api/_user';
+
 export const RegisterScreen = () => {
     const navigation = useNavigation();
     const [email, setEmail] = useState("");
@@ -14,6 +17,7 @@ export const RegisterScreen = () => {
     const [password, setPassword] = useState("");
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
+    const [disabled, setDisabled] = useState(false); // Added disabled state
     const toggleShowPassword1 = () => {
         setShowPassword1(!showPassword1);
     };
@@ -23,10 +27,28 @@ export const RegisterScreen = () => {
     function handleBack() { navigation.goBack() }
     function handleRegister() {
         if (password == confirm) {
+            setDisabled(true);
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredentials) => {
                     const user = userCredentials.user;
-                }).then(() => navigation.navigate('PlantListScreen'))
+
+                    const newUser = {
+                        name: first,
+                        surname: last,
+                        email: email,
+                        notifications: false,
+                        userId: user.uid
+                    };
+                    addUser(newUser)
+
+                }).then(() => {
+                    setDisabled(false);
+                    navigation.navigate('PlantListScreen')
+                })
+                .catch(error => {
+                    setDisabled(false);
+                    console.log(error);
+                });
         }
     }
     if (auth.currentUser?.email) { navigation.navigate("PlantListScreen") }
@@ -84,7 +106,8 @@ export const RegisterScreen = () => {
                         color="#648983" />
                 </Pressable>
             </View>
-            <Pressable style={styles.button1} onPress={handleRegister}>
+
+            <Pressable style={[styles.button1, disabled && styles.disabledButton]} onPress={handleRegister} disabled={disabled}>
                 <Text style={styles.buttonText}>Continue</Text>
             </Pressable>
         </View>
