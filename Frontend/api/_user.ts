@@ -34,7 +34,7 @@ type HistoryObject = {
   image: any;
 };
 export const addPlantToHistory = async (data: HistoryObject) => {
-  const response = await instance.post('/user/plant/add-history', data);
+  const response = await instance.post('user/add-history', data);
   return response.data;
 };
 
@@ -89,5 +89,25 @@ export const updateUserNotifications = async (
   data: UpdateUsersNotifications
 ) => {
   const response = await instance.put(`/user/${userId}`, data);
+  return response.data;
+};
+
+type UpdatePlant = {
+  customName: string;
+  firstDay: string;
+  numberOfDays: number;
+  amountOfWater: number;
+  description: string;
+};
+
+export const updatePlant = async (
+  userId: string,
+  plantId: string,
+  data: UpdatePlant
+) => {
+  const response = await instance.put(
+    `/user/${userId}/personal-garden/${plantId}`,
+    data
+  );
   return response.data;
 };

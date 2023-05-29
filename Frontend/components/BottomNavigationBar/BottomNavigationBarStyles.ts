@@ -24,9 +24,9 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: -0,
     left: '46%',
-    // borderStyle: 'solid',
-    // borderWidth: 5,
-    // borderColor: 'white',
+    borderStyle: 'solid',
+    borderWidth: 5,
+    borderColor: 'white',
   },
   scanButton: {
     backgroundColor: 'black',

@@ -36,11 +36,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: '10%',
   },
-  icon: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#648983',
-    paddingVertical: 2,
-  },
+
   container: {
     flex: 1,
     backgroundColor: '#134b3f',

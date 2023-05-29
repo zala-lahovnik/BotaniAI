@@ -29,12 +29,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: '10%',
   },
-  icon: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#648983',
-    paddingVertical: 3,
-    paddingHorizontal: 5,
-  },
+
   container: {
     flex: 1,
     backgroundColor: 'white',
