@@ -29,7 +29,6 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: '10%',
   },
-
   container: {
     flex: 1,
     backgroundColor: 'white',
@@ -61,5 +60,10 @@ export const styles = StyleSheet.create({
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  text: {
+    fontSize: 10,
+    color: 'red',
+    marginBottom: 4,
   },
 });
