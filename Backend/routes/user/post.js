@@ -114,7 +114,7 @@ router.post('/add-user', upload.none(), (req, res, next) => {
  *       500:
  *         description: Failed to add plant to MongoDB
  */
-router.post('/add-personal-garden', upload.any(), (req, res, next) => {
+router.post('/add-personal-garden', upload.none(), (req, res, next) => {
     const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
 
     const db = getDB();
@@ -173,6 +173,8 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
  *                 type: string
  *               date:
  *                 type: string
+ *               result:
+ *                  type: number
  *               image:
  *                 type: string
  *     responses:
@@ -182,7 +184,7 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
  *         description: Failed to add plant to MongoDB
  */
 router.post('/add-history', upload.any(), (req, res, next) => {
-    const { userId, plantId, customName, date, image } = req.body;
+    const { userId, plantId, customName, date, result, image } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
@@ -191,7 +193,7 @@ router.post('/add-history', upload.any(), (req, res, next) => {
     { _id: userId },
     {
         $push: {
-            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), image: image }
+            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: image }
         }
     }
     )
