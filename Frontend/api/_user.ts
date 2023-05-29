@@ -93,11 +93,12 @@ export const updateUserNotifications = async (
 };
 
 type UpdatePlant = {
+  description: string;
   customName: string;
   firstDay: string;
-  numberOfDays: number;
-  amountOfWater: number;
-  description: string;
+  numberOfDays: string;
+  amountOfWater: string;
+  wateringArray: { date: string; watered: boolean }[];
 };
 
 export const updatePlant = async (

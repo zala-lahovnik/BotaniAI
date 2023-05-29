@@ -1,42 +1,91 @@
 import { Text, TextInput, View, Pressable, Image, ScrollView } from 'react-native';
 import { Ionicons, AntDesign } from '@expo/vector-icons';
-import { useState } from 'react';
-import { Calendar, CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
+import { useEffect, useState } from 'react';
+import { CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
 import moment from 'moment';
 import React from 'react';
 import { styles } from './PlantViewStyles';
 import { BottomNavigationBar } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { auth } from '../../firebase/firebase';
+import { updatePlant } from '../../api/_user';
 type Props = NativeStackScreenProps<any>;
 export const PlantViewScreen = ({ navigation, route }: Props) => {
+    var plant = {
+        _id: "1",
+        latin: 'awsdf',
+        customName: 'asdxf',
+        description: 'sdxf',
+        image: { originalname: '' },
+        watering: {
+            firstDay: "2023-05-26",
+            amountOfWater: "",
+            numberOfDays: "3",
+            wateringArray: [{ date: "2023-05-26", watered: true }, { date: "2023-05-20", watered: true }, { date: "2023-05-28", watered: true }, { date: "2023-05-12", watered: false }, { date: "2023-05-01", watered: false }, { date: "2023-05-31", watered: false }, { date: "2023-05-30", watered: false }]
+        }
+    }
     const [edit, setEdit] = useState<boolean>(false);
-    const [name, setName] = useState<string>("");
-    const [water, setWater] = useState<string>("");
-    const [date, setDate] = useState<string>("");
-    const [days, setDays] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [markedDates, setMarkedDates] = useState<{ [date: string]: { selected: boolean; marked: boolean; dotColor?: string } }>({});
+    const [name, setName] = useState<string>(plant.customName);
+    const [water, setWater] = useState<string>(plant.watering.amountOfWater);
+    const [date, setDate] = useState<string>(plant.watering.firstDay);
+    const [days, setDays] = useState<string>(plant.watering.numberOfDays || "7");
+    const [description, setDescription] = useState<string>(plant.description);
+    const [markedDates, setMarkedDates] = useState<{ [date: string]: { selected: boolean; selectedColor: string } }>({});
     const minDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
-    function handleDate(day: { dateString: string }) { setDate(day.dateString) }
-    function handleMark() {
-        const today = new Date()
-        const startDate = date;
-        const currentDatePlus = new Date(startDate);
-        const endDatePlus = new Date(today);
-        endDatePlus.setMonth(endDatePlus.getMonth() + 1);
-        while (currentDatePlus <= today) {
-            const dateString = currentDatePlus.toISOString().split('T')[0];
-            console.log(dateString);
-            markedDates[dateString] = { selected: true, marked: true, dotColor: 'blue' };
-            currentDatePlus.setDate(currentDatePlus.getDate() + parseInt(days));
+    const [dates, setDates] = useState<{ date: string, watered: boolean }[]>(plant.watering.wateringArray);
+    const today = new Date().toISOString().split("T")[0];
+    const userId = auth.currentUser?.uid || ""
+    useEffect(() => {
+        if (date && days) {
+            setMarkedDates(getBeforeTodayPlusFive(1));
         }
-        while (currentDatePlus <= endDatePlus && currentDatePlus > today) {
-            const dateString = currentDatePlus.toISOString().split('T')[0];
-            console.log(dateString);
-            markedDates[dateString] = { selected: true, marked: true, dotColor: '#adc487' };
-            currentDatePlus.setDate(currentDatePlus.getDate() + parseInt(days));
+    }, [date, days]);
+    function getBeforeTodayPlusFive(start: number) {
+        const filteredData = dates.filter(item => moment(item.date).isSameOrBefore(today));
+        const sortedData = filteredData.sort((a, b) => moment(b.date).diff(moment(a.date)));
+        let nextFive: { date: string, watered: boolean }[] = [];
+        let startDate = date;
+        if (startDate && moment(startDate).isAfter(today)) {
+            nextFive = getNextFiveDays(startDate);
+        } else {
+            startDate = sortedData[0].date;
+            nextFive = getNextFiveDays(startDate);
         }
-        return markedDates
+        const updatedDates = [...sortedData, ...nextFive];
+        const updatedMarkedDates: { [date: string]: { selected: boolean; selectedColor: string } } = {};
+        for (const dateObj of updatedDates) {
+            const { date, watered } = dateObj;
+            const selectedColor = watered ? '#1672EC' : '#adc487';
+            updatedMarkedDates[date] = { selected: true, selectedColor };
+        }
+        updatedMarkedDates[startDate] = { selected: true, selectedColor: '#adc487' };
+        setDates(updatedDates);
+        setMarkedDates(updatedMarkedDates);
+        const newPlant = {
+            customName: name,
+            firstDay: date,
+            numberOfDays: days,
+            amountOfWater: water,
+            description: description,
+            wateringArray: dates,
+        }
+        updatePlant(userId, plant._id, newPlant)
+        return updatedMarkedDates;
+    }
+    function getNextFiveDays(startDate: string) {
+        let startingDate = new Date(startDate);
+        if (moment(startDate).isSameOrBefore(today)) {
+            startingDate = new Date(today);
+            setDate(today);
+        }
+        let i = 1;
+        let nextFive: { date: string, watered: boolean }[] = []
+        while (i < 6) {
+            const newDate = new Date(startingDate.getTime() + i * parseInt(days) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+            nextFive.push({ date: newDate, watered: false });
+            i++;
+        }
+        return nextFive
     }
     function handleBack() {
         navigation.goBack()
@@ -45,125 +94,156 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         setEdit(true)
     }
     function handleEditFalse() {
-        handleMark()
-        //save new description, water, name, days, date
+        setMarkedDates(getBeforeTodayPlusFive(2))
+        const newPlant = {
+            customName: name,
+            firstDay: date,
+            numberOfDays: days,
+            amountOfWater: water,
+            description: description,
+            wateringArray: dates,
+        }
+        updatePlant(userId, plant._id, newPlant)
         setEdit(false)
     }
     return (
-        <View style={{ flex: 1, }}>
+        <View style={{ flex: 1 }}>
             <ScrollView>
                 <View style={styles.container}>
                     <Pressable style={styles.puscica}>
                         <Ionicons name="arrow-back" size={24} color="black" onPress={handleBack} />
                     </Pressable>
-                    <Text style={styles.ime}>Latinsko ime</Text>
-                    {edit ? (<Pressable style={styles.edit} onPress={handleEditFalse}>
-                        <Ionicons name="checkmark-done" size={24} color="black" onPress={handleEditFalse} />
-                    </Pressable>) : (<Pressable style={styles.edit}>
-                        <AntDesign name="edit" size={24} color="black" onPress={handleEditTrue} />
-                    </Pressable>)}
+                    <Text style={styles.ime}>{plant.latin}</Text>
+                    {edit ? (
+                        <Pressable style={styles.edit} onPress={handleEditFalse}>
+                            <Ionicons name="checkmark-done" size={24} color="black" onPress={handleEditFalse} />
+                        </Pressable>
+                    ) : (
+                        <Pressable style={styles.edit}>
+                            <AntDesign name="edit" size={24} color="black" onPress={handleEditTrue} />
+                        </Pressable>
+                    )}
                     <Image
                         source={{ uri: 'https://www.ambius.com/blog/wp-content/uploads/2019/03/GettyImages-484148116-770x360.jpg' }}
-                        style={styles.image} />
-                    {edit ? (<View>
-                        <View style={styles.container2}>
-                            <View style={styles.leftContainer}>
-                                <Text style={styles.text1}>Custom name</Text>
+                        style={styles.image}
+                    />
+                    {edit ? (
+                        <View>
+                            <View style={styles.container2}>
+                                <View style={styles.leftContainer}>
+                                    <Text style={styles.text1}>Custom name</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder={name}
+                                        placeholderTextColor="#648983"
+                                        onChangeText={setName}
+                                        value={name}
+                                    />
+                                </View>
+                                <View style={styles.middleContainer}>
+                                    <Text style={styles.text1}>Water every</Text>
+                                    <View style={styles.amount}>
+                                        <TextInput
+                                            keyboardType="numeric"
+                                            style={styles.input2}
+                                            placeholder={days}
+                                            placeholderTextColor="#648983"
+                                            onChangeText={setDays}
+                                            value={days}
+                                        />
+                                        <Text style={styles.text}>days</Text>
+                                    </View>
+                                </View>
+                                <View style={styles.rightContainer}>
+                                    <Text style={styles.text1}>Amount of water</Text>
+                                    <View style={styles.amount}>
+                                        <TextInput
+                                            keyboardType="numeric"
+                                            style={styles.input2}
+                                            placeholder={water}
+                                            placeholderTextColor="#648983"
+                                            onChangeText={setWater}
+                                            value={water}
+                                        />
+                                        <Text style={styles.text}>ml</Text>
+                                    </View>
+                                </View>
+                            </View>
+                            <View style={styles.middleContainer}>
+                                <Text style={styles.text1}>Description</Text>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder={name}
+                                    placeholder={description}
                                     placeholderTextColor="#648983"
-                                    onChangeText={setName}
-                                    value={name} />
+                                    onChangeText={setDescription}
+                                    value={description}
+                                />
                             </View>
-                            <View style={styles.middleContainer}>
-                                <Text style={styles.text1}>Water every</Text>
-                                <View style={styles.amount}>
-                                    <TextInput
-                                        keyboardType="numeric"
-                                        style={styles.input2}
-                                        placeholder={days}
-                                        placeholderTextColor="#648983"
-                                        onChangeText={setDays}
-                                        value={days} />
-                                    <Text style={styles.text}>days</Text>
+                            <View>
+                                <CalendarProvider date={minDate}>
+                                    <ExpandableCalendar
+                                        firstDay={1}
+                                        onDayPress={(day) => setDate(day.dateString)}
+                                        theme={{
+                                            calendarBackground: '#ffffff',
+                                            selectedDayBackgroundColor: '#134a3e',
+                                            monthTextColor: 'black',
+                                            dayTextColor: 'black',
+                                            todayTextColor: '#adadac',
+                                            selectedDayTextColor: '#ffffff',
+                                            textSectionTitleColor: 'black',
+                                            textDisabledColor: 'black',
+                                            arrowColor: "black",
+                                        }}
+                                    />
+                                </CalendarProvider>
+                            </View>
+                        </View>
+                    ) : (
+                        <View>
+                            <View style={styles.container2}>
+                                <View style={styles.leftContainer}>
+                                    <Text style={styles.text1}>Custom name</Text>
+                                    <Text style={styles.text2}>{name}</Text>
+                                </View>
+                                <View style={styles.middleContainer}>
+                                    <Text style={styles.text1}>Water every</Text>
+                                    <Text style={styles.text2}>{days} days</Text>
+                                </View>
+                                <View style={styles.rightContainer}>
+                                    <Text style={styles.text1}>Amount of water</Text>
+                                    <Text style={styles.text2}>{water} ml</Text>
                                 </View>
                             </View>
-                            <View style={styles.rightContainer}>
-                                <Text style={styles.text1}>Amount of water</Text>
-                                <View style={styles.amount}>
-                                    <TextInput
-                                        keyboardType="numeric"
-                                        style={styles.input2}
-                                        placeholder={water}
-                                        placeholderTextColor="#648983"
-                                        onChangeText={setWater}
-                                        value={water} />
-                                    <Text style={styles.text}>ml</Text>
-                                </View>
-                            </View>
-                        </View>
-                        <View style={styles.middleContainer}>
-                            <Text style={styles.text1}>Description</Text>
-                            <TextInput
-                                style={styles.input}
-                                placeholder={description}
-                                placeholderTextColor="#648983"
-                                onChangeText={setDescription}
-                                value={description} />
-                        </View>
-                        <CalendarProvider date={minDate}>
-                            <ExpandableCalendar firstDay={1}
-                                onDayPress={handleDate}
-                                theme={{
-                                    calendarBackground: '#ffffff',
-                                    selectedDayBackgroundColor: '#134a3e',
-                                    monthTextColor: 'black',
-                                    dayTextColor: 'black',
-                                    todayTextColor: '#adadac',
-                                    selectedDayTextColor: '#ffffff',
-                                    textSectionTitleColor: 'black',
-                                    textDisabledColor: 'black',
-                                    arrowColor: "black",
-                                }} />
-                        </CalendarProvider>
-                    </View>) : (<View>
-                        <View style={styles.container2}>
-                            <View style={styles.leftContainer}>
-                                <Text style={styles.text1}>Custom name</Text>
-                                <Text style={styles.text2}>{name}</Text>
-                            </View>
                             <View style={styles.middleContainer}>
-                                <Text style={styles.text1}>Water every</Text>
-                                <Text style={styles.text2}>{days} days</Text></View>
-                            <View style={styles.rightContainer}>
-                                <Text style={styles.text1}>Amount of water</Text>
-                                <Text style={styles.text2}>{water} ml</Text>
+                                <Text style={styles.text1}>Description</Text>
+                                <Text style={styles.text3}>{description}</Text>
+                            </View>
+                            <View>
+                                <CalendarProvider date={minDate}>
+                                    <ExpandableCalendar
+                                        firstDay={1}
+                                        markedDates={markedDates}
+                                        theme={{
+                                            calendarBackground: '#ffffff',
+                                            selectedDayBackgroundColor: '#134a3e',
+                                            monthTextColor: 'black',
+                                            dayTextColor: 'black',
+                                            todayTextColor: '#adadac',
+                                            selectedDayTextColor: '#ffffff',
+                                            textSectionTitleColor: 'black',
+                                            textDisabledColor: 'black',
+                                            arrowColor: "black",
+                                        }}
+                                    />
+                                </CalendarProvider>
                             </View>
                         </View>
-                        <View style={styles.middleContainer}>
-                            <Text style={styles.text1}>Description</Text>
-                            <Text style={styles.text3}>{description}</Text>
-                        </View>
-                        <CalendarProvider date={minDate}>
-                            <ExpandableCalendar firstDay={1}
-                                markedDates={markedDates}
-                                theme={{
-                                    calendarBackground: '#ffffff',
-                                    selectedDayBackgroundColor: '#134a3e',
-                                    monthTextColor: 'black',
-                                    dayTextColor: 'black',
-                                    todayTextColor: '#adadac',
-                                    selectedDayTextColor: '#ffffff',
-                                    textSectionTitleColor: 'black',
-                                    textDisabledColor: 'black',
-                                    arrowColor: "black",
-                                }} />
-                        </CalendarProvider>
-                    </View>)}
+                    )}
                 </View>
-            </ScrollView >
+            </ScrollView>
             <BottomNavigationBar navigation={navigation} route={route} />
         </View>
     );
 };
+export default PlantViewScreen;
