@@ -107,7 +107,7 @@ router.post('/add-user', upload.none(), (req, res, next) => {
  *                          watered:
  *                              type: boolean
  *               image:
- *                 type: file
+ *                 type: string
  *     responses:
  *       200:
  *         description: Plant added successfully
@@ -115,11 +115,7 @@ router.post('/add-user', upload.none(), (req, res, next) => {
  *         description: Failed to add plant to MongoDB
  */
 router.post('/add-personal-garden', upload.any(), (req, res, next) => {
-    const { originalname, mimetype, buffer } = req.files[0];
-    if (req.files.length == 0) {
-        res.send('No image');
-    }
-    const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray } = req.body;
+    const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
@@ -131,17 +127,11 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
         wateringArray: wateringArray
     }
 
-    const newImage = {
-        originalname,
-        mimetype,
-        buffer
-    };
-
     collection.updateOne(
     { _id: userId },
     {
         $push: {
-            personalGarden: { _id: new ObjectId, latin: latin, common: common, customName: customName, description: description, watering: watering, image: newImage }
+            personalGarden: { _id: new ObjectId, latin: latin, common: common, customName: customName, description: description, watering: watering, image: image }
         }
     }
     )
@@ -184,7 +174,7 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
  *               date:
  *                 type: string
  *               image:
- *                 type: file
+ *                 type: string
  *     responses:
  *       200:
  *         description: Plant added successfully
@@ -192,23 +182,16 @@ router.post('/add-personal-garden', upload.any(), (req, res, next) => {
  *         description: Failed to add plant to MongoDB
  */
 router.post('/add-history', upload.any(), (req, res, next) => {
-    const { originalname, mimetype, buffer } = req.files[0];
-    const { userId, plantId, customName, date } = req.body;
+    const { userId, plantId, customName, date, image } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
-
-    const newImage = {
-        originalname,
-        mimetype,
-        buffer
-    };
 
     collection.updateOne(
     { _id: userId },
     {
         $push: {
-            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date).toISOString(), image: newImage }
+            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), image: image }
         }
     }
     )
