@@ -21,8 +21,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 const dotenv = require('dotenv');
 dotenv.config({ path: './.env' });
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json({
+  limit: '500mb'
+}));
 
 const runDB = async () => {
     const { connectDB } = require('./db/db');

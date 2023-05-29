@@ -31,6 +31,7 @@ type HistoryObject = {
   plantId: string;
   customName: string;
   date: string;
+  result: number;
   image: any;
 };
 export const addPlantToHistory = async (data: HistoryObject) => {
