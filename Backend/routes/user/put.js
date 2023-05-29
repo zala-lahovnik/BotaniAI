@@ -52,6 +52,8 @@ const upload = multer({ storage: storage });
  *                              type: string
  *                          watered:
  *                              type: boolean
+ *              image:
+ *                  type: string
  *     responses:
  *       200:
  *         description: Plant attributes updated successfully
@@ -64,7 +66,7 @@ router.put('/:userId/personal-garden/:plantId', upload.none(), (req, res) => {
     const db = getDB();
     const userId = req.params.userId;
     const plantId = req.params.plantId;
-    const { customName, firstDay, numberOfDays, amountOfWater, wateringArray } = req.body;
+    const { customName, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
 
     const watering = {
         firstDay: firstDay,
@@ -86,6 +88,7 @@ router.put('/:userId/personal-garden/:plantId', upload.none(), (req, res) => {
                 if (obj._id.toString() === plantId) {
                     obj.customName = customName;
                     obj.watering = watering;
+                    obj.image = image;
                 }
                 return obj;
             });
