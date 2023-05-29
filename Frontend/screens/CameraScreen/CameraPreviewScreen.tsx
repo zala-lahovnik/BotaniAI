@@ -14,12 +14,11 @@ import { functionsPython } from '../../firebase/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { species } from '../../constants/species';
 import { previewStyles } from './CameraPreviewScreenStyles';
-import { instance } from '../../api/_axios_base_url';
 import { getPlantByLatin } from '../../api/_plant';
 import { Plant } from '../../types/_plant';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
-import { global } from "../../styles/globals";
-import { addPlantToHistory } from "../../api/_user";
+import { global } from '../../styles/globals';
+import { addPlantToHistory } from '../../api/_user';
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -59,19 +58,22 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         setPredictedKey(predictedClassKey);
         setShowClassResultView(true);
         setLoading(false);
-        saveIntoUserHistory(predictedClass);
+        saveIntoUserHistory(
+          predictedClass,
+          Number((maxPrediction * 100).toFixed(0))
+        );
       })
       .catch((err: any) => {
         console.log(err);
       });
   }
 
-  const saveIntoUserHistory = async (predicted: string) => {
-    const plantData = await getPlantByLatin(predicted)
-    setFetchedPlantData(plantData)
+  const saveIntoUserHistory = async (predicted: string, result: number) => {
+    const plantData = await getPlantByLatin(predicted);
+    setFetchedPlantData(plantData);
 
     try {
-      let manipulatedPhoto = photo
+      let manipulatedPhoto = photo;
       if (photo.hasOwnProperty('uri')) {
         const manipulateResult = await manipulateAsync(
           photo.uri,
@@ -81,14 +83,15 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         manipulatedPhoto = manipulateResult;
       }
 
-      //TODO: save result percent to DB
+      //TODO: get userID from context
       await addPlantToHistory({
         userId: 'GVJoNX0geGO47y4B19twgrwM99A3',
         plantId: plantData._id,
         customName: plantData.common,
         date: Date.now().toString(),
-        image: manipulatedPhoto.base64
-      })
+        result: result,
+        image: manipulatedPhoto.base64,
+      });
     } catch (err) {
       console.log(err);
     }
