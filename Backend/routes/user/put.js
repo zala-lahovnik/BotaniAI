@@ -52,7 +52,7 @@ const upload = multer({ storage: storage });
  *                              type: string
  *                          watered:
  *                              type: boolean
- *              image:
+ *               image:
  *                  type: string
  *     responses:
  *       200:
