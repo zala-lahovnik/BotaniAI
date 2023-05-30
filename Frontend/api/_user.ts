@@ -3,7 +3,7 @@ import { instance } from './_axios_base_url';
 import { type HistoryPlant, type PersonalGardenPlant } from '../types/_plant';
 
 export const getUserById = async (userId: string) => {
-  const response = await instance.get(`http://localhost:3000/user/${userId}`);
+  const response = await instance.get(`/user/${userId}`);
   return response.data as User;
 };
 
