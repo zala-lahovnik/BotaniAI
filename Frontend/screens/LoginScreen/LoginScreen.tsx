@@ -1,14 +1,23 @@
-import { Text, View, TextInput, Pressable } from 'react-native';
-import { useState, useEffect } from "react";
-import { GoogleAuthProvider, signInWithCredential, signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
+import { Pressable, Text, TextInput, View } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import {
+  GoogleAuthProvider,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import { auth } from '../../firebase/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './LoginScreenStyles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
-import { GOOGLE_EXPO, GOOGLE_ANDROID, GOOGLE_IOS } from '../../firebase/firebase-config';
-import { addUser } from '../../api/_user';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import {
+  GOOGLE_ANDROID,
+  GOOGLE_EXPO,
+  GOOGLE_IOS,
+} from '../../firebase/firebase-config';
+import { addUser, getUserById } from '../../api/_user';
+import { UserActionType, UserContext } from '../../context/UserContext';
 
 type Props = NativeStackScreenProps<any>;
 export const LoginScreen = ({ navigation }: Props) => {
@@ -17,6 +26,8 @@ export const LoginScreen = ({ navigation }: Props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const { dispatch } = useContext(UserContext)
+
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
@@ -38,9 +49,26 @@ export const LoginScreen = ({ navigation }: Props) => {
                 const user = userCredentials.user;
                 console.log("Logged in with : ", user.email);
                 setUserInfo(user)
+                handleUserLogin(user.uid)
             }).then(() => navigation.navigate('PlantListScreen'))
             .catch((error: { message: any; }) => alert(error.message));
     }
+
+    const handleUserLogin = async (userId: string) => {
+      const user = await getUserById(userId);
+
+      const dispatchUser = {
+        _id: user._id,
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+        notifications: user.notifications,
+        history: user.history || [],
+        personalGarden: user.personalGarden || []
+      }
+      dispatch({ type: UserActionType.UPDATE_USER, payload: dispatchUser } )
+    }
+
     WebBrowser.maybeCompleteAuthSession();
     const [request, response, promptAsync] = Google.useAuthRequest({
         androidClientId: GOOGLE_ANDROID,
@@ -81,7 +109,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                             userId: auth.currentUser.uid
                         };
                         addUser(newUser)
-                        //TODO
+                        handleUserLogin(auth.currentUser.uid)
                     }
                     navigation.navigate('PlantListScreen');
                 })

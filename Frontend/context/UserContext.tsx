@@ -1,14 +1,14 @@
 import { type User } from '../types/_user';
 import { createContext, Dispatch, PropsWithChildren, useReducer } from 'react';
 
-enum ActionType {
+export enum UserActionType {
   UPDATE_USER = 'UPDATE_USER',
   CLEAR_USER = 'CLEAR_USER',
 }
 
 type Action =
-  | { type: ActionType.UPDATE_USER; payload: User }
-  | { type: ActionType.CLEAR_USER };
+  | { type: UserActionType.UPDATE_USER; payload: User }
+  | { type: UserActionType.CLEAR_USER };
 
 const initialState: User = {
   _id: '',
@@ -22,12 +22,12 @@ const initialState: User = {
 
 const userReducer = (state: User, action: Action): User => {
   switch (action.type) {
-    case ActionType.UPDATE_USER:
+    case UserActionType.UPDATE_USER:
       return {
         ...state,
         ...action.payload,
       };
-    case ActionType.CLEAR_USER:
+    case UserActionType.CLEAR_USER:
       return initialState;
     default:
       return state;
