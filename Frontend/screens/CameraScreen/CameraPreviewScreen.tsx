@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -19,6 +19,7 @@ import { Plant } from '../../types/_plant';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { global } from '../../styles/globals';
 import { addPlantToHistory } from '../../api/_user';
+import { UserContext } from '../../context/UserContext';
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -29,8 +30,8 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
   const [showClassResultView, setShowClassResultView] = useState(false);
   const [predictionResults, setPredictionsResults] = useState('');
   const [predictionPercent, setPredictionPercent] = useState('');
-  const [predictedKey, setPredictedKey] = useState('');
-  const [fetchedPlantData, setFetchedPlantData] = useState<Plant | null>(null)
+  const [fetchedPlantData, setFetchedPlantData] = useState<Plant | null>(null);
+  const { user } = useContext(UserContext);
 
   async function onPressOnUsePhotoButton() {
     setShowClassResultView(false);
@@ -50,12 +51,10 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         const indexOfMax = data.pred.indexOf(maxPrediction);
 
         const predictedClass = arrayKey[indexOfMax];
-        const predictedClassKey = Object.keys(species)[indexOfMax];
 
         setPredictionsResults(predictedClass);
         setPredictionPercent((maxPrediction * 100).toFixed(2));
 
-        setPredictedKey(predictedClassKey);
         setShowClassResultView(true);
         setLoading(false);
         saveIntoUserHistory(
@@ -75,30 +74,29 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
     try {
       let manipulatedPhoto = photo;
       if (photo.hasOwnProperty('uri')) {
-        const manipulateResult = await manipulateAsync(
+        manipulatedPhoto = await manipulateAsync(
           photo.uri,
           [],
           { compress: 0.2, format: SaveFormat.JPEG, base64: true } // from 0 to 1 "1 for best quality"
         );
-        manipulatedPhoto = manipulateResult;
       }
 
-      //TODO: get userID from context
-      await addPlantToHistory({
-        userId: 'GVJoNX0geGO47y4B19twgrwM99A3',
-        plantId: plantData._id,
-        customName: plantData.common,
-        date: Date.now().toString(),
-        result: result,
-        image: manipulatedPhoto.base64,
-      });
+      if (user._id)
+        await addPlantToHistory({
+          userId: user._id,
+          plantId: plantData._id,
+          customName: plantData.common,
+          date: Date.now().toString(),
+          result: result,
+          image: manipulatedPhoto.base64,
+        });
     } catch (err) {
       console.log(err);
     }
   };
 
   const onPressOnContinueButton = () => {
-    if(fetchedPlantData)
+    if (fetchedPlantData)
       navigation.navigate('PlantDetails', {
         latin: fetchedPlantData?.latin,
         common: fetchedPlantData?.common,
@@ -110,7 +108,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         wateringDetail: fetchedPlantData?.wateringDetail,
         fertilization: fetchedPlantData?.fertilization,
         toxicity: fetchedPlantData?.toxicity,
-      })
+      });
   };
 
   return (
@@ -127,11 +125,11 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
           flex: 1,
         }}
       >
-        {loading === true ? (
+        {loading ? (
           <>
             <ActivityIndicator
               size="large"
-              color='#124A3F'
+              color="#124A3F"
               style={{ marginBottom: '10%', marginTop: '20%' }}
             />
             <Text
@@ -171,13 +169,25 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
                   }}
                   style={previewStyles.usePhotoButton}
                 >
-                  <Text style={{ color: global.color.primary.backgroundColor, fontSize: 16 }}>Retake</Text>
+                  <Text
+                    style={{
+                      color: global.color.primary.backgroundColor,
+                      fontSize: 16,
+                    }}
+                  >
+                    Retake
+                  </Text>
                 </Pressable>
                 <Pressable
                   onPress={onPressOnUsePhotoButton}
                   style={previewStyles.usePhotoButton}
                 >
-                  <Text style={{ color: global.color.primary.backgroundColor, fontSize: 16 }}>
+                  <Text
+                    style={{
+                      color: global.color.primary.backgroundColor,
+                      fontSize: 16,
+                    }}
+                  >
                     Use this photo
                   </Text>
                 </Pressable>
