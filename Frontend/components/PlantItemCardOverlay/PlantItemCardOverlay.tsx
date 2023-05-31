@@ -12,9 +12,11 @@ import { global } from '../../styles/globals';
 import Svg, { Circle, G } from 'react-native-svg';
 import WaterIcon from 'react-native-vector-icons/Ionicons';
 import OpenSvg from 'react-native-vector-icons/Ionicons';
-import { useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './PlantItemCardOverlayStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContext } from '../../context/UserContext';
 
 type Props = NativeStackScreenProps<any> & {
   plantName: string;
@@ -29,7 +31,7 @@ export const PlantImage = ({
   imageSrc,
   small = false,
 }: {
-  imageSrc: ImageSourcePropType;
+  imageSrc: string;
   small?: boolean;
 }) => {
   return (
@@ -42,7 +44,10 @@ export const PlantImage = ({
     >
       <View style={styles.plantImage__topLeftShadow} />
       <View style={styles.plantImage__bottomRightShadow} />
-      <Image source={imageSrc} style={styles.plantImage__image} />
+      <Image
+        source={{ uri: 'data:image/png;base64,' + imageSrc }}
+        style={styles.plantImage__image}
+      />
     </View>
   );
 };
@@ -83,16 +88,7 @@ const WateringInformation = ({
             r={radius}
             strokeWidth={strokeWidth}
           />
-          <WaterIcon
-            name="water"
-            size={22}
-            color={global.color.primary.backgroundColor}
-            style={{
-              position: 'absolute',
-              top: center - 11,
-              left: center - 10,
-            }}
-          />
+
           <Circle
             stroke={global.color.primary.backgroundColor}
             cx={center}
@@ -106,6 +102,16 @@ const WateringInformation = ({
           />
         </G>
       </Svg>
+      <WaterIcon
+        name="water"
+        size={22}
+        color={global.color.primary.backgroundColor}
+        style={{
+          position: 'absolute',
+          top: center - 12,
+          left: center + 1,
+        }}
+      />
     </View>
   );
 };
@@ -139,9 +145,22 @@ export const PlantItemCardOverlay = ({
   setIsVerticalScroll,
 }: Props) => {
   const [expanded, setExpanded] = useState(false);
-  console.log('isVerticalScroll', isVerticalScroll);
 
   const pan = useRef(new Animated.Value(0)).current;
+  const { user, dispatch } = useContext(UserContext);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const value = await AsyncStorage.getItem('@user');
+        if (value !== null) {
+          const data = JSON.parse(value);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    })();
+  }, []);
 
   const panResponder = useRef(
     PanResponder.create({

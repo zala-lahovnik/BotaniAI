@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
-import { BottomNavigationBar, Header, NotLoggedIn, RecentPlantCard } from '../../components';
+import { BottomNavigationBar, Header, RecentPlantCard } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { type VirtualPlant } from '../../types/_plant';

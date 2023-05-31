@@ -13,17 +13,16 @@ export interface Plant {
   toxicity: string;
   folder_num: number;
   fertilization: string;
+  image: string;
 }
 
 export interface HistoryPlant {
+  _id: string;
   plantId: string;
   customName: string;
-  date: string; // DATE OBJECT ISO: '2021-05-21T00:00:00.000Z'
-  image: {
-    originalName: string;
-    mimetype: string;
-    buffer: string;
-  };
+  date: string; // DATE OBJECT ISO:
+  result: number;
+  image: string;
 }
 
 export interface PersonalGardenPlant {
@@ -32,17 +31,11 @@ export interface PersonalGardenPlant {
   common: string;
   customName: string;
   description: string;
-  watering: string;
-  // intervalZalivanja: string;
-  // prviDanZalivanja: Date; // Date object: '2023-05-21
-  image: {
-    originalName: string;
-    mimetype: string;
-    buffer: string;
+  watering: {
+    firstDay: string;
+    numberOfDays: string;
+    amountOfWater: string;
+    wateringArray: Array<{ date: string; watered: boolean }>;
   };
-}
-
-export interface VirtualPlant extends HistoryPlant {
-  waterAmount: number;
-  daysWatered: Array<Date>;
+  image: string;
 }

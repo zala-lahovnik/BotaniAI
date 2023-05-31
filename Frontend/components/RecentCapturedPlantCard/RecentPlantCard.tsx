@@ -66,6 +66,7 @@ export const RecentPlantCard = ({
             }}
           >
             <Text style={styles.customNameText}>{plant.customName}</Text>
+
             <Divider
               style={{
                 marginVertical: 2,

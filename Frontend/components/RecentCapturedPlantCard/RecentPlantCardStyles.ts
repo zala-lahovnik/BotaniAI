@@ -32,6 +32,8 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: global.color.primary.backgroundColor,
+    // maxWidth: '100%',
+    position: 'relative',
   },
   latinNameText: {
     fontSize: 14,
