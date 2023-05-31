@@ -1,9 +1,9 @@
 import { Pressable, Text, TextInput, View } from 'react-native';
 import { useContext, useEffect, useState } from 'react';
 import {
-  GoogleAuthProvider,
-  signInWithCredential,
-  signInWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithCredential,
+    signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,12 +12,13 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import {
-  GOOGLE_ANDROID,
-  GOOGLE_EXPO,
-  GOOGLE_IOS,
+    GOOGLE_ANDROID,
+    GOOGLE_EXPO,
+    GOOGLE_IOS,
 } from '../../firebase/firebase-config';
 import { addUser, getUserById } from '../../api/_user';
 import { UserActionType, UserContext } from '../../context/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = NativeStackScreenProps<any>;
 export const LoginScreen = ({ navigation }: Props) => {
@@ -55,18 +56,18 @@ export const LoginScreen = ({ navigation }: Props) => {
     }
 
     const handleUserLogin = async (userId: string) => {
-      const user = await getUserById(userId);
+        const user = await getUserById(userId);
 
-      const dispatchUser = {
-        _id: user._id,
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        notifications: user.notifications,
-        history: user.history || [],
-        personalGarden: user.personalGarden || []
-      }
-      dispatch({ type: UserActionType.UPDATE_USER, payload: dispatchUser } )
+        const dispatchUser = {
+            _id: user._id,
+            name: user.name,
+            surname: user.surname,
+            email: user.email,
+            notifications: user.notifications,
+            history: user.history || [],
+            personalGarden: user.personalGarden || []
+        }
+        dispatch({ type: UserActionType.UPDATE_USER, payload: dispatchUser })
     }
 
     WebBrowser.maybeCompleteAuthSession();

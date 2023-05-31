@@ -16,7 +16,7 @@ type NavigationItemProps = {
 
 const navigationItems: NavigationItemProps[] = [
   {
-    name: 'Home',
+    name: 'PlantListScreen',
     icon: <Home name="home" size={20} color="white" />,
   },
   {
@@ -49,7 +49,7 @@ const NavigationItem = ({
 
 export const BottomNavigationBar = ({ navigation }: NavigationProps) => {
   return (
-    <View style={[styles.container, Platform.OS === 'ios' ? {height: 80} : null]}>
+    <View style={[styles.container, Platform.OS === 'ios' ? { height: 80 } : null]}>
       <View style={styles.circle} />
       <TouchableOpacity
         style={styles.scanButton}

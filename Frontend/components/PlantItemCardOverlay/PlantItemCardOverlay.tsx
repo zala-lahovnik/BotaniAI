@@ -169,6 +169,22 @@ export const PlantItemCardOverlay = ({
     transform: [{ translateX: pan }],
   };
 
+
+  //remove
+  let plant = {
+    _id: "1",
+    latin: 'awsdf',
+    customName: 'asdxf',
+    description: 'sdxf',
+    image: { originalname: '' },
+    watering: {
+      firstDay: "2023-05-31",
+      amountOfWater: " ",
+      numberOfDays: "3",
+      wateringArray: [{ date: "2023-05-26", watered: true }, { date: "2023-05-20", watered: true }, { date: "2023-05-28", watered: true }, { date: "2023-05-12", watered: false }, { date: "2023-05-01", watered: false }, { date: "2023-05-31", watered: false }, { date: "2023-05-30", watered: false }]
+    }
+  }
+
   return (
     <Animated.View
       style={[styles.overlay_container, overlayStyles]}
@@ -182,10 +198,10 @@ export const PlantItemCardOverlay = ({
       <WateringInformation plantWaterPercent={plantWaterPercent} />
       <TouchableOpacity
         style={styles.showPlantButton__container}
-        onPress={() =>
-          // TODO: CHANGE THIS NAVIGATION
-          {}
-        }
+        onPress={() => {
+          // replace with actual plant object
+          navigation.navigate('PlantViewScreen', { plant: plant })
+        }}
         activeOpacity={0.8}
       >
         <View style={styles.showPlantButton__button}>
@@ -198,6 +214,6 @@ export const PlantItemCardOverlay = ({
       </TouchableOpacity>
 
       <ExpandedCardIndicator expanded={expanded} />
-    </Animated.View>
+    </Animated.View >
   );
 };

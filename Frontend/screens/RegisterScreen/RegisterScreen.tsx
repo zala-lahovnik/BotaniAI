@@ -4,11 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import { styles } from './RegisterScreenStyles';
-import { useNavigation } from '@react-navigation/native';
 import { addUser } from '../../api/_user';
-
-export const RegisterScreen = () => {
-    const navigation = useNavigation();
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+type Props = NativeStackScreenProps<any>;
+export const RegisterScreen = ({ navigation }: Props) => {
     const [email, setEmail] = useState("");
     const [first, setFirst] = useState("");
     const [last, setLast] = useState("");
@@ -17,14 +16,12 @@ export const RegisterScreen = () => {
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     const [disabled, setDisabled] = useState(false);
-
     const toggleShowPassword1 = () => {
         setShowPassword1(!showPassword1);
     };
     const toggleShowPassword2 = () => {
         setShowPassword2(!showPassword2);
     };
-
     function handleBack() { navigation.goBack() }
     function handleRegister() {
 
@@ -45,7 +42,6 @@ export const RegisterScreen = () => {
             Alert.alert('Error', 'Enter your name.');
             return;
         }
-
         setDisabled(true);
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredentials) => {
@@ -68,8 +64,6 @@ export const RegisterScreen = () => {
                 console.log(error);
             });
     }
-
-
     if (auth.currentUser?.email) { navigation.navigate("PlantListScreen") }
     return (
         <View style={styles.container}>
