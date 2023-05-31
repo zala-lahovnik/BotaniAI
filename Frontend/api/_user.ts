@@ -46,6 +46,10 @@ type PersonalGardenObject = {
   description: string;
   watering: string; // array
   customName: string;
+  firstDay: string;
+  numberOfDays: string;
+  amountOfWater: string;
+  wateringArray: { date: string; watered: boolean }[];
   image: any;
 };
 
@@ -60,23 +64,6 @@ export const deletePlantFromPersonalGarden = async (
 ) => {
   const response = await instance.delete(
     `/user/${userId}/personal-garden/${plantId}`
-  );
-  return response.data;
-};
-
-type UpdatePlantInPersonalGarden = {
-  customName: string;
-  watering: string; // array
-};
-
-export const updatePlantInPersonalGarden = async (
-  userId: string,
-  plantId: string,
-  data: UpdatePlantInPersonalGarden
-) => {
-  const response = await instance.put(
-    `/user/${userId}/personal-garden/${plantId}`,
-    data
   );
   return response.data;
 };
