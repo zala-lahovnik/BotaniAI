@@ -1,4 +1,4 @@
-import { PersonalGardenPlant, Plant } from '../types/_plant';
+import { PersonalGardenPlant } from '../types/_plant';
 
 export const filterPlants = (
   plants: PersonalGardenPlant[],
