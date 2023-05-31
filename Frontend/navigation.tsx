@@ -5,6 +5,7 @@ import {
   CameraScreen,
   ChangePasswordScreen,
   ExploringScreen,
+  IntroScreen,
   LoginScreen,
   PhotoInputScreen,
   PlantDetailsScreen,
@@ -13,7 +14,6 @@ import {
   RecentCaptures,
   RegisterScreen,
   WateringScreen,
-  IntroScreen
 } from './screens';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -27,7 +27,10 @@ export default function RootNavigation() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={'IntroScreen'} screenOptions={screenOptions}>
+        <Stack.Navigator
+          initialRouteName={'IntroScreen'}
+          screenOptions={screenOptions}
+        >
           <Stack.Screen name={'IntroScreen'} component={IntroScreen} />
           <Stack.Screen name={'PlantListScreen'} component={PlantListScreen} />
           <Stack.Screen

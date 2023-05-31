@@ -51,7 +51,6 @@ export const styles = StyleSheet.create({
   plantImage__image: {
     width: '80%',
     height: '80%',
-    resizeMode: 'contain',
     overflow: 'hidden',
     borderRadius: 20,
   },

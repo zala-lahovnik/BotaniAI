@@ -10,6 +10,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
 import { useQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
+import { getUserHistory } from '../../api/_user';
 
 export const ExploringScreen = ({
   navigation,

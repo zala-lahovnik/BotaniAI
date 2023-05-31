@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -7,24 +7,42 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import ArrowRight from 'react-native-vector-icons/AntDesign';
 import { Divider } from 'react-native-elements';
 import User from 'react-native-vector-icons/FontAwesome';
 import { global } from '../../styles/globals';
-import { UserContext } from '../../context/UserContext';
+import { UserActionType, UserContext } from '../../context/UserContext';
 import { Switch } from '@rneui/themed';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { updateUserNotifications } from '../../api/_user';
 
-export const DrawerLayout = () => {
-  const navigation = useNavigation();
-
+export const DrawerLayout = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<any>) => {
   const { user, dispatch } = useContext(UserContext);
+  const [checked, setChecked] = useState(user.notifications);
 
-  const [checked, setChecked] = useState(false);
+  const handleChange = useCallback(async (value: boolean): Promise<any> => {
+    try {
+      await updateUserNotifications(user.userId, {
+        notifications: value,
+      });
+      dispatch({
+        type: UserActionType.UPDATE_USER,
+        payload: { notifications: value },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
-  const toggleSwitch = () => {
-    setChecked(!checked);
-  };
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      handleChange(checked);
+    }, 1000);
+    return () => clearTimeout(timeout);
+  }, [checked, handleChange]);
 
   return (
     <View style={styles.container}>
@@ -32,16 +50,18 @@ export const DrawerLayout = () => {
         <Text style={styles.headerText}>SIGN OUT</Text>
         <TouchableOpacity
           onPress={() => {
-            // TODO: Add sign out functionality
             Alert.alert('Logout', 'Are you sure you want to logout!', [
               {
                 text: 'No',
-                onPress: () => console.log('Cancel Pressed'),
+                onPress: () => {},
                 style: 'cancel',
               },
               {
                 text: 'Yes',
-                onPress: () => console.log('Yes Pressed'),
+                onPress: () => {
+                  dispatch({ type: UserActionType.CLEAR_USER });
+                  navigation.navigate('LoginScreen');
+                },
               },
             ]);
           }}
@@ -65,10 +85,19 @@ export const DrawerLayout = () => {
         <Text style={styles.text}>Signed in as</Text>
         <View style={{ marginHorizontal: 20 }}>
           <View style={styles.userInfo}>
-            {user.image ? (
-              // TODO: Add user avatar
-              <View>
-                <Image source={require('../../assets/favicon.png')} />
+            {user.profilePicture ? (
+              <View
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 50,
+                  overflow: 'hidden',
+                }}
+              >
+                <Image
+                  source={{ uri: user.profilePicture }}
+                  style={{ width: '100%', height: '100%' }}
+                />
               </View>
             ) : (
               <User
@@ -77,7 +106,9 @@ export const DrawerLayout = () => {
                 color={global.color.heading.color}
               />
             )}
-            <Text style={styles.userName}>{user.displayName || 'Guest'}</Text>
+            <Text style={styles.userName}>
+              {user.name + ' ' + user.surname || 'Guest'}
+            </Text>
           </View>
           {user.email ? (
             <Text style={styles.userEmail}>{user.email}</Text>
@@ -139,6 +170,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
+    marginBottom: 5,
   },
   text: {
     fontSize: 14,
@@ -150,7 +182,7 @@ const styles = StyleSheet.create({
     color: global.color.heading.color,
   },
   userEmail: {
-    fontSize: 14,
+    fontSize: 12,
     color: global.color.heading.color,
     fontStyle: 'italic',
   },

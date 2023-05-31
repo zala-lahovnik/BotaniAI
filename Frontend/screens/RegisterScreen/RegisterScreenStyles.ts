@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { global } from '../../styles/globals';
 export const styles = StyleSheet.create({
   eye: {
     flexDirection: 'row',
@@ -24,16 +25,18 @@ export const styles = StyleSheet.create({
     width: '70%',
   },
   create: {
-    color: 'black',
+    color: global.color.heading.color,
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: '10%',
   },
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: global.color.primary.backgroundColor,
     alignItems: 'center',
     justifyContent: 'center',
+    height: '100%',
+    width: '100%',
   },
   button1: {
     color: 'white',

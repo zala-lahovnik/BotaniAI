@@ -9,4 +9,5 @@ export interface User {
   notifications: boolean;
   history: Array<HistoryPlant>;
   personalGarden: Array<any>;
+  profilePicture?: string;
 }

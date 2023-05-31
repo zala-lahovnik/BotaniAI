@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { ActivityIndicator, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -15,7 +15,11 @@ import {
 } from '../../components';
 import { global } from '../../styles/globals';
 import { Drawer } from 'react-native-drawer-layout';
-import { auth } from '../../firebase/firebase';
+import { UserContext } from '../../context/UserContext';
+import { useQuery } from '@tanstack/react-query';
+import { getUserPersonalGarden } from '../../api/_user';
+import { filterPlants } from '../../utils/plants-filtering';
+import { PersonalGardenPlant } from '../../types/_plant';
 
 type Props = NativeStackScreenProps<any>;
 const text = 'Your plants';
@@ -28,15 +32,21 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(true);
 
+  const { user, dispatch } = useContext(UserContext);
+
+  const { isLoading, isError, data } = useQuery(['user_personal_garden'], () =>
+    getUserPersonalGarden('33xOgIFa2DOIfAw2fExTB9MPh8T2')
+  );
+
   return (
     <>
-      {auth.currentUser?.email ? (
+      {user ? (
         <Drawer
           open={drawerOpen}
           onOpen={() => setDrawerOpen(true)}
           onClose={() => setDrawerOpen(false)}
           renderDrawerContent={() => {
-            return <DrawerLayout />;
+            return <DrawerLayout navigation={navigation} route={route} />;
           }}
           drawerStyle={{
             paddingTop: insets.top,
@@ -46,7 +56,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
           <View
             style={{
               paddingTop: insets.top,
-              paddingBottom: 0,
+              paddingBottom: insets.bottom,
               flex: 1,
             }}
           >
@@ -65,7 +75,11 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
                 { flex: 1, marginVertical: 20 },
               ]}
             >
-              <SearchInputField search={search} setSearch={setSearch} />
+              <SearchInputField
+                search={search}
+                setSearch={setSearch}
+                plants={data as PersonalGardenPlant[]}
+              />
               <View
                 style={[
                   {
@@ -75,19 +89,30 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
               >
                 <View
                   style={{
-                    marginVertical: 20,
+                    marginVertical: 10,
                   }}
-                >
-                  <FilterOptions
-                    setSelectedCategory={setSelectedCategory}
-                    selectedCategory={selectedCategory}
+                ></View>
+                {isLoading && (
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <ActivityIndicator
+                      size="large"
+                      color={global.color.primary.backgroundColor}
+                    />
+                  </View>
+                )}
+                {data && (
+                  <PlantItemsList
+                    navigation={navigation}
+                    route={route}
+                    plants={filterPlants(data, search)}
                   />
-                </View>
-                <PlantItemsList
-                  navigation={navigation}
-                  route={route}
-                  filter={[selectedCategory, search]}
-                />
+                )}
               </View>
             </View>
 

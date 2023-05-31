@@ -8,13 +8,10 @@ import { PlantItemCardOverlay } from '../PlantItemCardOverlay/PlantItemCardOverl
 import { styles } from './PlantItemCardStyles';
 
 type Props = NativeStackScreenProps<any> & {
-  plantName: string;
-  plantImage: string;
-  plantDescription: string;
-  plantWaterPercent: number;
   onSwipeLeft?: () => void;
   isVerticalScroll: boolean;
   setIsVerticalScroll: (isVerticalScroll: boolean) => void;
+  props: any;
 };
 
 const PlantNextWatering = ({
@@ -69,23 +66,21 @@ const PlantNextWatering = ({
 export const PlantItemCard = ({
   navigation,
   route,
-  plantName,
-  plantImage,
-  plantDescription,
-  plantWaterPercent,
   onSwipeLeft,
   setIsVerticalScroll,
   isVerticalScroll,
+  props,
 }: Props) => {
+  const { latin, common, image, description, watering } = props;
   return (
     <View style={[global.color.primary, styles.plantItemCard__container]}>
       <PlantNextWatering waterNeededInDays={2} />
       <PlantNextWatering waterNeededInDays={2} />
       <PlantItemCardOverlay
-        plantName={plantName}
-        plantImage={plantImage}
-        plantDescription={plantDescription}
-        plantWaterPercent={plantWaterPercent}
+        plantName={latin}
+        plantImage={image.buffer}
+        plantDescription={common}
+        plantWaterPercent={0}
         navigation={navigation}
         route={route}
         setIsVerticalScroll={setIsVerticalScroll}

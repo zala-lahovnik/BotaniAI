@@ -57,9 +57,8 @@ const styles = StyleSheet.create({
   },
   title: {
     color: global.color.heading.color,
-    fontSize: 18,
-    fontWeight: 'bold',
-    letterSpacing: 1,
+    fontSize: 17,
+    fontWeight: '600',
   },
   pickerContainer: {
     flexDirection: 'row',

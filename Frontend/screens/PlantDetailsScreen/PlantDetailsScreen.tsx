@@ -17,6 +17,7 @@ import Shovel from 'react-native-vector-icons/MaterialCommunityIcons';
 import Water from 'react-native-vector-icons/Entypo';
 import Calender from 'react-native-vector-icons/AntDesign';
 import { Plant } from '../../types/_plant';
+import { useQuery } from '@tanstack/react-query';
 
 type Props = NativeStackScreenProps<any>;
 
