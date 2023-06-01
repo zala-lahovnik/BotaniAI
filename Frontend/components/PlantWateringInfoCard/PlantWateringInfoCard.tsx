@@ -8,12 +8,13 @@ import Water from 'react-native-vector-icons/Ionicons';
 import Checkmark from 'react-native-vector-icons/Ionicons';
 import Calender from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './PlantWateringInfoCardStyles';
-import { VirtualPlant } from '../../types/_plant';
 import {
+  getLastWateredDateIndex,
   getNumberBetweenDates,
   getWateringPercentage,
 } from '../../utils/plant-watering-calculations';
 import { global } from '../../styles/globals';
+import { PersonalGardenPlant } from '../../types/_plant';
 
 const PlantWateringInfo = ({
   children,
@@ -41,12 +42,25 @@ const PlantWateringInfo = ({
 };
 
 type Props = NativeStackScreenProps<any> & {
-  plant: VirtualPlant;
+  plant: PersonalGardenPlant;
+  showWateredButton?: boolean;
 };
 
-export const PlantWateringInfoCard = ({ navigation, route, plant }: Props) => {
+export const PlantWateringInfoCard = ({
+  navigation,
+  route,
+  plant,
+  showWateredButton,
+}: Props) => {
   const cardAnimation = useRef(new Animated.Value(0)).current;
   const [expanded, setExpanded] = React.useState(false);
+
+  const lastWateredIndex = getLastWateredDateIndex(
+    plant.watering.wateringArray
+  );
+  const lastWateredDate = new Date(
+    plant.watering.wateringArray[lastWateredIndex].date
+  );
 
   const handlePress = () => {
     setExpanded(!expanded);
@@ -77,12 +91,12 @@ export const PlantWateringInfoCard = ({ navigation, route, plant }: Props) => {
       <Animated.View
         style={[
           styles.cardLayout,
-          { transform: [{ translateX: cardTranslateX }] },
+          showWateredButton && { transform: [{ translateX: cardTranslateX }] },
         ]}
       >
         <View>
           {/*TODO: PLANT IMAGE WRONG FORMAT*/}
-          <PlantImage imageSrc={plant.image} small />
+          <PlantImage imageSrc={plant.image.buffer || plant.image} small />
         </View>
         <View style={styles.cardInfoLayout}>
           <View
@@ -113,19 +127,17 @@ export const PlantWateringInfoCard = ({ navigation, route, plant }: Props) => {
           >
             <PlantWateringInfo
               text={`${getWateringPercentage(
-                plant.daysWatered[plant.daysWatered.length - 1],
-                Number(plant.intervalZalivanja)
+                lastWateredDate,
+                parseInt(plant.watering.numberOfDays)
               )}%`}
             >
               <Water name={'water-sharp'} size={16} color={'#000'} />
             </PlantWateringInfo>
-            <PlantWateringInfo text={`${plant.waterAmount}ml`}>
+            <PlantWateringInfo text={plant.watering.amountOfWater || '0ml'}>
               <Watering name={'water'} size={16} color={'#000'} />
             </PlantWateringInfo>
             <PlantWateringInfo
-              text={`${getNumberBetweenDates(
-                plant.daysWatered[plant.daysWatered.length - 1]
-              )} days since last`}
+              text={`${getNumberBetweenDates(lastWateredDate)} days since last`}
             >
               <Calender name={'calendar-clock'} size={16} color={'#000'} />
             </PlantWateringInfo>
@@ -135,7 +147,7 @@ export const PlantWateringInfoCard = ({ navigation, route, plant }: Props) => {
       <Animated.View
         style={[
           styles.wateredButton,
-          {
+          showWateredButton && {
             transform: [{ translateX: wateredButtonTranslateX }],
           },
         ]}

@@ -37,5 +37,5 @@ export interface PersonalGardenPlant {
     amountOfWater: string;
     wateringArray: Array<{ date: string; watered: boolean }>;
   };
-  image: string;
+  image: any;
 }

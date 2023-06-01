@@ -1,5 +1,4 @@
-import { HistoryPlant } from '../types/_plant';
-import { temp_data } from '../screens';
+import { PersonalGardenPlant } from '../types/_plant';
 
 export enum CaptureTime {
   Today = 'Today',
@@ -10,34 +9,53 @@ export enum CaptureTime {
   ThisYear = 'This year',
 }
 
-export const getImageCaptureTime = (
-  date: HistoryPlant['date']
-): CaptureTime | null => {
-  const today = new Date();
+export const getImageCaptureTime = (date: Date): string => {
+  const currentDate = new Date();
+  const startDate = new Date(currentDate.getFullYear(), 0, 1);
+  const days = Math.floor((currentDate - startDate) / (24 * 60 * 60 * 1000));
+  const currentWeekNumber = Math.ceil(days / 7);
 
-  if (date.toDateString() === today.toDateString()) {
+  const imageDate = new Date(date);
+  const imageStartDate = new Date(imageDate.getFullYear(), 0, 1);
+  const imageDays = Math.floor(
+    (imageDate - imageStartDate) / (24 * 60 * 60 * 1000)
+  );
+  const imageWeekNumber = Math.ceil(imageDays / 7);
+
+  if (
+    imageDate.toDateString() === currentDate.toDateString() &&
+    imageWeekNumber === currentWeekNumber
+  ) {
     return CaptureTime.Today;
   }
 
-  const daysDifference = Math.floor(
-    (today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const weeksDifference = Math.floor(daysDifference / 7);
-  const monthsDifference = today.getMonth() - date.getMonth();
-  const yearsDifference = today.getFullYear() - date.getFullYear();
-
-  if (weeksDifference === 0) {
+  if (imageWeekNumber === currentWeekNumber) {
     return CaptureTime.ThisWeek;
-  } else if (weeksDifference === 1) {
+  }
+
+  if (imageWeekNumber === currentWeekNumber - 1) {
     return CaptureTime.LastWeek;
-  } else if (monthsDifference === 0) {
+  }
+
+  if (
+    imageDate.getMonth() === currentDate.getMonth() &&
+    imageDate.getFullYear() === currentDate.getFullYear()
+  ) {
     return CaptureTime.ThisMonth;
-  } else if (monthsDifference === 1) {
+  }
+
+  if (
+    imageDate.getMonth() === currentDate.getMonth() - 1 &&
+    imageDate.getFullYear() === currentDate.getFullYear()
+  ) {
     return CaptureTime.LastMonth;
-  } else if (yearsDifference === 0) {
+  }
+
+  if (imageDate.getFullYear() === currentDate.getFullYear()) {
     return CaptureTime.ThisYear;
   }
-  return null;
+
+  return 'Way back';
 };
 
 // next watering date
@@ -49,73 +67,100 @@ export enum NextWateringDay {
 export enum WateringStatus {
   NotWatered = 'Not Watered',
   Today = 'Today',
-  Upcoming = 'Upcoming',
 }
 
-export const sortPlantsByWateringStatus = (plants: typeof temp_data) => {
-  const today = new Date();
+export const sortPlantsByWateringStatus = (
+  plants: PersonalGardenPlant[]
+): PersonalGardenPlant[] => {
   const sortedPlants = [...plants];
 
-  sortedPlants
-    .sort((a, b) => {
-      const nextWateringDayA = getNextWateringDay(
-        a.prviDanZalivanja,
-        a.intervalZalivanja
-      );
-      const nextWateringDayB = getNextWateringDay(
-        b.prviDanZalivanja,
-        b.intervalZalivanja
-      );
+  sortedPlants.sort((a, b) => {
+    const lastWateredIndexA = a.watering.wateringArray.findIndex(
+      (plant) => plant.watered
+    );
+    const lastWateredIndexB = b.watering.wateringArray.findIndex(
+      (plant) => plant.watered
+    );
 
-      if (nextWateringDayA === nextWateringDayB) {
-        return a.date.getTime() - b.date.getTime();
-      }
+    const lastWateredDateA = new Date(
+      a.watering.wateringArray[lastWateredIndexA].date
+    );
+    const lastWateredDateB = new Date(
+      b.watering.wateringArray[lastWateredIndexB].date
+    );
 
-      if (nextWateringDayA === WateringStatus.NotWatered) {
-        return 1;
-      }
+    const nextWateredIndexA = lastWateredIndexA + 1;
+    const nextWateredIndexB = lastWateredIndexB + 1;
 
-      if (nextWateringDayB === WateringStatus.NotWatered) {
-        return -1;
-      }
+    const nextWateredDateA = new Date(
+      a.watering.wateringArray[nextWateredIndexA]?.date
+    );
+    const nextWateredDateB = new Date(
+      b.watering.wateringArray[nextWateredIndexB]?.date
+    );
 
-      if (nextWateringDayA === WateringStatus.Today) {
-        return 1;
-      }
+    const wateringStatusA = getNextWateringDay(
+      lastWateredDateA,
+      nextWateredDateA
+    );
+    const wateringStatusB = getNextWateringDay(
+      lastWateredDateB,
+      nextWateredDateB
+    );
 
-      if (nextWateringDayB === WateringStatus.Today) {
-        return -1;
-      }
+    if (wateringStatusA === wateringStatusB) {
+      return nextWateredDateA.getTime() - nextWateredDateB.getTime();
+    }
 
-      const dateA = new Date(nextWateringDayA);
-      const dateB = new Date(nextWateringDayB);
+    if (wateringStatusA === WateringStatus.NotWatered) {
+      return -1;
+    }
 
-      return dateA.getTime() - dateB.getTime();
-    })
-    .reverse();
+    if (wateringStatusB === WateringStatus.NotWatered) {
+      return 1;
+    }
+
+    if (
+      wateringStatusA === WateringStatus.Today &&
+      wateringStatusB !== WateringStatus.Today
+    ) {
+      return -1;
+    }
+
+    if (
+      wateringStatusB === WateringStatus.Today &&
+      wateringStatusA !== WateringStatus.Today
+    ) {
+      return 1;
+    }
+
+    return nextWateredDateA.getTime() - nextWateredDateB.getTime();
+  });
 
   return sortedPlants;
 };
 
 export const getNextWateringDay = (
-  zacetekZalivanja: Date,
-  intervalZalivanja: string
+  lastWateredDate: Date,
+  nextWateredDate: Date
 ): string => {
-  const interval = Number(intervalZalivanja);
   const today = new Date();
-  const nextWateringDay = new Date(
-    zacetekZalivanja.getTime() + interval * 86400000
-  );
+  today.setHours(0, 0, 0, 0);
+  lastWateredDate.setHours(0, 0, 0, 0);
+  nextWateredDate.setHours(0, 0, 0, 0);
 
-  if (nextWateringDay <= today) {
+  if (nextWateredDate < today) {
     return WateringStatus.NotWatered;
   }
 
-  if (nextWateringDay.toDateString() === today.toDateString()) {
+  if (
+    nextWateredDate.toDateString() === today.toDateString() &&
+    lastWateredDate.toDateString() !== today.toDateString()
+  ) {
     return WateringStatus.Today;
   }
 
-  return nextWateringDay.toLocaleDateString('en-US', {
+  return nextWateredDate.toLocaleDateString('en-US', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -123,7 +168,8 @@ export const getNextWateringDay = (
 };
 
 export const getNumberBetweenDates = (lastWatered: Date): number => {
-  const today = new Date();
+  let today = new Date();
+  today = new Date(today.setHours(0, 0, 0, 0));
   const lastDay = new Date(lastWatered.setHours(0, 0, 0, 0));
 
   const timeDifference = lastDay.getTime() - today.getTime();
@@ -134,8 +180,9 @@ export const getWateringPercentage = (
   lastWatered: Date,
   interval: number
 ): number => {
-  const currentDate = new Date();
-  const millisecondsPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+  let currentDate = new Date();
+  // currentDate = new Date(currentDate.setHours(0, 0, 0, 0));
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
 
   const daysSinceLastWatering = Math.floor(
     (currentDate.getTime() - lastWatered.getTime()) / millisecondsPerDay
@@ -144,4 +191,29 @@ export const getWateringPercentage = (
   return Math.round(
     Math.max(0, 100 - (daysSinceLastWatering / interval) * 100)
   );
+};
+
+export const getNumberOfDaysTillNextWatering = (
+  nextWateringDate: Date
+): number => {
+  let currentDate = new Date();
+  currentDate = new Date(currentDate.setHours(0, 0, 0, 0));
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+
+  return Math.floor(
+    (nextWateringDate.getTime() - currentDate.getTime()) / millisecondsPerDay
+  );
+};
+
+export const getLastWateredDateIndex = (
+  wateringArray: PersonalGardenPlant['watering']['wateringArray']
+): number => {
+  let lastIndex = -1;
+  for (let i = wateringArray.length - 1; i >= 0; i--) {
+    if (wateringArray[i].watered) {
+      lastIndex = i;
+      break;
+    }
+  }
+  return lastIndex;
 };

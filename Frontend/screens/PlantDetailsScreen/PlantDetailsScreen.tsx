@@ -17,7 +17,6 @@ import Shovel from 'react-native-vector-icons/MaterialCommunityIcons';
 import Water from 'react-native-vector-icons/Entypo';
 import Calender from 'react-native-vector-icons/AntDesign';
 import { Plant } from '../../types/_plant';
-import { useQuery } from '@tanstack/react-query';
 
 type Props = NativeStackScreenProps<any>;
 
@@ -68,6 +67,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     wateringDetail,
     fertilization,
     toxicity,
+    image,
   } = route.params as Plant;
 
   const [expanded, setExpanded] = useState(false);
@@ -91,7 +91,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         label: Object.keys(item)[0],
         ...item,
         ...PlantInfoIconStyle[
-        Object.keys(item)[0] as keyof typeof PlantInfoIconStyle
+          Object.keys(item)[0] as keyof typeof PlantInfoIconStyle
         ],
       };
     })
@@ -107,7 +107,6 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     }, []);
 
   return (
-
     <View
       style={{
         flex: 1,
@@ -116,8 +115,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
       <ImageBackground
         blurRadius={0.5}
         fadeDuration={500}
-        // TODO: Change to uri
-        source={require('../../assets/sample_plant.png')}
+        source={{ uri: 'data:image/png;base64,' + image }}
         resizeMode="cover"
         style={{
           height: 220,
@@ -182,18 +180,19 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             {arrayOfPlantDetails?.map((item, index) => {
               return (
                 <View
+                  key={index}
                   style={{
                     flexDirection: 'row',
-                    gap: 25,
+                    justifyContent: 'space-between',
                   }}
                 >
                   {item.map((object, index) => (
                     <View
+                      key={index}
                       style={{
                         flexDirection: 'row',
                         gap: 15,
                         alignItems: 'center',
-                        justifyContent: 'center',
                       }}
                     >
                       <View
@@ -251,6 +250,5 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         </View>
       </View>
     </View>
-
   );
 };

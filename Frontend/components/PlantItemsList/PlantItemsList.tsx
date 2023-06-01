@@ -6,7 +6,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PersonalGardenPlant } from '../../types/_plant';
 
 type Props = NativeStackScreenProps<any> & {
-  plants?: PersonalGardenPlant[];
+  plants: PersonalGardenPlant[];
 };
 
 export const PlantItemsList = ({ navigation, route, plants }: Props) => {

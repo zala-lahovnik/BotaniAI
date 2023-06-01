@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Alert,
   Image,
@@ -22,6 +28,7 @@ export const DrawerLayout = ({
 }: NativeStackScreenProps<any>) => {
   const { user, dispatch } = useContext(UserContext);
   const [checked, setChecked] = useState(user.notifications);
+  const isFirstRender = useRef(true);
 
   const handleChange = useCallback(async (value: boolean): Promise<any> => {
     try {
@@ -38,6 +45,10 @@ export const DrawerLayout = ({
   }, []);
 
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     const timeout = setTimeout(() => {
       handleChange(checked);
     }, 1000);

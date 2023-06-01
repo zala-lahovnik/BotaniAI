@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -34,9 +34,9 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
 
   const { user, dispatch } = useContext(UserContext);
 
-  const { isLoading, isError, data } = useQuery(['user_personal_garden'], () =>
-    getUserPersonalGarden('33xOgIFa2DOIfAw2fExTB9MPh8T2')
-  );
+  // const { isLoading, isError, data } = useQuery(['user_personal_garden'], () =>
+  //   getUserPersonalGarden('33xOgIFa2DOIfAw2fExTB9MPh8T2')
+  // );
 
   return (
     <>
@@ -78,7 +78,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
               <SearchInputField
                 search={search}
                 setSearch={setSearch}
-                plants={data as PersonalGardenPlant[]}
+                plants={user.personalGarden as PersonalGardenPlant[]}
               />
               <View
                 style={[
@@ -92,25 +92,11 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
                     marginVertical: 10,
                   }}
                 ></View>
-                {isLoading && (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <ActivityIndicator
-                      size="large"
-                      color={global.color.primary.backgroundColor}
-                    />
-                  </View>
-                )}
-                {data && (
+                {user?.personalGarden && (
                   <PlantItemsList
                     navigation={navigation}
                     route={route}
-                    plants={filterPlants(data, search)}
+                    plants={filterPlants(user.personalGarden, search)}
                   />
                 )}
               </View>

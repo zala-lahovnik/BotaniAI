@@ -12,14 +12,17 @@ import { global } from '../../styles/globals';
 import Svg, { Circle, G } from 'react-native-svg';
 import WaterIcon from 'react-native-vector-icons/Ionicons';
 import OpenSvg from 'react-native-vector-icons/Ionicons';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './PlantItemCardOverlayStyles';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../../context/UserContext';
 
 type Props = NativeStackScreenProps<any> & {
-  plantName: string;
+  plantId: string;
+  latin: string;
+  plantCommon: string;
+  plantCustomName: string;
+  plantWatering: any;
   plantImage: ImageSourcePropType & string;
   plantDescription: string;
   plantWaterPercent: number;
@@ -53,14 +56,14 @@ export const PlantImage = ({
 };
 
 const PlantInformation = ({
-  plantName,
-  plantDescription,
-}: Pick<Props, 'plantName' | 'plantDescription'>) => {
+  plantCustomName,
+  plantCommon,
+}: Pick<Props, 'plantCustomName' | 'plantCommon'>) => {
   return (
     <View style={styles.plantInformation__container}>
-      <Text style={styles.plantInformation__plantName}>{plantName}</Text>
+      <Text style={styles.plantInformation__plantName}>{plantCustomName}</Text>
       <Text style={styles.plantInformation__plantDescription}>
-        {plantDescription}
+        {plantCommon}
       </Text>
     </View>
   );
@@ -104,12 +107,12 @@ const WateringInformation = ({
       </Svg>
       <WaterIcon
         name="water"
-        size={22}
+        size={21}
         color={global.color.primary.backgroundColor}
         style={{
           position: 'absolute',
           top: center - 12,
-          left: center + 1,
+          left: center + 2,
         }}
       />
     </View>
@@ -135,7 +138,11 @@ const ExpandedCardIndicator = ({ expanded }: { expanded: boolean }) => {
 };
 
 export const PlantItemCardOverlay = ({
-  plantName,
+  plantId,
+  latin,
+  plantCustomName,
+  plantCommon,
+  plantWatering,
   plantImage,
   plantDescription,
   plantWaterPercent,
@@ -147,20 +154,8 @@ export const PlantItemCardOverlay = ({
   const [expanded, setExpanded] = useState(false);
 
   const pan = useRef(new Animated.Value(0)).current;
-  const { user, dispatch } = useContext(UserContext);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const value = await AsyncStorage.getItem('@user');
-        if (value !== null) {
-          const data = JSON.parse(value);
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    })();
-  }, []);
+  const { user } = useContext(UserContext);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -188,22 +183,6 @@ export const PlantItemCardOverlay = ({
     transform: [{ translateX: pan }],
   };
 
-
-  //remove
-  let plant = {
-    _id: "1",
-    latin: 'awsdf',
-    customName: 'asdxf',
-    description: 'sdxf',
-    image: { originalname: '' },
-    watering: {
-      firstDay: "2023-05-31",
-      amountOfWater: " ",
-      numberOfDays: "3",
-      wateringArray: [{ date: "2023-05-26", watered: true }, { date: "2023-05-20", watered: true }, { date: "2023-05-28", watered: true }, { date: "2023-05-12", watered: false }, { date: "2023-05-01", watered: false }, { date: "2023-05-31", watered: false }, { date: "2023-05-30", watered: false }]
-    }
-  }
-
   return (
     <Animated.View
       style={[styles.overlay_container, overlayStyles]}
@@ -211,16 +190,22 @@ export const PlantItemCardOverlay = ({
     >
       <PlantImage imageSrc={plantImage} />
       <PlantInformation
-        plantName={plantName}
-        plantDescription={plantDescription}
+        plantCustomName={plantCustomName}
+        plantCommon={plantCommon}
       />
       <WateringInformation plantWaterPercent={plantWaterPercent} />
       <TouchableOpacity
         style={styles.showPlantButton__container}
-        onPress={() => {
-          // replace with actual plant object
-          navigation.navigate('PlantViewScreen', { plant: plant })
-        }}
+        onPress={() =>
+          navigation.navigate('PlantViewScreen', {
+            _id: plantId,
+            latin: latin,
+            customName: plantCustomName,
+            description: plantDescription,
+            watering: plantWatering,
+            image: plantImage,
+          })
+        }
         activeOpacity={0.8}
       >
         <View style={styles.showPlantButton__button}>
@@ -233,6 +218,6 @@ export const PlantItemCardOverlay = ({
       </TouchableOpacity>
 
       <ExpandedCardIndicator expanded={expanded} />
-    </Animated.View >
+    </Animated.View>
   );
 };

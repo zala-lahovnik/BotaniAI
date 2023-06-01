@@ -12,8 +12,6 @@ type Props = NativeStackScreenProps<any> & {
   captureTime: string | null;
   date: Date;
   classificationPercent: number;
-  latin: string;
-  watering: string;
 };
 
 export const RecentPlantCard = ({
@@ -23,8 +21,6 @@ export const RecentPlantCard = ({
   date,
   route,
   classificationPercent,
-  latin,
-  watering,
 }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const heightValue = useRef(new Animated.Value(0)).current;
@@ -79,9 +75,7 @@ export const RecentPlantCard = ({
               color="black"
             />
           </View>
-          <Text style={styles.latinNameText}>
-            Latin name from {plant.plantId}
-          </Text>
+          <Text style={styles.latinNameText}>FETCH ZA LATIN IZ PLANTID</Text>
         </View>
         <TouchableOpacity
           onPress={toggleExpand}
@@ -98,9 +92,9 @@ export const RecentPlantCard = ({
       </View>
       <Animated.View style={{ height: heightInterpolate }}>
         <RecentPlantDetails
-          plantImage={plant.image}
+          plantImage={plant.image || plant.image.buffer}
           classificationPercent={classificationPercent}
-          watering={watering}
+          watering={'NEVEM NEK PODATEK'}
         />
       </Animated.View>
     </View>

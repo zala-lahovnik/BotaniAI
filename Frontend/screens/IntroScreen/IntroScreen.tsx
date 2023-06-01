@@ -3,52 +3,51 @@ import { styles } from './IntroStyles';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Onboarding } from '../../components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LoginScreen } from '../LoginScreen/LoginScreen';
-import { ActionType, UserContext } from '../../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 import PlantListScreen from '../PlantListScreen/PlantListScreen';
 
 const Loading = () => {
-    return (
-        <View>
-            <ActivityIndicator size={'large'} />
-        </View>
-    );
+  return (
+    <View>
+      <ActivityIndicator size={'large'} />
+    </View>
+  );
 };
 type Props = NativeStackScreenProps<any>;
 export const IntroScreen = ({ navigation, route }: Props) => {
-    const [loading, setLoading] = useState(true);
-    const [viewOnboarding, setViewOnboarding] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [viewOnboarding, setViewOnboarding] = useState(false);
 
-    const { user: loggedUser, dispatch } = useContext(UserContext);
+  const { user: loggedUser, dispatch } = useContext(UserContext);
 
-    useEffect(() => {
-        (async () => {
-            try {
-                const value = await AsyncStorage.getItem('@viewedOnboarding');
-                if (value) {
-                    setViewOnboarding(true);
-                }
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, []);
+  useEffect(() => {
+    (async () => {
+      try {
+        const value = await AsyncStorage.getItem('@viewedOnboarding');
+        if (value) {
+          setViewOnboarding(true);
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-    if (loggedUser._id) {
-        return <PlantListScreen navigation={navigation} route={route} />;
-    }
+  if (loggedUser.userId) {
+    return <PlantListScreen navigation={navigation} route={route} />;
+  }
 
-    if (viewOnboarding) {
-        return <LoginScreen navigation={navigation} route={route} />;
-    }
+  if (viewOnboarding) {
+    return <LoginScreen navigation={navigation} route={route} />;
+  }
 
-    return (
-        <View style={styles.container}>
-            {loading ? <Loading /> : <Onboarding />}
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      {loading ? <Loading /> : <Onboarding />}
+    </View>
+  );
 };
-

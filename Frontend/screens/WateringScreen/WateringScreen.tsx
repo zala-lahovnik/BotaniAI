@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -8,17 +8,40 @@ import {
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
-import { temp_data } from '../HistoryScreen/RecentCaptures';
 import {
+  getLastWateredDateIndex,
   getNextWateringDay,
   sortPlantsByWateringStatus,
+  WateringStatus,
 } from '../../utils/plant-watering-calculations';
+import { UserContext } from '../../context/UserContext';
+import { PersonalGardenPlant } from '../../types/_plant';
 
 type Props = NativeStackScreenProps<any>;
 
 export const WateringScreen = ({ navigation, route }: Props) => {
   const insets = useSafeAreaInsets();
   const prev_watered_date = useRef('');
+  const { user, dispatch } = useContext(UserContext);
+
+  // TODO: FIX BACKEND SO IT DOES NOT RETURN {} INSTEAD OF []
+  let personalGardenCopy = [...user.personalGarden];
+  let personalGarden: PersonalGardenPlant[] = [];
+
+  try {
+    personalGarden = user.personalGarden.map((plant) => {
+      return {
+        ...plant,
+        watering: {
+          ...plant.watering,
+          wateringArray: JSON.parse(`[${plant.watering.wateringArray}]`),
+        },
+      };
+    }) as PersonalGardenPlant[];
+  } catch (error) {
+    personalGarden = personalGardenCopy;
+  }
+
   return (
     <View style={{ paddingTop: insets.top, flex: 1 }}>
       <Header
@@ -39,11 +62,16 @@ export const WateringScreen = ({ navigation, route }: Props) => {
             },
           ]}
         >
-          {sortPlantsByWateringStatus(temp_data).map((plant, index) => {
+          {sortPlantsByWateringStatus(personalGarden).map((plant, index) => {
+            const wateringArray = plant.watering.wateringArray;
+            const lastIndex = getLastWateredDateIndex(wateringArray);
+            const next_watering_index = lastIndex + 1;
+
             const next_watering = getNextWateringDay(
-              plant.prviDanZalivanja,
-              plant.intervalZalivanja
+              new Date(wateringArray[lastIndex].date),
+              new Date(wateringArray[next_watering_index].date)
             );
+
             if (next_watering !== prev_watered_date.current) {
               prev_watered_date.current = next_watering;
               return (
@@ -67,6 +95,10 @@ export const WateringScreen = ({ navigation, route }: Props) => {
                     plant={plant}
                     navigation={navigation}
                     route={route}
+                    showWateredButton={
+                      next_watering === WateringStatus.Today ||
+                      next_watering === WateringStatus.NotWatered
+                    }
                   />
                 </View>
               );
@@ -77,6 +109,10 @@ export const WateringScreen = ({ navigation, route }: Props) => {
                   plant={plant}
                   navigation={navigation}
                   route={route}
+                  showWateredButton={
+                    next_watering === WateringStatus.Today ||
+                    next_watering === WateringStatus.NotWatered
+                  }
                 />
               );
             }

@@ -21,9 +21,8 @@ export const ExplorePlantCard = ({ plant, navigation }: Props) => {
       }
       style={[styles.card, style.card]}
     >
-      {/*  TODO: CHANGE WITH URI*/}
       <Image
-        source={require('../../assets/sample_plant.png')}
+        source={{ uri: 'data:image/png;base64,' + plant?.image }}
         style={style.image}
       />
       <View style={{ flex: 1, height: '100%' }}>

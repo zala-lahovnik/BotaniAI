@@ -17,7 +17,7 @@ export default function App() {
   > | null>(null);
   const [isReady, setIsReady] = useState(false);
 
-  // AsyncStorage.clear();
+  //AsyncStorage.clear();
 
   useEffect(() => {
     (async () => {
