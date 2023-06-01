@@ -1,14 +1,16 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFunctions } from 'firebase/functions';
+import { getStorage } from 'firebase/storage';
 import {
   API_KEY,
+  APP_ID,
   AUTH_DOMAIN,
+  FUNCTIONS_REGION,
+  MESSAGING_SENDER_ID,
   PROJECT_ID,
   STORAGE_BUCKET,
-  MESSAGING_SENDER_ID,
-  APP_ID, FUNCTIONS_REGION
-} from "./firebase-config";
+} from './firebase-config';
 
 const firebaseConfig = {
   apiKey: API_KEY,
@@ -21,5 +23,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+export const storage = getStorage(app);
 
 export const functionsPython = getFunctions(app, FUNCTIONS_REGION);

@@ -10,16 +10,16 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CameraCapturedPicture } from 'expo-camera/src/Camera.types';
 import { Header } from '../../components';
-import { functionsPython } from '../../firebase/firebase';
+import { functionsPython, storage } from '../../firebase/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { species } from '../../constants/species';
 import { previewStyles } from './CameraPreviewScreenStyles';
 import { getPlantByLatin } from '../../api/_plant';
 import { Plant } from '../../types/_plant';
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { global } from '../../styles/globals';
 import { addPlantToHistory } from '../../api/_user';
 import { UserContext } from '../../context/UserContext';
+import { ref, uploadBytes } from 'firebase/storage';
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -72,28 +72,40 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
     setFetchedPlantData(plantData);
 
     try {
-      let manipulatedPhoto = photo;
-      if (photo.hasOwnProperty('uri')) {
-        manipulatedPhoto = await manipulateAsync(
-          photo.uri,
-          [],
-          { compress: 0.2, format: SaveFormat.JPEG, base64: true } // from 0 to 1 "1 for best quality"
-        );
-      }
+      if (user.userId) {
+        const imageName = user.userId+Date.now()
+        const storageRef = ref(storage, imageName);
+        const imageBlob = await uploadImage(photo.uri)
 
-      if (user.userId)
-        await addPlantToHistory({
-          userId: user.userId,
-          plantId: plantData._id,
-          customName: plantData.common,
-          date: Date.now().toString(),
-          result: result,
-          image: manipulatedPhoto.base64,
-        });
+        if(imageBlob) {
+          try {
+            await uploadBytes(storageRef, imageBlob)
+
+            await addPlantToHistory({
+              userId: user.userId,
+              plantId: plantData._id,
+              customName: plantData.common,
+              date: Date.now().toString(),
+              result: result,
+              image: imageName,
+            });
+          } catch (err) {
+            console.log('Error while uploading image', err);
+          }
+        }
+      }
     } catch (err) {
       console.log(err);
     }
   };
+
+  /* function to transform image URI into Blob, to be saved into firebase storage */
+  const uploadImage = async(imageUri: string) => {
+    const response = await fetch(imageUri);
+    let blob = null
+    await response.blob().then((result) => {blob = result})
+    return blob
+  }
 
   const onPressOnContinueButton = () => {
     if (fetchedPlantData)
