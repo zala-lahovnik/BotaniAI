@@ -3,6 +3,10 @@ const router = express.Router();
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../../db/db');
 const multer = require('multer');
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
+const admin = require('firebase-admin');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -183,22 +187,39 @@ router.post('/add-personal-garden', upload.none(), (req, res, next) => {
  *       500:
  *         description: Failed to add plant to MongoDB
  */
-router.post('/add-history', upload.any(), (req, res, next) => {
+router.post('/add-history', upload.any(), async (req, res, next) => {
     const { userId, plantId, customName, date, result, image } = req.body;
 
     const db = getDB();
     const collection = db.collection('user');
 
+    const fileName = userId + Date.now()
+    const filePath = path.join(os.tmpdir(), fileName);
+    const fileBuffer = Buffer.from(image, "base64")
+
+    fs.writeFileSync(filePath, fileBuffer);
+
+    const bucket = admin.storage().bucket();
+
+    await bucket.upload(filePath, {
+        // destination: filePath,
+        contentType: 'image/jpeg',
+    });
+    console.log('Saved image to Firebase Storage ', fileName);
+
+    fs.unlinkSync(filePath);
+
+
     collection.updateOne(
     { _id: userId },
     {
         $push: {
-            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: image }
+            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
         }
     }
     )
     .then(() => {
-        res.status(200).send(`Plant added, user: ${userId}`);
+        res.status(200).send({imageName: fileName});
     })
     .catch(err => {
         console.error('Failed to add plant to MongoDB:', err);
