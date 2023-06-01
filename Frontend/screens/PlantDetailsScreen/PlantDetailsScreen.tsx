@@ -68,6 +68,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     fertilization,
     toxicity,
     image,
+    imageToSave
   } = route.params as Plant;
 
   const [expanded, setExpanded] = useState(false);
