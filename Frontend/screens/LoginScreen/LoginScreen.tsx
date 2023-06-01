@@ -29,7 +29,7 @@ import {
 import { addUser, getUserById } from '../../api/_user';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SignInLoadingModal } from '../../components';
+import { LoadingModal } from '../../components';
 import { StatusBar } from 'expo-status-bar';
 
 type Props = NativeStackScreenProps<any>;
@@ -179,7 +179,7 @@ export const LoginScreen = ({ navigation }: Props) => {
             { minHeight: Math.round(Dimensions.get('window').height) },
           ]}
         >
-          {loading && <SignInLoadingModal loading={loading} />}
+          {loading && <LoadingModal loading={loading} />}
           <Pressable style={styles.puscica} onPress={handleBack}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>

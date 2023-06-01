@@ -16,6 +16,7 @@ import ArrowBack from 'react-native-vector-icons/Ionicons';
 import Camera_Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from './CameraScreenStyles';
 import { CameraPreviewScreen } from './CameraPreviewScreen';
+import BackButton from '../../components';
 
 const AnimatedBarCodeScanner = () => {
   const { width, height } = Dimensions.get('window');
@@ -59,27 +60,6 @@ const AnimatedBarCodeScanner = () => {
   );
 };
 
-export const BackButton = ({
-  navigation,
-}: Pick<NativeStackScreenProps<any>, 'navigation'>) => {
-  return (
-    <View
-      style={{
-        position: 'absolute',
-        top: '5%',
-        left: '5%',
-        backgroundColor: 'transparent',
-      }}
-    >
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
-        <ArrowBack name="arrow-back" size={40} color="black" />
-      </TouchableOpacity>
-    </View>
-  );
-};
 let camera: Camera | null = null;
 
 type Props = NativeStackScreenProps<any>;

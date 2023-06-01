@@ -16,6 +16,7 @@ import {
   WateringScreen,
 } from './screens';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import BlankScreen from './screens/BlankScreen/BlankScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -49,6 +50,7 @@ export default function RootNavigation() {
           <Stack.Screen name={'Water'} component={WateringScreen} />
           <Stack.Screen name={'Explore'} component={ExploringScreen} />
           <Stack.Screen name={'PlantDetails'} component={PlantDetailsScreen} />
+          <Stack.Screen name={'BlankScreen'} component={BlankScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

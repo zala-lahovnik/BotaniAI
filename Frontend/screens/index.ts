@@ -3,7 +3,6 @@
 export * from './PlantListScreen/PlantListScreen';
 export * from './CameraScreen/CameraScreen';
 export * from './PhotoInputScreen/PhotoInputScreen';
-export * from './CameraScreen/CameraPreviewScreen';
 export * from './HistoryScreen/RecentCaptures';
 export * from './WateringScreen/WateringScreen';
 export * from './PlantDetailsScreen/PlantDetailsScreen';
