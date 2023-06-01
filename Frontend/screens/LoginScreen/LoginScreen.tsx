@@ -1,15 +1,15 @@
 import {
-  Text,
-  View,
-  TextInput,
-  Pressable,
+  Dimensions,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
+  Text,
+  TextInput,
   TouchableWithoutFeedback,
-  Keyboard,
-  Dimensions,
+  View,
 } from 'react-native';
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useState } from 'react';
 import {
   GoogleAuthProvider,
   signInWithCredential,
@@ -136,19 +136,31 @@ export const LoginScreen = ({ navigation }: Props) => {
             };
             const profilePicture = auth.currentUser.photoURL as string;
             if (!loggedUser.userId) {
-              dispatch({
-                type: UserActionType.UPDATE_USER,
-                payload: { profilePicture, ...newUser },
-              });
-              AsyncStorage.setItem(
-                '@user',
-                JSON.stringify({
-                  userId: newUser.userId,
-                  profilePicture,
+              const userData = getUserById(auth.currentUser.uid)
+                .then((data) => {
+                  if (data) {
+                    dispatch({
+                      type: UserActionType.UPDATE_USER,
+                      payload: data,
+                    });
+                  }
                 })
-              );
-
-              addUser(newUser);
+                .catch((error) => {
+                  dispatch({
+                    type: UserActionType.UPDATE_USER,
+                    payload: { profilePicture, ...newUser },
+                  });
+                  addUser(newUser);
+                })
+                .finally(() => {
+                  AsyncStorage.setItem(
+                    '@user',
+                    JSON.stringify({
+                      userId: newUser.userId,
+                      profilePicture,
+                    })
+                  );
+                });
             }
           }
         })
