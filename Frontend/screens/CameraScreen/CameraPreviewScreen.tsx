@@ -10,7 +10,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CameraCapturedPicture } from 'expo-camera/src/Camera.types';
 import { Header } from '../../components';
-import { functionsPython, storage } from '../../firebase/firebase';
+import { functionsPython } from '../../firebase/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { species } from '../../constants/species';
 import { previewStyles } from './CameraPreviewScreenStyles';
@@ -19,7 +19,6 @@ import { Plant } from '../../types/_plant';
 import { global } from '../../styles/globals';
 import { addPlantToHistory } from '../../api/_user';
 import { UserContext } from '../../context/UserContext';
-import { ref, uploadBytes } from 'firebase/storage';
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -31,6 +30,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
   const [predictionResults, setPredictionsResults] = useState('');
   const [predictionPercent, setPredictionPercent] = useState('');
   const [fetchedPlantData, setFetchedPlantData] = useState<Plant | null>(null);
+  const [currentImageName, setCurrentImageName] = useState<string>('');
   const { user } = useContext(UserContext);
 
   async function onPressOnUsePhotoButton() {
@@ -71,41 +71,23 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
     const plantData = await getPlantByLatin(predicted);
     setFetchedPlantData(plantData);
 
-    try {
-      if (user.userId) {
-        const imageName = user.userId+Date.now()
-        const storageRef = ref(storage, imageName);
-        const imageBlob = await uploadImage(photo.uri)
+    if (user.userId) {
+        try {
 
-        if(imageBlob) {
-          try {
-            await uploadBytes(storageRef, imageBlob)
-
-            await addPlantToHistory({
-              userId: user.userId,
-              plantId: plantData._id,
-              customName: plantData.common,
-              date: Date.now().toString(),
-              result: result,
-              image: imageName,
-            });
-          } catch (err) {
-            console.log('Error while uploading image', err);
-          }
+          const uploadResult = await addPlantToHistory({
+            userId: user.userId,
+            plantId: plantData._id,
+            customName: plantData.common,
+            date: Date.now().toString(),
+            result: result,
+            image: photo.base64,
+          });
+          setCurrentImageName(uploadResult.imageName)
+        } catch (err) {
+          console.log('Error while uploading image', err);
         }
       }
-    } catch (err) {
-      console.log(err);
-    }
   };
-
-  /* function to transform image URI into Blob, to be saved into firebase storage */
-  const uploadImage = async(imageUri: string) => {
-    const response = await fetch(imageUri);
-    let blob = null
-    await response.blob().then((result) => {blob = result})
-    return blob
-  }
 
   const onPressOnContinueButton = () => {
     if (fetchedPlantData)
@@ -120,6 +102,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         wateringDetail: fetchedPlantData?.wateringDetail,
         fertilization: fetchedPlantData?.fertilization,
         toxicity: fetchedPlantData?.toxicity,
+        imageToSave: currentImageName || fetchedPlantData?.image
       });
   };
 
