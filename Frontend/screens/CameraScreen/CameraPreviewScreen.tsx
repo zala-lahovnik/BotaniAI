@@ -81,9 +81,9 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         );
       }
 
-      if (user._id)
+      if (user.userId)
         await addPlantToHistory({
-          userId: user._id,
+          userId: user.userId,
           plantId: plantData._id,
           customName: plantData.common,
           date: Date.now().toString(),
