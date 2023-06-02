@@ -1,12 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   BottomModal,
   BottomNavigationBar,
   DrawerLayout,
-  FilterOptions,
   Header,
   ModalPlantCard,
   NotLoggedIn,
@@ -16,8 +15,6 @@ import {
 import { global } from '../../styles/globals';
 import { Drawer } from 'react-native-drawer-layout';
 import { UserContext } from '../../context/UserContext';
-import { useQuery } from '@tanstack/react-query';
-import { getUserPersonalGarden } from '../../api/_user';
 import { filterPlants } from '../../utils/plants-filtering';
 import { PersonalGardenPlant } from '../../types/_plant';
 
@@ -56,7 +53,6 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
           <View
             style={{
               paddingTop: insets.top,
-              paddingBottom: insets.bottom,
               flex: 1,
             }}
           >
