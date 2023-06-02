@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getDB } = require('../../db/db');
 const multer = require('multer');
+const authMiddleware = require('../../middleware/authMiddleware');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -62,7 +63,10 @@ const upload = multer({ storage: storage });
  *       500:
  *         description: Failed to update plant attributes
  */
-router.put('/:userId/personal-garden/:plantId', upload.none(), async (req, res) => {
+router.put('/:userId/personal-garden/:plantId', upload.none(), authMiddleware, async (req, res) => {
+    if (req.params.userId !== req.userId) {
+      return res.status(401).json({ message: 'Unauthorized access' });
+    }
     try {
         const db = getDB();
         const userId = req.params.userId;
@@ -138,7 +142,10 @@ router.put('/:userId/personal-garden/:plantId', upload.none(), async (req, res) 
  *       500:
  *         description: Failed to update notifications
  */
-router.put('/:userId', upload.none(), async (req, res) => {
+router.put('/:userId', upload.none(), authMiddleware, async (req, res) => {
+    if (req.params.userId !== req.userId) {
+        return res.status(401).json({ message: 'Unauthorized access' });
+    }
     try {
         const db = getDB();
         const userId = req.params.userId;

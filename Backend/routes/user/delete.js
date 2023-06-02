@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getDB } = require('../../db/db');
+const authMiddleware = require('../../middleware/authMiddleware');
 
 
 /**
@@ -33,7 +34,10 @@ const { getDB } = require('../../db/db');
  *       500:
  *         description: Failed to delete plant from personal garden
  */
-router.delete('/:userId/personal-garden/:plantId', async (req, res) => {
+router.delete('/:userId/personal-garden/:plantId', authMiddleware, async (req, res) => {
+    if (req.params.userId !== req.userId) {
+        return res.status(401).json({ message: 'Unauthorized access' });
+    }
     try {
         const db = getDB();
         const userId = req.params.userId;

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { ObjectId } = require('mongodb');
 const { getDB } = require('../../db/db');
+const authMiddleware = require('../../middleware/authMiddleware');
 
 /**
  * Get a specific user by ID
@@ -27,7 +28,10 @@ const { getDB } = require('../../db/db');
  *       500:
  *         description: Internal server error
  */
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', authMiddleware, async (req, res) => {
+    if (req.params.userId !== req.userId) {
+      return res.status(401).json({ message: 'Unauthorized access' });
+    }
     const userId = req.params.userId;
 
     try {
@@ -69,7 +73,10 @@ router.get('/:userId', async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/:userId/personal-garden', async (req, res) => {
+router.get('/:userId/personal-garden', authMiddleware, async (req, res) => {
+    if (req.params.userId !== req.userId) {
+      return res.status(401).json({ message: 'Unauthorized access' });
+    }
     const userId = req.userId;
     try {
       const db = getDB();
@@ -110,7 +117,10 @@ router.get('/:userId/personal-garden', async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/:userId/history', async (req, res) => {
+router.get('/:userId/history', authMiddleware, async (req, res) => {
+    if (req.params.userId !== req.userId) {
+      return res.status(401).json({ message: 'Unauthorized access' });
+    }
     const userId = req.params.userId;
 
     try {
