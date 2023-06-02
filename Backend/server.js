@@ -51,7 +51,8 @@ const PORT = 3000;
 app.listen(PORT, (error) => {
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
-          storageBucket: `${process.env.STORAGE_BUCKET}`
+          storageBucket: `${process.env.STORAGE_BUCKET}`,
+          databaseURL: process.env.FIREBASE_DATABASE_URL
         })
 
         if(!error) console.log("Server is Successfully Running, and App is listening on port "+ PORT)

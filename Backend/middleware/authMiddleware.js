@@ -1,12 +1,5 @@
 const admin = require("firebase-admin");
 
-const serviceAccount = require(`../${process.env.SERVICE_ACCOUNT}`);
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.FIREBASE_DATABASE_URL
-});
-
 const authMiddleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization || req.query.token;
