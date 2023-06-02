@@ -28,23 +28,22 @@ const { getDB } = require('../../db/db');
  *       500:
  *         description: Failed to retrieve plant from MongoDB
  */
-router.get('/latin/:plantName', (req, res) => {
+router.get('/latin/:plantName', async (req, res) => {
     const latinName = decodeURIComponent(req.params.plantName);
 
-    const db = getDB();
-    const collection = db.collection('plant');
-    
-    collection.findOne({ latin: latinName })
-    .then(plant => {
+    try {
+      const db = getDB();
+      const collection = db.collection('plant');
+
+      const plant = await collection.findOne({ latin: latinName });
       if (!plant) {
         return res.status(404).send('Plant not found');
       }
       res.status(200).json(plant);
-    })
-    .catch(err => {
+    } catch(err) {
       console.error('Failed to retrieve plant from MongoDB:', err);
       res.status(500).send('Failed to retrieve plant from MongoDB');
-    });
+    };
 });
 
 
@@ -72,23 +71,22 @@ router.get('/latin/:plantName', (req, res) => {
  *       500:
  *         description: Failed to retrieve plant from MongoDB
  */
-router.get('/:plantId', (req, res) => {
+router.get('/:plantId', async (req, res) => {
     const plantId = req.params.plantId;
 
-    const db = getDB();
-    const collection = db.collection('plant');
-    
-    collection.findOne({ _id: new ObjectId(plantId) })
-    .then(plant => {
+    try {
+      const db = getDB();
+      const collection = db.collection('plant');
+
+      const plant = await collection.findOne({ _id: new ObjectId(plantId) });
       if (!plant) {
         return res.status(404).send('Plant not found');
       }
       res.status(200).json(plant);
-    })
-    .catch(err => {
+    } catch(err) {
       console.error('Failed to retrieve plant from MongoDB:', err);
       res.status(500).send('Failed to retrieve plant from MongoDB');
-    });
+    };
 });
 
 
@@ -108,23 +106,20 @@ router.get('/:plantId', (req, res) => {
  *           application/json:
  *             schema:
  *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Plant'
  *       500:
  *         description: Failed to retrieve plants from MongoDB
  */
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  try {
     const db = getDB();
     const collection = db.collection('plant');
-    
-    collection.find({}).toArray()
-    .then(plants => {
-      res.status(200).json(plants);
-    })
-    .catch(err => {
+
+    let plants = await collection.find({}).toArray();
+    res.status(200).json(plants);
+  } catch(err) {
       console.error('Failed to retrieve plants from MongoDB:', err);
       res.status(500).send('Failed to retrieve plants from MongoDB');
-    });
+  };
 });
 
 module.exports = router;

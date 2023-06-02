@@ -62,53 +62,46 @@ const upload = multer({ storage: storage });
  *       500:
  *         description: Failed to update plant attributes
  */
-router.put('/:userId/personal-garden/:plantId', upload.none(), (req, res) => {
-    const db = getDB();
-    const userId = req.params.userId;
-    const plantId = req.params.plantId;
-    const { customName, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
+router.put('/:userId/personal-garden/:plantId', upload.none(), async (req, res) => {
+    try {
+        const db = getDB();
+        const userId = req.params.userId;
+        const plantId = req.params.plantId;
+        const { customName, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
 
-    const watering = {
-        firstDay: firstDay,
-        numberOfDays: numberOfDays,
-        amountOfWater: amountOfWater,
-        wateringArray: wateringArray
-    }
+        const watering = {
+            firstDay: firstDay,
+            numberOfDays: numberOfDays,
+            amountOfWater: amountOfWater,
+            wateringArray: wateringArray
+        }
 
-    const userCollection = db.collection('user');
+        const userCollection = db.collection('user');
 
-    userCollection.findOne({ _id: userId })
-        .then(user => {
-            if (!user) {
-                return res.status(404).send('User not found');
+        const user = await userCollection.findOne({ _id: userId });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        const personalGarden = user.personalGarden;
+        const updatedGarden = personalGarden.map(obj => {
+            if (obj._id.toString() === plantId) {
+                obj.customName = customName;
+                obj.watering = watering;
+                obj.image = image;
             }
-
-            const personalGarden = user.personalGarden;
-            const updatedGarden = personalGarden.map(obj => {
-                if (obj._id.toString() === plantId) {
-                    obj.customName = customName;
-                    obj.watering = watering;
-                    obj.image = image;
-                }
-                return obj;
-            });
-
-            userCollection.updateOne(
-                { _id: userId },
-                { $set: { personalGarden: updatedGarden } }
-            )
-            .then(() => {
-                res.status(200).send('Plant common attribute updated');
-            })
-            .catch(err => {
-                console.error('Failed to update plant common attribute:', err);
-                res.status(500).send('Failed to update plant common attribute');
-            });
-        })
-        .catch(err => {
-            console.error('Failed to find user:', err);
-            res.status(500).send('Failed to find user');
+            return obj;
         });
+
+        await userCollection.updateOne(
+            { _id: userId },
+            { $set: { personalGarden: updatedGarden } }
+        );
+        res.status(200).send('Plant common attribute updated');
+    } catch(err) {
+        console.error('Failed to update plant', err);
+        res.status(500).send('Failed to update plant');
+    };
 });
 
 
@@ -145,35 +138,28 @@ router.put('/:userId/personal-garden/:plantId', upload.none(), (req, res) => {
  *       500:
  *         description: Failed to update notifications
  */
-router.put('/:userId', upload.none(), (req, res) => {
-    const db = getDB();
-    const userId = req.params.userId;
-    const { notifications } = req.body;
+router.put('/:userId', upload.none(), async (req, res) => {
+    try {
+        const db = getDB();
+        const userId = req.params.userId;
+        const { notifications } = req.body;
 
-    const userCollection = db.collection('user');
+        const userCollection = db.collection('user');
 
-    userCollection.findOne({ _id: userId })
-        .then(user => {
-            if (!user) {
-                return res.status(404).send('User not found');
-            }
+        const user = await userCollection.findOne({ _id: userId });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
 
-            userCollection.updateOne(
-                { _id: userId },
-                { $set: { notifications: notifications } }
-            )
-            .then(() => {
-                res.status(200).send('Notifications updated');
-            })
-            .catch(err => {
-                console.error('Failed to update notifications:', err);
-                res.status(500).send('Failed to update notifications');
-            });
-        })
-        .catch(err => {
-            console.error('Failed to find user:', err);
-            res.status(500).send('Failed to find user');
-        });
+        await userCollection.updateOne(
+            { _id: userId },
+            { $set: { notifications: notifications } }
+        )
+        res.status(200).send('Notifications updated');
+    } catch(err) {
+        console.error('There was an error updating user:', err);
+        res.status(500).send('There was an error updating user');
+    };
 });
 
 module.exports = router;

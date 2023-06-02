@@ -43,30 +43,29 @@ const upload = multer({ storage: storage });
  *       500:
  *         description: Failed to add new user to MongoDB
  */
-router.post('/add-user', upload.none(), (req, res, next) => {
-    const { userId, name, surname, email, notifications } = req.body;
-  
-    const db = getDB();
-    const collection = db.collection('user');
+router.post('/add-user', upload.none(), async (req, res, next) => {
+    try {
+        const { userId, name, surname, email, notifications } = req.body;
+    
+        const db = getDB();
+        const collection = db.collection('user');
 
-    const newUser = {
-        _id: userId,
-        name: name,
-        surname: surname,
-        email: email,
-        notifications: notifications,
-        history: [],
-        personalGarden: []
-    };
+        const newUser = {
+            _id: userId,
+            name: name,
+            surname: surname,
+            email: email,
+            notifications: notifications,
+            history: [],
+            personalGarden: []
+        };
 
-    collection.insertOne(newUser)
-    .then(() => {
-      res.status(200).send('New user added to MongoDB');
-    })
-    .catch(err => {
+        await collection.insertOne(newUser)
+        res.status(200).send('New user added to MongoDB');
+    } catch(err) {
       console.error('Failed to add new user to MongoDB:', err);
       res.status(500).send('Failed to add new user to MongoDB');
-    });
+    };
 });
 
 
@@ -118,38 +117,37 @@ router.post('/add-user', upload.none(), (req, res, next) => {
  *       500:
  *         description: Failed to add plant to MongoDB
  */
-router.post('/add-personal-garden', upload.none(), (req, res, next) => {
-    const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
+router.post('/add-personal-garden', upload.none(), async (req, res, next) => {
+    try {
+        const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
 
-    const db = getDB();
-    const collection = db.collection('user');
+        const db = getDB();
+        const collection = db.collection('user');
 
-    const watering = {
-        firstDay: firstDay,
-        numberOfDays: numberOfDays,
-        amountOfWater: amountOfWater,
-        wateringArray: wateringArray
-    }
-
-    collection.updateOne(
-    { _id: userId },
-    {
-        $push: {
-            personalGarden: { _id: new ObjectId, latin: latin, common: common, customName: customName, description: description, watering: watering, image: image }
+        const watering = {
+            firstDay: firstDay,
+            numberOfDays: numberOfDays,
+            amountOfWater: amountOfWater,
+            wateringArray: wateringArray
         }
-    }
-    )
-    .then(() => {
-        res.status(200).send(`Plant added, user: ${userId}`);
-    })
-    .catch(err => {
+
+        await collection.updateOne(
+            { _id: userId },
+            {
+                $push: {
+                    personalGarden: { _id: new ObjectId, latin: latin, common: common, customName: customName, description: description, watering: watering, image: image }
+                }
+            }
+        );
+        res.status(200).send(`Plant added, to user: ${userId}`);
+    } catch(err) {
         console.error('Failed to add plant to MongoDB:', err);
         if (err == 'RangeError: offset is out of bounds') {
             res.send('choose smaller image');
         } else {
             res.status(500).send('Failed to add plant to MongoDB');
         }
-    });
+    };
 });
 
 
@@ -188,47 +186,46 @@ router.post('/add-personal-garden', upload.none(), (req, res, next) => {
  *         description: Failed to add plant to MongoDB
  */
 router.post('/add-history', upload.any(), async (req, res, next) => {
-    const { userId, plantId, customName, date, result, image } = req.body;
+    try {
+        const { userId, plantId, customName, date, result, image } = req.body;
 
-    const db = getDB();
-    const collection = db.collection('user');
+        const db = getDB();
+        const collection = db.collection('user');
 
-    const fileName = userId + Date.now()
-    const filePath = path.join(os.tmpdir(), fileName);
-    const fileBuffer = Buffer.from(image, "base64")
+        const fileName = userId + Date.now()
+        const filePath = path.join(os.tmpdir(), fileName);
+        const fileBuffer = Buffer.from(image, "base64")
 
-    fs.writeFileSync(filePath, fileBuffer);
+        fs.writeFileSync(filePath, fileBuffer);
 
-    const bucket = admin.storage().bucket();
+        const bucket = admin.storage().bucket();
 
-    await bucket.upload(filePath, {
-        // destination: filePath,
-        contentType: 'image/jpeg',
-    });
-    console.log('Saved image to Firebase Storage ', fileName);
+        await bucket.upload(filePath, {
+            // destination: filePath,
+            contentType: 'image/jpeg',
+        });
+        console.log('Saved image to Firebase Storage ', fileName);
 
-    fs.unlinkSync(filePath);
+        fs.unlinkSync(filePath);
 
 
-    collection.updateOne(
-    { _id: userId },
-    {
-        $push: {
-            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
-        }
-    }
-    )
-    .then(() => {
+        await collection.updateOne(
+            { _id: userId },
+            {
+                $push: {
+                    history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
+                }
+            }
+        );
         res.status(200).send({imageName: fileName});
-    })
-    .catch(err => {
+    } catch(err) {
         console.error('Failed to add plant to MongoDB:', err);
         if (err == 'RangeError: offset is out of bounds') {
             res.send('choose smaller image');
         } else {
             res.status(500).send('Failed to add plant to MongoDB');
         }
-    });
+    };
 });
 
 module.exports = router;
