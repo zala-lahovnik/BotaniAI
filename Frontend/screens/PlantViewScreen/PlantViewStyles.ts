@@ -19,8 +19,6 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#648983',
     fontSize: 16,
     color: '#648983',
   },
@@ -59,7 +57,6 @@ export const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
     alignItems: 'center',
   },
   ime: {
@@ -72,9 +69,9 @@ export const styles = StyleSheet.create({
   image: {
     width: '70%',
     aspectRatio: 1,
-    marginTop: '30%',
     marginBottom: '5%',
     borderRadius: 50,
+    alignSelf: 'center',
   },
   input: {
     borderBottomWidth: 1,
@@ -105,7 +102,6 @@ export const styles = StyleSheet.create({
     marginTop: '2%',
     display: 'flex',
     justifyItems: 'center',
-    flex: 1,
   },
   button: {
     display: 'flex',
