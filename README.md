@@ -70,24 +70,49 @@ npx expo start
 
 ## Backend Setup
 
-1. **MongoDB Setup:**
-    - Create a MongoDB database to store backend data.
-    - Copy the database connection link.
+Follow these steps to seamlessly set up the backend of the project:
 
-2. Create an `.env` file inside the `Backend` directory and paste the MongoDB connection link into the file, as shown below:
+1. **MongoDB Setup:**
+   - Begin by creating a MongoDB database to store backend data.
+   - Make sure to copy the database connection link for later use.
+
+2. **Firebase Storage Bucket Info:**
+   - Retrieve the Storage bucket info from your frontend's `firebase-config.js` file.
+   - Copy the required information from the file and paste it here.
+
+3. **Firebase Database URL Info:**
+   - Obtain the Database URL info from your Firebase console, just like you did for the mobile app setup.
+   - Need a refresher? Follow this [tutorial](https://firebase.google.com/docs/web/setup) to find the Database URL.
+
+4. **Firebase Service Account Info:**
+   - Obtain your Firebase service account info following the instructions in the [tutorial](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments).
+
+5. **Firebase Service Account File:**
+   - Save the downloaded `firebase_service_account.json` file into the Backend folder.
+
+6. **Environment Configuration:**
+   - Create an `.env` file inside the `Backend` directory.
+   - Paste the MongoDB connection link, Storage bucket info, and the name of the `firebase_service_account.json` file, as shown below:
 ```
 DATABASE_URI=mongodb://username:password@localhost:27017/database_name
+FIREBASE_DATABASE_URL=YOUR_DATABASE_URL
+STORAGE_BUCKET=STORAGE_BUCKET_VALUE
+SERVICE_ACCOUNT=firebase_service_account.json
 ```
 
-3. Install the project dependencies by running the following command inside the `Backend` directory:
+7. **Install Dependencies:**
+   - Install the project dependencies by running the following command inside the `Backend` directory:
 ```
 npm i
 ```
 
-4. Start the backend server by running the following command in the `Backend` folder:
+8. **Start the Backend Server:**
+   - Launch the backend server by running the following command in the `Backend` folder:
 ```
 node server.js
 ```
+
+9. Get ready to unleash the full potential of the project by powering up the backend! 🚀✨
 
 # Technologies Used
 
@@ -104,6 +129,7 @@ BotaniAI utilizes the following key libraries and technologies:
 - ExpressJS
 - MongoDB
 - Swagger
+- Firebase Admin
 
 ## Classification
 - Anaconda
