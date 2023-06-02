@@ -10,7 +10,6 @@ import { auth } from '../../firebase/firebase';
 import { updatePlant, deletePlantFromPersonalGarden, addPlantToPersonalGarden, PersonalGardenObject } from '../../api/_user';
 import { type PersonalGardenPlant } from '../../types/_plant';
 import { UserContext } from '../../context/UserContext';
-
 type Props = NativeStackScreenProps<any>;
 export const PlantViewScreen = ({ navigation, route }: Props) => {
   const { ...plant } = route.params || {};
@@ -43,7 +42,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     } else {
       sortedData = [{ date: date, watered: false }];
     }
-
     let nextFive: { date: string; watered: boolean }[] = [];
     let startDate: string = date;
     if (startDate && moment(startDate).isAfter(today)) {
@@ -61,8 +59,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       const selectedColor: string = watered ? '#1672EC' : '#adc487';
       updatedMarkedDates[date] = { selected: true, selectedColor };
     }
-    setDates(updatedDates);
-    setMarkedDates(updatedMarkedDates);
     const newPlant: {
       image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
     } = {
@@ -83,20 +79,20 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       startingDate = new Date(today);
       setDate(today);
     }
-
-    let i: number = 1;
+    let i: number = 0;
     let nextFive: { date: string; watered: boolean }[] = [];
-    nextFive.push({ date: startingDate.toISOString().split('T')[0], watered: true });
-    while (i < 5) {
+
+    if (edit[1] === true) {
+      const previousDate = new Date(startingDate);
+      previousDate.setDate(startingDate.getDate() - parseInt(days));
+      nextFive.push({ date: previousDate.toISOString().slice(0, 10), watered: true })
+    }
+    while (i <= 5) {
       const newDate: string = new Date(
         startingDate.getTime() + i * parseInt(days) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
       nextFive.push({ date: newDate, watered: false });
       i++;
     }
-
-
-
-
     return nextFive;
   }
 
@@ -126,52 +122,55 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     ]);
   }
   async function handleEditFalse() {
-    if (edit[1] === true) {
-      const plantData: PersonalGardenObject = {
-        userId: loggedUser.userId,
-        latin: plant.latin,
-        common: plant.common,
-        customName: name,
-        description: description,
-        firstDay: date,
-        numberOfDays: parseInt(days),
-        amountOfWater: parseInt(water),
-        wateringArray: getNextFiveDays(date), // Provide the appropriate array of watering data here
-        image: plant.imageToSave || plant.image,
-      };
-      setEdit([edit[0], false]);
+    Alert.alert('Save', `Do you wish to save this plant?`, [
+      {
+        text: 'No',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes',
+        onPress: async () => {
+          if (edit[1] === true) {
+            const plantData: PersonalGardenObject = {
+              userId: loggedUser.userId,
+              latin: plant.latin,
+              common: plant.common,
+              customName: name,
+              description: description,
+              firstDay: date,
+              numberOfDays: parseInt(days),
+              amountOfWater: parseInt(water),
+              wateringArray: getNextFiveDays(date),
+              image: plant.imageToSave || plant.image,
+            };
+            setEdit([edit[0], false]);
+            try {
+              await addPlantToPersonalGarden(plantData);
+              console.log('Plant added successfully');
+              navigation.navigate("PlantListScreen")
+            } catch (error) {
+              console.error('Failed to add plant:', error);
+            }
+          }
+          const newMDates = getBeforeTodayPlusFive()
+          setMarkedDates(newMDates.updatedMarkedDates);
+          const newPlant: {
+            image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
+          } = {
+            customName: name,
+            firstDay: date,
+            numberOfDays: days,
+            amountOfWater: water,
+            description: description,
+            wateringArray: newMDates.dates,
+            image: plant.image
+          };
+          updatePlant(userId, plant._id, newPlant);
+          setEdit([false, edit[1]]);
+        },
+      },
+    ]);
 
-
-      try {
-        await addPlantToPersonalGarden(plantData); // Await the result of the function
-        console.log('Plant added successfully');
-        // Perform any additional actions if needed
-      } catch (error) {
-        console.error('Failed to add plant:', error);
-        // Handle error cases
-      }
-
-
-    }
-
-
-
-
-    const newMDates = getBeforeTodayPlusFive()
-    setMarkedDates(newMDates.updatedMarkedDates);
-    const newPlant: {
-      image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
-    } = {
-      customName: name,
-      firstDay: date,
-      numberOfDays: days,
-      amountOfWater: water,
-      description: description,
-      wateringArray: newMDates.dates,
-      image: plant.image
-    };
-    updatePlant(userId, plant._id, newPlant);
-    setEdit([false, edit[1]]);
   }
   return (
     <View style={{ flex: 1 }}>
@@ -191,7 +190,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
               name="checkmark-done"
               size={24}
               color="black"
-              onPress={handleEditFalse}
             />
           </Pressable>
         ) : (
@@ -205,15 +203,8 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           </Pressable>
         )}
       </View>
-
       <ScrollView >
-        <Image
-          source={{
-            uri: 'https://www.ambius.com/blog/wp-content/uploads/2019/03/GettyImages-484148116-770x360.jpg',
-          }}
-          style={styles.image}
-        />
-
+        <Image source={{ uri: 'https://www.ambius.com/blog/wp-content/uploads/2019/03/GettyImages-484148116-770x360.jpg', }} style={styles.image} />
         {edit[0] ? (
           <View>
             <View style={styles.middleContainer}>
@@ -266,7 +257,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
                 value={description} />
             </View>
             <View>
-              <Text>When is the last time you watered your plant?</Text>
               <CalendarProvider date={minDate}>
                 <ExpandableCalendar
                   firstDay={1}
@@ -313,13 +303,13 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
                   markedDates={markedDates}
                   theme={{
                     calendarBackground: '#ffffff',
-                    selectedDayBackgroundColor: '#134a3e',
+                    selectedDayBackgroundColor: 'white',
                     monthTextColor: 'black',
                     dayTextColor: 'black',
                     todayTextColor: '#adadac',
-                    selectedDayTextColor: '#ffffff',
+                    selectedDayTextColor: 'black',
                     textSectionTitleColor: 'black',
-                    textDisabledColor: 'black',
+                    textDisabledColor: 'grey',
                     arrowColor: 'black',
                   }}
                 />
@@ -338,8 +328,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             <Text style={styles.buttonText}>Delete plant</Text>
           </View>
         </Pressable>
-
-
       </ScrollView>
       <BottomNavigationBar navigation={navigation} route={route} />
     </View >
