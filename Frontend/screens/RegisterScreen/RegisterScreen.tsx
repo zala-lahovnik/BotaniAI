@@ -20,7 +20,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { updateAuthorizationToken } from '../../api/_axios_base_url';
 export const RegisterScreen = () => {
     const navigation = useNavigation() as NativeStackNavigationProp<any>;
     const [email, setEmail] = useState('');
@@ -74,15 +73,7 @@ export const RegisterScreen = () => {
             })
             .then(() => {
                 setDisabled(false);
-                auth.currentUser?.getIdToken(/* forceRefresh */ true).then(function (idToken) {
-                    AsyncStorage.setItem(
-                        '@userIdToken',
-                        idToken
-                    );
-                    updateAuthorizationToken(idToken)
-                }).catch(function (error) {
-                    console.log("token error" + error)
-                });
+
                 const dispatchUser = {
                     userId: auth.currentUser?.uid,
                     name: first,
