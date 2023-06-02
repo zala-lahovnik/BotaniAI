@@ -133,7 +133,9 @@ export const PlantWateringInfoCard = ({
             >
               <Water name={'water-sharp'} size={16} color={'#000'} />
             </PlantWateringInfo>
-            <PlantWateringInfo text={plant.watering.amountOfWater || '0ml'}>
+            <PlantWateringInfo
+              text={(plant.watering.amountOfWater || '0') + 'ml'}
+            >
               <Watering name={'water'} size={16} color={'#000'} />
             </PlantWateringInfo>
             <PlantWateringInfo

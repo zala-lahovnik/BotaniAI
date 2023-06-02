@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Pressable
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
@@ -68,6 +69,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     fertilization,
     toxicity,
     image,
+    imageToSave
   } = route.params as Plant;
 
   const [expanded, setExpanded] = useState(false);
@@ -91,7 +93,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         label: Object.keys(item)[0],
         ...item,
         ...PlantInfoIconStyle[
-          Object.keys(item)[0] as keyof typeof PlantInfoIconStyle
+        Object.keys(item)[0] as keyof typeof PlantInfoIconStyle
         ],
       };
     })
@@ -234,20 +236,28 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             })}
           </View>
         </ScrollView>
-        <View style={styles.saveButton}>
-          <Bookmark
-            name={'bookmark'}
-            size={30}
-            color={global.color.heading.color}
-          />
-          <Text
-            style={{
-              color: global.color.heading.color,
-            }}
-          >
-            Save this plant
-          </Text>
-        </View>
+        <Pressable onPress={() =>
+          navigation.navigate('PlantViewScreen', {
+            latin: latin,
+            image: image,
+            edit: true,
+          })
+        }>
+          <View style={styles.saveButton}>
+            <Bookmark
+              name={'bookmark'}
+              size={30}
+              color={global.color.heading.color}
+            />
+            <Text
+              style={{
+                color: global.color.heading.color,
+              }}
+            >
+              Save this plant
+            </Text>
+          </View>
+        </Pressable>
       </View>
     </View>
   );

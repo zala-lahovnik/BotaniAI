@@ -14,6 +14,7 @@ export interface Plant {
   folder_num: number;
   fertilization: string;
   image: string;
+  imageToSave ?: string
 }
 
 export interface HistoryPlant {

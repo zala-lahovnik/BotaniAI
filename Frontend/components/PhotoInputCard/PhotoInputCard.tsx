@@ -1,13 +1,14 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useRef } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { global } from '../../styles/globals';
 import * as ImagePicker from 'expo-image-picker';
+import { ImagePickerAsset } from 'expo-image-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { LoadingModal } from '../SignInLoadingModal/LoadingModal';
 
 type Props = PropsWithChildren &
   NativeStackScreenProps<any> & {
     text: string;
-    setPhoto?: React.Dispatch<any>;
   };
 
 export const PhotoInputCard = ({
@@ -15,61 +16,77 @@ export const PhotoInputCard = ({
   children,
   navigation,
   route,
-  setPhoto,
 }: Props) => {
+  const capturedImage = useRef<ImagePickerAsset | null>(null);
+  const [loading, setLoading] = React.useState(false);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      quality: 1,
-    });
 
-    if (!result.canceled) {
-      let filename = result?.assets[0].uri.substring(
-        result?.assets[0].uri.lastIndexOf('/') + 1,
-        result?.assets[0].uri.length
-      );
+    try {
+      setLoading(true);
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        base64: true,
+      });
+      if (!result.canceled) {
+        let filename = result?.assets[0].uri.substring(
+          result?.assets[0].uri.lastIndexOf('/') + 1,
+          result?.assets[0].uri.length
+        );
 
-      // @ts-ignore
-      delete result.cancelled;
+        // @ts-ignore
+        delete result.cancelled;
+      }
+      if (result.assets![0].base64) {
+        navigation.navigate('BlankScreen', {
+          photo: result.assets![0],
+        });
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <TouchableOpacity
-      style={[styles.container]}
-      activeOpacity={0.8}
-      onPress={
-        text === 'Gallery'
-          ? pickImage
-          : () => navigation.navigate('CameraScreen')
-      }
-    >
-      <View
-        style={{
-          position: 'absolute',
-          top: -20,
-          left: '14%',
-          zIndex: 1,
-          backgroundColor: global.color.primary.backgroundColor,
-          borderRadius: 10,
-          padding: 5,
-          width: 150,
-          height: 40,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+    <>
+      {loading && <LoadingModal loading={loading} title={'Image Loading'} />}
+      <TouchableOpacity
+        style={[styles.container]}
+        activeOpacity={0.8}
+        onPress={
+          text === 'Gallery'
+            ? pickImage
+            : () => navigation.navigate('CameraScreen')
+        }
       >
-        <Text
+        <View
           style={{
-            color: global.color.secondary.color,
+            position: 'absolute',
+            top: -20,
+            left: '14%',
+            zIndex: 1,
+            backgroundColor: global.color.primary.backgroundColor,
+            borderRadius: 10,
+            padding: 5,
+            width: 150,
+            height: 40,
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
-          {text}
-        </Text>
-      </View>
-      {children}
-    </TouchableOpacity>
+          <Text
+            style={{
+              color: global.color.secondary.color,
+            }}
+          >
+            {text}
+          </Text>
+        </View>
+        {children}
+      </TouchableOpacity>
+    </>
   );
 };
 

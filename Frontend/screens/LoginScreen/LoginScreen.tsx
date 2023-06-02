@@ -1,15 +1,15 @@
 import {
-  Text,
-  View,
-  TextInput,
-  Pressable,
+  Dimensions,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
+  Text,
+  TextInput,
   TouchableWithoutFeedback,
-  Keyboard,
-  Dimensions,
+  View,
 } from 'react-native';
-import { useState, useEffect, useContext } from 'react';
+import { useContext, useState } from 'react';
 import {
   GoogleAuthProvider,
   signInWithCredential,
@@ -29,7 +29,7 @@ import {
 import { addUser, getUserById } from '../../api/_user';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SignInLoadingModal } from '../../components';
+import { LoadingModal } from '../../components';
 import { StatusBar } from 'expo-status-bar';
 
 type Props = NativeStackScreenProps<any>;
@@ -136,19 +136,31 @@ export const LoginScreen = ({ navigation }: Props) => {
             };
             const profilePicture = auth.currentUser.photoURL as string;
             if (!loggedUser.userId) {
-              dispatch({
-                type: UserActionType.UPDATE_USER,
-                payload: { profilePicture, ...newUser },
-              });
-              AsyncStorage.setItem(
-                '@user',
-                JSON.stringify({
-                  userId: newUser.userId,
-                  profilePicture,
+              const userData = getUserById(auth.currentUser.uid)
+                .then((data) => {
+                  if (data) {
+                    dispatch({
+                      type: UserActionType.UPDATE_USER,
+                      payload: data,
+                    });
+                  }
                 })
-              );
-
-              addUser(newUser);
+                .catch((error) => {
+                  dispatch({
+                    type: UserActionType.UPDATE_USER,
+                    payload: { profilePicture, ...newUser },
+                  });
+                  addUser(newUser);
+                })
+                .finally(() => {
+                  AsyncStorage.setItem(
+                    '@user',
+                    JSON.stringify({
+                      userId: newUser.userId,
+                      profilePicture,
+                    })
+                  );
+                });
             }
           }
         })
@@ -179,7 +191,7 @@ export const LoginScreen = ({ navigation }: Props) => {
             { minHeight: Math.round(Dimensions.get('window').height) },
           ]}
         >
-          {loading && <SignInLoadingModal loading={loading} />}
+          {loading && <LoadingModal loading={loading} />}
           <Pressable style={styles.puscica} onPress={handleBack}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
