@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
   plantInformation__container: {
     position: 'absolute',
     width: '60%',
-    right: '5%',
+    right: '0%',
     top: '27%',
     height: '100%',
   },
