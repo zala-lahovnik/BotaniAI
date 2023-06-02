@@ -39,25 +39,6 @@ export const addPlantToHistory = async (data: HistoryObject) => {
   return response.data;
 };
 
-type PersonalGardenObject = {
-  userId: string;
-  latin: string;
-  common: string;
-  description: string;
-  watering: string; // array
-  customName: string;
-  firstDay: string;
-  numberOfDays: string;
-  amountOfWater: string;
-  wateringArray: { date: string; watered: boolean }[];
-  image: any;
-};
-
-export const addPlantToPersonalGarden = async (data: PersonalGardenObject) => {
-  const response = await instance.post('/user/add-personal-garden', data);
-  return response.data;
-};
-
 export const deletePlantFromPersonalGarden = async (
   userId: string,
   plantId: string
@@ -87,6 +68,7 @@ type UpdatePlant = {
   numberOfDays: string;
   amountOfWater: string;
   wateringArray: { date: string; watered: boolean }[];
+  image: string;
 };
 
 export const updatePlant = async (
@@ -99,4 +81,27 @@ export const updatePlant = async (
     data
   );
   return response.data;
+};
+
+export type PersonalGardenObject = {
+  userId: string;
+  latin: string;
+  common: string;
+  customName: string;
+  description: string;
+  firstDay: string;
+  numberOfDays: number;
+  amountOfWater: number;
+  wateringArray: { date: string; watered: boolean }[];
+  image: string;
+};
+
+export const addPlantToPersonalGarden = async (data: PersonalGardenObject) => {
+  try {
+    const response = await instance.post(`/user/add-personal-garden`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to add plant:', error);
+    throw error;
+  }
 };

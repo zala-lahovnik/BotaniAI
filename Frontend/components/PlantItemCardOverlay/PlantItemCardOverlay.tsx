@@ -48,7 +48,7 @@ export const PlantImage = ({
       setTimeout(() => {
         setIsLoaded(true)
       }, 1000)
-    }).catch((err) => {console.log(err)})
+    }).catch((err) => { console.log(err) })
   }, [imageSrc])
 
   return (
@@ -66,7 +66,7 @@ export const PlantImage = ({
           source={{ uri: image }}
           style={styles.plantImage__image}
         />
-      :
+        :
         <ActivityIndicator
           size="large"
           color="#124A3F"
@@ -226,6 +226,7 @@ export const PlantItemCardOverlay = ({
             description: plantDescription,
             watering: plantWatering,
             image: plantImage,
+            edit: false,
           })
         }
         activeOpacity={0.8}

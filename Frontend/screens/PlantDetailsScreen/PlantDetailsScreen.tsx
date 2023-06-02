@@ -241,6 +241,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             latin: latin,
             image: image,
             edit: true,
+            common: common,
           })
         }>
           <View style={styles.saveButton}>
