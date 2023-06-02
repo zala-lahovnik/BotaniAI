@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Animated,
   Dimensions,
   Image,
@@ -12,10 +13,11 @@ import { global } from '../../styles/globals';
 import Svg, { Circle, G } from 'react-native-svg';
 import WaterIcon from 'react-native-vector-icons/Ionicons';
 import OpenSvg from 'react-native-vector-icons/Ionicons';
-import { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './PlantItemCardOverlayStyles';
 import { UserContext } from '../../context/UserContext';
+import { getOnlineImageUri } from '../../firebase/firebase';
 
 type Props = NativeStackScreenProps<any> & {
   plantId: string;
@@ -37,6 +39,18 @@ export const PlantImage = ({
   imageSrc: string;
   small?: boolean;
 }) => {
+  const [image, setImage] = useState(imageSrc || '')
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    getOnlineImageUri(imageSrc).then((result) => {
+      setImage(result)
+      setTimeout(() => {
+        setIsLoaded(true)
+      }, 1000)
+    }).catch((err) => {console.log(err)})
+  }, [imageSrc])
+
   return (
     <View
       style={
@@ -47,10 +61,18 @@ export const PlantImage = ({
     >
       <View style={styles.plantImage__topLeftShadow} />
       <View style={styles.plantImage__bottomRightShadow} />
-      <Image
-        source={{ uri: 'data:image/png;base64,' + imageSrc }}
-        style={styles.plantImage__image}
-      />
+      {isLoaded ?
+        <Image
+          source={{ uri: image }}
+          style={styles.plantImage__image}
+        />
+      :
+        <ActivityIndicator
+          size="large"
+          color="#124A3F"
+          style={{ marginBottom: '10%', marginTop: '20%' }}
+        />
+      }
     </View>
   );
 };

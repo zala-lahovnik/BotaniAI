@@ -92,7 +92,7 @@ export const RecentPlantCard = ({
       </View>
       <Animated.View style={{ height: heightInterpolate }}>
         <RecentPlantDetails
-          plantImage={plant.image || plant.image.buffer}
+          plantImage={plant.image || ''}
           classificationPercent={classificationPercent}
           watering={'NEVEM NEK PODATEK'}
         />
