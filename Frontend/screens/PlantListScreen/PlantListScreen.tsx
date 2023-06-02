@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -17,6 +17,12 @@ import { Drawer } from 'react-native-drawer-layout';
 import { UserContext } from '../../context/UserContext';
 import { filterPlants } from '../../utils/plants-filtering';
 import { PersonalGardenPlant } from '../../types/_plant';
+import {
+  getLastWateredDateIndex,
+  getNextWateringDay,
+  sortPlantsByWateringStatus,
+  WateringStatus,
+} from '../../utils/plant-watering-calculations';
 
 type Props = NativeStackScreenProps<any>;
 const text = 'Your plants';
@@ -27,13 +33,43 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
   const [search, setSearch] = useState('');
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [modalOpen, setModalOpen] = useState(true);
+  const firstRender = React.useRef(true);
 
   const { user, dispatch } = useContext(UserContext);
+
+  const [modalOpen, setModalOpen] = useState(user.notifications);
 
   // const { isLoading, isError, data } = useQuery(['user_personal_garden'], () =>
   //   getUserPersonalGarden('33xOgIFa2DOIfAw2fExTB9MPh8T2')
   // );
+
+  useCallback(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    setModalOpen(false);
+  }, []);
+
+  {
+    /*  TODO: REMOVE THIS PART WHEN THERE IS NEW MONGO COLLECTION */
+  }
+  let personalGardenCopy = [...user.personalGarden];
+  let personalGarden: PersonalGardenPlant[] = [];
+
+  try {
+    personalGarden = user.personalGarden.map((plant) => {
+      return {
+        ...plant,
+        watering: {
+          ...plant.watering,
+          wateringArray: JSON.parse(`[${plant.watering.wateringArray}]`),
+        },
+      };
+    }) as PersonalGardenPlant[];
+  } catch (error) {
+    personalGarden = personalGardenCopy;
+  }
 
   return (
     <>
@@ -53,6 +89,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
           <View
             style={{
               paddingTop: insets.top,
+              paddingBottom: insets.bottom,
               flex: 1,
             }}
           >
@@ -101,7 +138,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
             <BottomNavigationBar navigation={navigation} route={route} />
           </View>
           <BottomModal
-            isVisible={modalOpen}
+            isVisible={modalOpen && firstRender.current}
             onClose={() => setModalOpen(false)}
           >
             <ScrollView
@@ -115,15 +152,30 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
                 flexDirection: 'row',
               }}
             >
-              {/*  TODO: replace this with filtered array */}
-              {[
-                {
-                  latin: 'Lorem',
-                  image: require('../../assets/sample_plant.png'),
-                },
-              ].map((item, index) => (
-                <ModalPlantCard key={index} navigation={navigation} {...item} />
-              ))}
+              {sortPlantsByWateringStatus(personalGarden).map(
+                (plant, index) => {
+                  const wateringArray = plant.watering.wateringArray;
+                  const lastIndex = getLastWateredDateIndex(wateringArray);
+                  const next_watering_index = lastIndex + 1;
+
+                  const next_watering = getNextWateringDay(
+                    new Date(wateringArray[lastIndex].date),
+                    new Date(wateringArray[next_watering_index].date)
+                  );
+                  if (
+                    next_watering === WateringStatus.NotWatered ||
+                    next_watering === WateringStatus.Today
+                  ) {
+                    return (
+                      <ModalPlantCard
+                        key={index}
+                        navigation={navigation}
+                        {...plant}
+                      />
+                    );
+                  }
+                }
+              )}
             </ScrollView>
           </BottomModal>
         </Drawer>

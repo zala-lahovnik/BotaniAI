@@ -7,14 +7,15 @@ import {
 } from 'react-native';
 import WaterIcon from 'react-native-vector-icons/Ionicons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { PersonalGardenPlant } from '../../types/_plant';
 
 type Props = {
-  latin: string;
-  image: string;
+  customName: PersonalGardenPlant['customName'];
+  image: PersonalGardenPlant['image'];
   navigation: NativeStackNavigationProp<any>;
 };
 
-export const ModalPlantCard = ({ navigation, latin, image }: Props) => {
+export const ModalPlantCard = ({ navigation, customName, image }: Props) => {
   return (
     <TouchableOpacity
       style={{ marginHorizontal: 10 }}
@@ -25,7 +26,7 @@ export const ModalPlantCard = ({ navigation, latin, image }: Props) => {
       <ImageBackground
         blurRadius={1.1}
         // TODO: REPLACE THIS WITH URI
-        source={require('../../assets/sample_plant.png')}
+        source={{ uri: 'data:image/png;base64,' + (image.buffer || image) }}
         resizeMode={'cover'}
         style={styles.card}
       >
@@ -35,7 +36,7 @@ export const ModalPlantCard = ({ navigation, latin, image }: Props) => {
           color={'#fff'}
           style={styles.waterIcon}
         />
-        <Text style={styles.text}>{latin}</Text>
+        <Text style={styles.text}>{customName}</Text>
       </ImageBackground>
     </TouchableOpacity>
   );

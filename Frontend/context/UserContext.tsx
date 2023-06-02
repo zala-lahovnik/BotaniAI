@@ -1,14 +1,22 @@
 import { type User } from '../types/_user';
 import { createContext, Dispatch, PropsWithChildren, useReducer } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { type HistoryPlant, type PersonalGardenPlant } from '../types/_plant';
 
 export enum UserActionType {
   UPDATE_USER = 'UPDATE_USER',
   CLEAR_USER = 'CLEAR_USER',
+  UPDATE_PERSONAL_GARDEN = 'UPDATE_PERSONAL_GARDEN',
+  UPDATE_HISTORY = 'UPDATE_HISTORY',
 }
 
 type Action =
   | { type: UserActionType.UPDATE_USER; payload: User }
+  | {
+      type: UserActionType.UPDATE_PERSONAL_GARDEN;
+      payload: PersonalGardenPlant;
+    }
+  | { type: UserActionType.UPDATE_HISTORY; payload: HistoryPlant }
   | { type: UserActionType.CLEAR_USER };
 
 export const initialState: Omit<
@@ -43,6 +51,16 @@ const userReducer = (
       return {
         ...state,
         ...action.payload,
+      };
+    case UserActionType.UPDATE_PERSONAL_GARDEN:
+      return {
+        ...state,
+        personalGarden: [...state.personalGarden, action.payload],
+      };
+    case UserActionType.UPDATE_HISTORY:
+      return {
+        ...state,
+        history: [...state.history, action.payload],
       };
     case UserActionType.CLEAR_USER:
       clearUserAsyncStorage();
