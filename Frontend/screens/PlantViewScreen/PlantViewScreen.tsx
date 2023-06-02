@@ -1,16 +1,30 @@
-import { Text, TextInput, View, Pressable, Image, ScrollView, Alert, } from 'react-native';
-import { Ionicons, AntDesign } from '@expo/vector-icons';
+import {
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useContext, useEffect, useState } from 'react';
-import { CalendarProvider, ExpandableCalendar, } from 'react-native-calendars';
+import { CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
 import moment from 'moment';
 import { styles } from './PlantViewStyles';
 import { BottomNavigationBar } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { auth } from '../../firebase/firebase';
-import { updatePlant, deletePlantFromPersonalGarden, addPlantToPersonalGarden, PersonalGardenObject } from '../../api/_user';
-import { type PersonalGardenPlant } from '../../types/_plant';
+import { auth, getOnlineImageUri } from '../../firebase/firebase';
+import {
+  addPlantToPersonalGarden,
+  deletePlantFromPersonalGarden,
+  PersonalGardenObject,
+  updatePlant,
+} from '../../api/_user';
 import { UserContext } from '../../context/UserContext';
+
 type Props = NativeStackScreenProps<any>;
+
 export const PlantViewScreen = ({ navigation, route }: Props) => {
   const { ...plant } = route.params || {};
   const today: string = new Date().toISOString().split('T')[0];
@@ -24,6 +38,14 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   const minDate: string = moment().startOf('isoWeek').format('YYYY-MM-DD');
   const [dates, setDates] = useState<{ date: string; watered: boolean }[]>(plant.watering?.wateringArray);
   const { user: loggedUser, dispatch } = useContext(UserContext);
+  const [onlineImageUri, setOnlineImageUri] = useState('')
+
+  useEffect(() => {
+    getOnlineImageUri(plant.image || '').then((result) => {
+      setOnlineImageUri(result)
+    }).catch((err) => { console.log(err) })
+  }, [plant.image])
+
   const userId: string = auth.currentUser?.uid || '';
   useEffect(() => {
     if (date && days) {
@@ -204,7 +226,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         )}
       </View>
       <ScrollView >
-        <Image source={{ uri: 'https://www.ambius.com/blog/wp-content/uploads/2019/03/GettyImages-484148116-770x360.jpg', }} style={styles.image} />
+        <Image source={{ uri: onlineImageUri}} style={styles.image} />
         {edit[0] ? (
           <View>
             <View style={styles.middleContainer}>
