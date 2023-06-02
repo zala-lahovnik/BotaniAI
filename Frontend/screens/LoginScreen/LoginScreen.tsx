@@ -75,7 +75,7 @@ export const LoginScreen = ({ navigation }: Props) => {
     const tempUser = await getUserById(userId);
 
     const dispatchUser = {
-      _id: tempUser._id,
+      userId: tempUser._id,
       name: tempUser.name,
       surname: tempUser.surname,
       email: tempUser.email,
@@ -84,6 +84,14 @@ export const LoginScreen = ({ navigation }: Props) => {
       personalGarden: tempUser.personalGarden || [],
     };
     dispatch({ type: UserActionType.UPDATE_USER, payload: dispatchUser });
+
+    AsyncStorage.setItem(
+      '@user',
+      JSON.stringify({
+        userId: dispatchUser.userId,
+        profilePicture: null,
+      })
+    );
   };
 
   WebBrowser.maybeCompleteAuthSession();
@@ -140,7 +148,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                   if (data) {
                     dispatch({
                       type: UserActionType.UPDATE_USER,
-                      payload: data,
+                      payload: {...data, userId: data._id},
                     });
                   }
                 })

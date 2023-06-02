@@ -58,7 +58,7 @@ export const DrawerLayout = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        {(user.userId !== '' || user.email !== '') ?
+        {user.userId !== '' ? (
           <>
             <Text style={styles.headerText}>SIGN OUT</Text>
             <TouchableOpacity
@@ -88,24 +88,24 @@ export const DrawerLayout = ({
               />
             </TouchableOpacity>
           </>
-        :
+        ) : (
           <>
             <Text style={styles.headerText}>SIGN IN</Text>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate("LoginScreen");
+                navigation.navigate('LoginScreen');
               }}
               style={{}}
               activeOpacity={0.8}
             >
               <ArrowRight
-                name={"arrowright"}
+                name={'arrowright'}
                 size={22}
                 color={global.color.heading.color}
               />
             </TouchableOpacity>
           </>
-        }
+        )}
       </View>
       <Divider
         style={{ marginVertical: 5, width: '100%', opacity: 0.5 }}
