@@ -9,7 +9,7 @@ import {
     TouchableWithoutFeedback,
     View,
 } from 'react-native';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
@@ -18,7 +18,9 @@ import { addUser } from '../../api/_user';
 import { StatusBar } from 'expo-status-bar';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
-
+import { UserActionType, UserContext } from '../../context/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { updateAuthorizationToken } from '../../api/_axios_base_url';
 export const RegisterScreen = () => {
     const navigation = useNavigation() as NativeStackNavigationProp<any>;
     const [email, setEmail] = useState('');
@@ -29,17 +31,16 @@ export const RegisterScreen = () => {
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const { user: loggedUser, dispatch } = useContext(UserContext);
     const toggleShowPassword1 = () => {
         setShowPassword1(!showPassword1);
     };
     const toggleShowPassword2 = () => {
         setShowPassword2(!showPassword2);
     };
-
     function handleBack() {
         navigation.goBack();
     }
-
     function handleRegister() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -58,7 +59,6 @@ export const RegisterScreen = () => {
             Alert.alert('Error', 'Enter your name.');
             return;
         }
-
         setDisabled(true);
         createUserWithEmailAndPassword(auth, email, password)
             .then((userCredentials) => {
@@ -71,10 +71,36 @@ export const RegisterScreen = () => {
                     userId: user.uid,
                 };
                 addUser(newUser);
-                //TODO
             })
             .then(() => {
                 setDisabled(false);
+                auth.currentUser?.getIdToken(/* forceRefresh */ true).then(function (idToken) {
+                    AsyncStorage.setItem(
+                        '@userIdToken',
+                        idToken
+                    );
+                    updateAuthorizationToken(idToken)
+                }).catch(function (error) {
+                    console.log("token error" + error)
+                });
+                const dispatchUser = {
+                    userId: auth.currentUser?.uid,
+                    name: first,
+                    surname: last,
+                    email: email,
+                    notifications: false,
+                    history: [],
+                    personalGarden: [],
+                };
+                console.log(dispatchUser)
+                dispatch({ type: UserActionType.UPDATE_USER, payload: dispatchUser });
+                AsyncStorage.setItem(
+                    '@user',
+                    JSON.stringify({
+                        userId: dispatchUser.userId,
+                        profilePicture: null,
+                    })
+                );
                 navigation.navigate('PlantListScreen');
             })
             .catch((error) => {
@@ -82,7 +108,6 @@ export const RegisterScreen = () => {
                 console.log(error);
             });
     }
-
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
