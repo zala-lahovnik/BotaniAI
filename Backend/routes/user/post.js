@@ -209,17 +209,18 @@ router.post('/add-history', upload.any(), async (req, res, next) => {
 
     fs.unlinkSync(filePath);
 
+    const historyPlantId = new ObjectId
 
     collection.updateOne(
     { _id: userId },
     {
         $push: {
-            history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
+            history: { _id: historyPlantId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
         }
     }
     )
     .then(() => {
-        res.status(200).send({imageName: fileName});
+        res.status(200).send({addedId: historyPlantId, imageName: fileName});
     })
     .catch(err => {
         console.error('Failed to add plant to MongoDB:', err);
