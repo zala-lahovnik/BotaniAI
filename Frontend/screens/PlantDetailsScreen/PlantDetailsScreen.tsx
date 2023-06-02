@@ -239,7 +239,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         <Pressable onPress={() =>
           navigation.navigate('PlantViewScreen', {
             latin: latin,
-            image: image,
+            image: imageToSave,
             edit: true,
             common: common,
           })
