@@ -25,31 +25,31 @@ import { type PersonalGardenPlant } from '../../types/_plant';
 type Props = NativeStackScreenProps<any>;
 export const PlantViewScreen = ({ navigation, route }: Props) => {
   const { ...plant } = route.params || {};
-  const [edit, setEdit] = useState<boolean>(false);
+  const today: string = new Date().toISOString().split('T')[0];
+  const [edit, setEdit] = useState<boolean>(plant.edit || false);
   const [name, setName] = useState<string>(plant.customName);
   const [water, setWater] = useState<string>(
-    plant.watering.amountOfWater || '50'
+    plant.watering?.amountOfWater || '50'
   );
-  const [date, setDate] = useState<string>(plant.watering.firstDay);
-  const [days, setDays] = useState<string>(plant.watering.numberOfDays);
-  const [description, setDescription] = useState<string>(plant.description);
+  const [date, setDate] = useState<string>(plant.watering?.firstDay || today);
+  const [days, setDays] = useState<string>(plant.watering?.numberOfDays || "7");
+  const [description, setDescription] = useState<string>(plant.description || "");
   const [markedDates, setMarkedDates] = useState<{
     [date: string]: { selected: boolean; selectedColor: string };
   }>({});
-  const minDate = moment().startOf('isoWeek').format('YYYY-MM-DD');
+  const minDate: string = moment().startOf('isoWeek').format('YYYY-MM-DD');
   const [dates, setDates] = useState<{ date: string; watered: boolean }[]>(
-    plant.watering.wateringArray
+    plant.watering?.wateringArray
   );
-  const today = new Date().toISOString().split('T')[0];
-  const userId = auth.currentUser?.uid || '';
+  const userId: string = auth.currentUser?.uid || '';
   useEffect(() => {
     if (date && days) {
-      setMarkedDates(getBeforeTodayPlusFive(1));
+      setMarkedDates(getBeforeTodayPlusFive());
     }
   }, [date, days]);
-  function getBeforeTodayPlusFive(start: number) {
+  function getBeforeTodayPlusFive() {
     let sortedData: { date: string; watered: boolean }[];
-    if (dates.length > 0) {
+    if (dates && dates.length > 0) {
       const filteredData = dates.filter((item) =>
         moment(item.date).isSameOrBefore(today)
       );
@@ -61,45 +61,47 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     }
 
     let nextFive: { date: string; watered: boolean }[] = [];
-    let startDate = date;
+    let startDate: string = date;
     if (startDate && moment(startDate).isAfter(today)) {
       nextFive = getNextFiveDays(startDate);
     } else {
       startDate = sortedData[0].date;
       nextFive = getNextFiveDays(startDate);
     }
-    const updatedDates = [...sortedData, ...nextFive];
+    const updatedDates: { date: string; watered: boolean; }[] = [...sortedData, ...nextFive];
     const updatedMarkedDates: {
       [date: string]: { selected: boolean; selectedColor: string };
     } = {};
     for (const dateObj of updatedDates) {
       const { date, watered } = dateObj;
-      const selectedColor = watered ? '#1672EC' : '#adc487';
+      const selectedColor: string = watered ? '#1672EC' : '#adc487';
       updatedMarkedDates[date] = { selected: true, selectedColor };
     }
     setDates(updatedDates);
     setMarkedDates(updatedMarkedDates);
-    const newPlant = {
+    const newPlant: {
+      customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
+    } = {
       customName: name,
       firstDay: date,
       numberOfDays: days,
       amountOfWater: water,
       description: description,
-      wateringArray: dates,
+      wateringArray: updatedDates,
     };
     updatePlant(userId, plant._id, newPlant);
     return updatedMarkedDates;
   }
   function getNextFiveDays(startDate: string) {
-    let startingDate = new Date(startDate);
+    let startingDate: Date = new Date(startDate);
     if (moment(startDate).isSameOrBefore(today)) {
       startingDate = new Date(today);
       setDate(today);
     }
-    let i = 1;
+    let i: number = 1;
     let nextFive: { date: string; watered: boolean }[] = [];
     while (i < 5) {
-      const newDate = new Date(
+      const newDate: string = new Date(
         startingDate.getTime() + i * parseInt(days) * 24 * 60 * 60 * 1000
       )
         .toISOString()
@@ -131,8 +133,10 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     ]);
   }
   function handleEditFalse() {
-    setMarkedDates(getBeforeTodayPlusFive(2));
-    const newPlant = {
+    setMarkedDates(getBeforeTodayPlusFive());
+    const newPlant: {
+      customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
+    } = {
       customName: name,
       firstDay: date,
       numberOfDays: days,
