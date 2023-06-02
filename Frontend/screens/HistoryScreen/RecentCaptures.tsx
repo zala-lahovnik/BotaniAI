@@ -24,7 +24,7 @@ export const RecentCaptures = ({ navigation, route }: Props) => {
 
   return (
     <>
-      {user.userId ? (
+      {(user.userId !== '' || user.email !== '') ? (
         <View style={{ paddingTop: insets.top, flex: 1 }}>
           <Header
             navigation={navigation}
