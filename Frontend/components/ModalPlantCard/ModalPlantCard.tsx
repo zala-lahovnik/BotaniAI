@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
 import WaterIcon from 'react-native-vector-icons/Ionicons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { PersonalGardenPlant } from '../../types/_plant';
+import { getOnlineImageUri } from '../../firebase/firebase';
 
 type Props = {
   customName: PersonalGardenPlant['customName'];
@@ -16,6 +17,14 @@ type Props = {
 };
 
 export const ModalPlantCard = ({ navigation, customName, image }: Props) => {
+  const [imageUri, setImageUri] = useState(image || '')
+
+  useEffect(() => {
+    getOnlineImageUri(image).then((result) => {
+      setImageUri(result)
+    }).catch((err) => { console.log(err) })
+  }, [image])
+
   return (
     <TouchableOpacity
       style={{ marginHorizontal: 10 }}
@@ -25,8 +34,7 @@ export const ModalPlantCard = ({ navigation, customName, image }: Props) => {
     >
       <ImageBackground
         blurRadius={1.1}
-        // TODO: REPLACE THIS WITH URI
-        source={{ uri: 'data:image/png;base64,' + (image.buffer || image) }}
+        source={{ uri:  imageUri || ''}}
         resizeMode={'cover'}
         style={styles.card}
       >
