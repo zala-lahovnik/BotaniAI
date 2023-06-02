@@ -85,14 +85,14 @@ Follow these steps to seamlessly set up the backend of the project:
    - Need a refresher? Follow this [tutorial](https://firebase.google.com/docs/web/setup) to find the Database URL.
 
 4. **Firebase Service Account Info:**
-   - Obtain your Firebase service account info following the instructions in the [tutorial](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments).
+   - Obtain your Firebase service account info following the instructions in this [tutorial](https://firebase.google.com/docs/admin/setup#initialize_the_sdk_in_non-google_environments).
 
 5. **Firebase Service Account File:**
    - Save the downloaded `firebase_service_account.json` file into the Backend folder.
 
 6. **Environment Configuration:**
    - Create an `.env` file inside the `Backend` directory.
-   - Paste the MongoDB connection link, Storage bucket info, and the name of the `firebase_service_account.json` file, as shown below:
+   - Paste the MongoDB connection link, Storage bucket info, Firebase database URL and the name of the `firebase_service_account.json` file, as shown below:
 ```
 DATABASE_URI=mongodb://username:password@localhost:27017/database_name
 FIREBASE_DATABASE_URL=YOUR_DATABASE_URL
