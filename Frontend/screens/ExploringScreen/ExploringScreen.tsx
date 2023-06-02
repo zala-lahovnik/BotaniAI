@@ -4,13 +4,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   BottomNavigationBar,
   ExplorePlantCard,
-  Header, NotLoggedIn
+  Header,
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
 import { useQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
-import { getUserHistory } from '../../api/_user';
 
 export const ExploringScreen = ({
   navigation,
@@ -49,7 +48,7 @@ export const ExploringScreen = ({
             </View>
           )}
           <FlatList
-            data={data?.slice(0, 10)}
+            data={data?.sort((a,b) => {if(a.latin > b.latin){return 1;} else if(b.latin > a.latin) {return -1;} else { return 0;}}) || []}
             renderItem={({ item }) => (
               <ExplorePlantCard
                 plant={item}
