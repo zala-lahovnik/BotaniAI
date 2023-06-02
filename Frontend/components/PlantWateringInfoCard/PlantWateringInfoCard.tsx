@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
 import { Divider } from 'react-native-elements';
 import { PlantImage } from '../PlantItemCardOverlay/PlantItemCardOverlay';
@@ -15,6 +15,8 @@ import {
 } from '../../utils/plant-watering-calculations';
 import { global } from '../../styles/globals';
 import { PersonalGardenPlant } from '../../types/_plant';
+import { UserActionType, UserContext } from '../../context/UserContext';
+import { updatePlant } from '../../api/_user';
 
 const PlantWateringInfo = ({
   children,
@@ -55,6 +57,8 @@ export const PlantWateringInfoCard = ({
   const cardAnimation = useRef(new Animated.Value(0)).current;
   const [expanded, setExpanded] = React.useState(false);
 
+  const { user, dispatch } = React.useContext(UserContext);
+
   const lastWateredIndex = getLastWateredDateIndex(
     plant.watering.wateringArray
   );
@@ -71,6 +75,24 @@ export const PlantWateringInfoCard = ({
       useNativeDriver: true,
     }).start();
   };
+
+  // TODO: FIX DATE UPDATE
+  const handleUpdateWateringDate = useCallback(
+    async (plant: PersonalGardenPlant) => {
+      try {
+        const response = await updatePlant(user?.userId, plant._id, plant);
+        if (response) {
+          dispatch({
+            type: UserActionType.UPDATE_PERSONAL_GARDEN,
+            payload: plant,
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    []
+  );
 
   const cardTranslateX = cardAnimation.interpolate({
     inputRange: [0, 1],
@@ -95,8 +117,7 @@ export const PlantWateringInfoCard = ({
         ]}
       >
         <View>
-          {/*TODO: PLANT IMAGE WRONG FORMAT*/}
-          <PlantImage imageSrc={plant.image.buffer || plant.image} small />
+          <PlantImage imageSrc={plant.image || ''} small />
         </View>
         <View style={styles.cardInfoLayout}>
           <View
@@ -158,9 +179,20 @@ export const PlantWateringInfoCard = ({
           style={styles.wateredButtonTouchable}
           activeOpacity={0.8}
           onPress={() => {
-            {
-              /* TODO: set plant as watered*/
-            }
+            // TODO: WHAT IF WATERING IS MISSED
+
+            let dispatchPlant = {
+              ...plant,
+              watering: {
+                ...plant.watering,
+                wateringArray: plant.watering.wateringArray.map((item) =>
+                  item.date === new Date().toISOString().split('T')[0]
+                    ? { ...item, watered: true }
+                    : item
+                ),
+              },
+            };
+            return handleUpdateWateringDate(dispatchPlant);
           }}
         >
           <Text style={styles.wateredButtonText}>Watered</Text>

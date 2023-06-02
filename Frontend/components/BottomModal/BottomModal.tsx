@@ -10,19 +10,34 @@ type Props = PropsWithChildren<{
 }>;
 
 export const BottomModal = ({ children, isVisible, onClose }: Props) => {
-  return (
-    <Modal animationType="slide" visible={isVisible} transparent={true}>
-      <View style={styles.modalContent}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Watering needed!</Text>
-          <Pressable onPress={onClose}>
-            <Close name="close" color={global.color.heading.color} size={25} />
-          </Pressable>
+  let isFirstRender = React.useRef(true);
+
+  if (isFirstRender.current && isVisible) {
+    return (
+      <Modal
+        animationType="slide"
+        visible={isVisible}
+        transparent={true}
+        hardwareAccelerated={true}
+      >
+        <View style={styles.modalContent}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Watering needed!</Text>
+            <Pressable onPress={onClose}>
+              <Close
+                name="close"
+                color={global.color.heading.color}
+                size={25}
+              />
+            </Pressable>
+          </View>
+          {children}
         </View>
-        {children}
-      </View>
-    </Modal>
-  );
+      </Modal>
+    );
+  }
+  isFirstRender.current = false;
+  return null;
 };
 
 const styles = StyleSheet.create({

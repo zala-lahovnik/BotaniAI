@@ -58,33 +58,54 @@ export const DrawerLayout = ({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>SIGN OUT</Text>
-        <TouchableOpacity
-          onPress={() => {
-            Alert.alert('Logout', 'Are you sure you want to logout!', [
-              {
-                text: 'No',
-                onPress: () => {},
-                style: 'cancel',
-              },
-              {
-                text: 'Yes',
-                onPress: () => {
-                  dispatch({ type: UserActionType.CLEAR_USER });
-                  navigation.navigate('LoginScreen');
-                },
-              },
-            ]);
-          }}
-          style={{}}
-          activeOpacity={0.8}
-        >
-          <ArrowRight
-            name={'arrowright'}
-            size={22}
-            color={global.color.heading.color}
-          />
-        </TouchableOpacity>
+        {user.userId !== '' ? (
+          <>
+            <Text style={styles.headerText}>SIGN OUT</Text>
+            <TouchableOpacity
+              onPress={() => {
+                Alert.alert('Logout', 'Are you sure you want to logout!', [
+                  {
+                    text: 'No',
+                    onPress: () => {},
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Yes',
+                    onPress: () => {
+                      dispatch({ type: UserActionType.CLEAR_USER });
+                      navigation.navigate('LoginScreen');
+                    },
+                  },
+                ]);
+              }}
+              style={{}}
+              activeOpacity={0.8}
+            >
+              <ArrowRight
+                name={'arrowright'}
+                size={22}
+                color={global.color.heading.color}
+              />
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <Text style={styles.headerText}>SIGN IN</Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('LoginScreen');
+              }}
+              style={{}}
+              activeOpacity={0.8}
+            >
+              <ArrowRight
+                name={'arrowright'}
+                size={22}
+                color={global.color.heading.color}
+              />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
       <Divider
         style={{ marginVertical: 5, width: '100%', opacity: 0.5 }}

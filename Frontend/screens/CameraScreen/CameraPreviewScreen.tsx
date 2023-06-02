@@ -18,7 +18,7 @@ import { getPlantByLatin } from '../../api/_plant';
 import { Plant } from '../../types/_plant';
 import { global } from '../../styles/globals';
 import { addPlantToHistory } from '../../api/_user';
-import { UserContext } from '../../context/UserContext';
+import { UserActionType, UserContext } from '../../context/UserContext';
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -31,7 +31,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
   const [predictionPercent, setPredictionPercent] = useState('');
   const [fetchedPlantData, setFetchedPlantData] = useState<Plant | null>(null);
   const [currentImageName, setCurrentImageName] = useState<string>('');
-  const { user } = useContext(UserContext);
+  const { user, dispatch } = useContext(UserContext);
 
   async function onPressOnUsePhotoButton() {
     setShowClassResultView(false);
@@ -73,16 +73,24 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
 
     if (user.userId) {
         try {
-
           const uploadResult = await addPlantToHistory({
             userId: user.userId,
             plantId: plantData._id,
             customName: plantData.common,
-            date: Date.now().toString(),
+            date: new Date().toISOString(),
             result: result,
             image: photo.base64,
           });
           setCurrentImageName(uploadResult.imageName)
+
+          dispatch({ type: UserActionType.UPDATE_HISTORY, payload: {
+            _id: uploadResult.addedId,
+            plantId: plantData._id,
+            customName: plantData.common,
+            date: new Date().toISOString(),
+            result: result,
+            image: uploadResult.imageName
+          }})
         } catch (err) {
           console.log('Error while uploading image', err);
         }
@@ -200,15 +208,23 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
                     </Text>
                   </View>
                   <View style={previewStyles.continueButtonContainer}>
-                    <Pressable
-                      style={previewStyles.continueButton}
-                      onPress={onPressOnContinueButton}
-                    >
-                      <Image
-                        source={require('../../assets/arrow-right-icon.png')}
-                        style={previewStyles.continueButtonImage}
+                    {(user.userId ? currentImageName : fetchedPlantData) ?
+                      <Pressable
+                        style={previewStyles.continueButton}
+                        onPress={onPressOnContinueButton}
+                      >
+                        <Image
+                          source={require('../../assets/arrow-right-icon.png')}
+                          style={previewStyles.continueButtonImage}
+                        />
+                      </Pressable>
+                      :
+                      <ActivityIndicator
+                        size="large"
+                        color="#124A3F"
+                        style={{ marginBottom: '10%', marginTop: '20%' }}
                       />
-                    </Pressable>
+                    }
                   </View>
                 </View>
               </View>

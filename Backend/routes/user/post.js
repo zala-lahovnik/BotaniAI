@@ -208,16 +208,17 @@ router.post('/add-history', upload.any(), async (req, res, next) => {
 
         fs.unlinkSync(filePath);
 
+        const historyPlantId = new ObjectId
 
         await collection.updateOne(
             { _id: userId },
             {
                 $push: {
-                    history: { _id: new ObjectId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
+                    history: { _id: historyPlantId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
                 }
             }
         );
-        res.status(200).send({imageName: fileName});
+        res.status(200).send({addedId: historyPlantId, imageName: fileName});
     } catch(err) {
         console.error('Failed to add plant to MongoDB:', err);
         if (err == 'RangeError: offset is out of bounds') {
