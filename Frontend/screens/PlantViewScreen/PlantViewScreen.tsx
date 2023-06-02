@@ -14,7 +14,7 @@ import moment from 'moment';
 import { styles } from './PlantViewStyles';
 import { BottomNavigationBar } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { auth, getOnlineImageUri } from '../../firebase/firebase';
+import { getOnlineImageUri } from '../../firebase/firebase';
 import {
   addPlantToPersonalGarden,
   deletePlantFromPersonalGarden,
@@ -46,7 +46,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     }).catch((err) => { console.log(err) })
   }, [plant.image])
 
-  const userId: string = auth.currentUser?.uid || '';
   useEffect(() => {
     if (date && days) {
       setMarkedDates(getBeforeTodayPlusFive().updatedMarkedDates);
@@ -92,8 +91,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       wateringArray: updatedDates,
       image: plant.image,
     };
-    console.log(plant._id)
-    updatePlant(userId, plant._id, newPlant);
+    updatePlant(loggedUser.userId, plant._id, newPlant);
     return { updatedMarkedDates: updatedMarkedDates, dates: updatedDates };
   }
   function getNextFiveDays(startDate: string) {
@@ -138,7 +136,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           if (edit[1] === true) {
             handleBack()
           }
-          deletePlantFromPersonalGarden(userId, plant._id);
+          deletePlantFromPersonalGarden(loggedUser.userId, plant._id);
           navigation.navigate('PlantListScreen');
         },
       },
@@ -188,7 +186,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             wateringArray: newMDates.dates,
             image: plant.image
           };
-          updatePlant(userId, plant._id, newPlant);
+          updatePlant(loggedUser.userId, plant._id, newPlant);
           setEdit([false, edit[1]]);
         },
       },
