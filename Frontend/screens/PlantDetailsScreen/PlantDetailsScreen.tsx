@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   ImageBackground,
+  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
-  Pressable
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
@@ -18,6 +19,8 @@ import Shovel from 'react-native-vector-icons/MaterialCommunityIcons';
 import Water from 'react-native-vector-icons/Entypo';
 import Calender from 'react-native-vector-icons/AntDesign';
 import { Plant } from '../../types/_plant';
+import { UserContext } from '../../context/UserContext';
+import { getOnlineImageUri } from '../../firebase/firebase';
 
 type Props = NativeStackScreenProps<any>;
 
@@ -76,6 +79,9 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
   const truncatedDescription =
     description.split('').slice(0, 150).join('') + '...';
   const isTruncated = description.split('').length > 150;
+  const { user } = useContext(UserContext)
+  const [imageUri, setImageUri] = useState(image || '')
+  const [isLoaded, setIsLoaded] = useState(false)
 
   const handleExpand = () => {
     setExpanded(!expanded);
@@ -108,23 +114,40 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
       return result;
     }, []);
 
+  useEffect(() => {
+    getOnlineImageUri(image || '').then((result) => {
+      setImageUri(result)
+      setTimeout(() => {
+        setIsLoaded(true)
+      }, 1000)
+    }).catch((err) => {console.log(err)})
+  }, [image])
+
   return (
     <View
       style={{
         flex: 1,
       }}
     >
-      <ImageBackground
-        blurRadius={0.5}
-        fadeDuration={500}
-        source={{ uri: 'data:image/png;base64,' + image }}
-        resizeMode="cover"
-        style={{
-          height: 220,
-          width: '100%',
-          opacity: 0.8,
-        }}
-      />
+      { isLoaded ?
+        <ImageBackground
+          blurRadius={0.5}
+          fadeDuration={500}
+          source={{ uri: imageUri || '' }}
+          resizeMode="cover"
+          style={{
+            height: 220,
+            width: '100%',
+            opacity: 0.8,
+          }}
+        />
+        :
+        <ActivityIndicator
+          size="large"
+          color="#124A3F"
+          style={{ marginBottom: '10%', marginTop: '20%' }}
+        />
+      }
       <BackButton navigation={navigation} />
       <View style={[styles.container]}>
         <View>
@@ -236,28 +259,33 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             })}
           </View>
         </ScrollView>
-        <Pressable onPress={() =>
-          navigation.navigate('PlantViewScreen', {
-            latin: latin,
-            image: image,
-            edit: true,
-          })
-        }>
-          <View style={styles.saveButton}>
-            <Bookmark
-              name={'bookmark'}
-              size={30}
-              color={global.color.heading.color}
-            />
-            <Text
-              style={{
-                color: global.color.heading.color,
-              }}
-            >
-              Save this plant
-            </Text>
-          </View>
-        </Pressable>
+        {user.userId !== '' && (
+          <Pressable
+            onPress={() =>
+              navigation.navigate('PlantViewScreen', {
+                latin: latin,
+                image: image,
+                edit: true,
+                imageToSave,
+              })
+            }
+          >
+            <View style={styles.saveButton}>
+              <Bookmark
+                name={'bookmark'}
+                size={30}
+                color={global.color.heading.color}
+              />
+              <Text
+                style={{
+                  color: global.color.heading.color,
+                }}
+              >
+                Save this plant
+              </Text>
+            </View>
+          </Pressable>
+        )}
       </View>
     </View>
   );

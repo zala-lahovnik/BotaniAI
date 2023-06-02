@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { styles } from '../PlantWateringInfoCard/PlantWateringInfoCardStyles';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import ArrowRight from 'react-native-vector-icons/AntDesign';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { type Plant } from '../../types/_plant';
+import { getOnlineImageUri } from '../../firebase/firebase';
 
 type Props = NativeStackScreenProps<any> & {
   plant: Plant;
 };
 
 export const ExplorePlantCard = ({ plant, navigation }: Props) => {
+  const [imageUri, setImageUri] = useState(plant.image || '')
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  useEffect(() => {
+    getOnlineImageUri(plant.image || '').then((result) => {
+      setImageUri(result)
+      setTimeout(() => {
+        setIsLoaded(true)
+      }, 1000)
+    }).catch((err) => {console.log(err)})
+  }, [plant.image])
+
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -21,10 +41,15 @@ export const ExplorePlantCard = ({ plant, navigation }: Props) => {
       }
       style={[styles.card, style.card]}
     >
-      <Image
-        source={{ uri: 'data:image/png;base64,' + plant?.image }}
-        style={style.image}
-      />
+      {isLoaded ?
+        <Image source={{ uri: imageUri }} style={style.image} />
+        :
+        <ActivityIndicator
+          size="large"
+          color="#124A3F"
+          style={{ marginBottom: '10%', marginTop: '20%' }}
+        />
+      }
       <View style={{ flex: 1, height: '100%' }}>
         <Text style={styles.cardTitle}>{plant?.latin}</Text>
         <Text style={style.description}>{plant?.common}</Text>

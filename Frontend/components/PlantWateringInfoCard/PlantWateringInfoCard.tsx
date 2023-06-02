@@ -117,8 +117,7 @@ export const PlantWateringInfoCard = ({
         ]}
       >
         <View>
-          {/*TODO: PLANT IMAGE WRONG FORMAT*/}
-          <PlantImage imageSrc={plant.image.buffer || plant.image} small />
+          <PlantImage imageSrc={plant.image || ''} small />
         </View>
         <View style={styles.cardInfoLayout}>
           <View
