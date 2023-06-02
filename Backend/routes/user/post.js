@@ -44,10 +44,7 @@ const upload = multer({ storage: storage });
  *       500:
  *         description: Failed to add new user to MongoDB
  */
-router.post('/add-user', upload.none(), authMiddleware, async (req, res, next) => {
-    if (req.params.userId !== req.userId) {
-      return res.status(401).json({ message: 'Unauthorized access' });
-    }
+router.post('/add-user', upload.none(), async (req, res, next) => {
     try {
         const { userId, name, surname, email, notifications } = req.body;
     
