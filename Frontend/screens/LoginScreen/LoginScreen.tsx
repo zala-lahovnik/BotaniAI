@@ -65,24 +65,23 @@ export const LoginScreen = ({ navigation }: Props) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredentials: { user: any }) => {
         const user = userCredentials.user;
-        console.log('Logged in with : ', user);
-        // handleUserLogin(user.uid);
+        handleUserLogin(user.uid);
       })
       .then(() => navigation.navigate('PlantListScreen'))
       .catch((error: { message: any }) => alert(error.message));
   }
 
   const handleUserLogin = async (userId: string) => {
-    const user = await getUserById(userId);
+    const tempUser = await getUserById(userId);
 
     const dispatchUser = {
-      _id: user._id,
-      name: user.name,
-      surname: user.surname,
-      email: user.email,
-      notifications: user.notifications,
-      history: user.history || [],
-      personalGarden: user.personalGarden || [],
+      _id: tempUser._id,
+      name: tempUser.name,
+      surname: tempUser.surname,
+      email: tempUser.email,
+      notifications: tempUser.notifications,
+      history: tempUser.history || [],
+      personalGarden: tempUser.personalGarden || [],
     };
     dispatch({ type: UserActionType.UPDATE_USER, payload: dispatchUser });
   };
