@@ -92,7 +92,8 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       wateringArray: updatedDates,
       image: plant.image,
     };
-    updatePlant(userId, "", newPlant);
+    console.log(plant._id)
+    updatePlant(userId, plant._id, newPlant);
     return { updatedMarkedDates: updatedMarkedDates, dates: updatedDates };
   }
   function getNextFiveDays(startDate: string) {
@@ -226,7 +227,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         )}
       </View>
       <ScrollView >
-        <Image source={{ uri: onlineImageUri}} style={styles.image} />
+        <Image source={{ uri: onlineImageUri }} style={styles.image} />
         {edit[0] ? (
           <View>
             <View style={styles.middleContainer}>

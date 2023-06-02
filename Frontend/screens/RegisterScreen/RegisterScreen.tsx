@@ -92,7 +92,6 @@ export const RegisterScreen = () => {
                     history: [],
                     personalGarden: [],
                 };
-                console.log(dispatchUser)
                 dispatch({ type: UserActionType.UPDATE_USER, payload: dispatchUser });
                 AsyncStorage.setItem(
                     '@user',
