@@ -74,7 +74,7 @@ const userReducer = (
     case UserActionType.UPDATE_HISTORY:
       return {
         ...state,
-        history: [...state.history, action.payload],
+        history: [action.payload, ...state.history],
       };
     case UserActionType.CLEAR_USER:
       clearUserAsyncStorage();
