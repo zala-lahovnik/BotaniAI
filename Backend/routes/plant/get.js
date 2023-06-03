@@ -1,8 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { ObjectId } = require('mongodb');
-const { getDB } = require('../../db/db');
-
+const { ObjectId } = require("mongodb");
+const { getDB } = require("../../db/db");
 
 /**
  * Get a plant by its Latin name
@@ -28,24 +27,23 @@ const { getDB } = require('../../db/db');
  *       500:
  *         description: Failed to retrieve plant from MongoDB
  */
-router.get('/latin/:plantName', async (req, res) => {
-    const latinName = decodeURIComponent(req.params.plantName);
+router.get("/latin/:plantName", async (req, res) => {
+  const latinName = decodeURIComponent(req.params.plantName);
 
-    try {
-      const db = getDB();
-      const collection = db.collection('plant');
+  try {
+    const db = getDB();
+    const collection = db.collection("plant");
 
-      const plant = await collection.findOne({ latin: latinName });
-      if (!plant) {
-        return res.status(404).send('Plant not found');
-      }
-      res.status(200).json(plant);
-    } catch(err) {
-      console.error('Failed to retrieve plant from MongoDB:', err);
-      res.status(500).send('Failed to retrieve plant from MongoDB');
-    };
+    const plant = await collection.findOne({ latin: latinName });
+    if (!plant) {
+      return res.status(404).send("Plant not found");
+    }
+    res.status(200).json(plant);
+  } catch (err) {
+    console.error("Failed to retrieve plant from MongoDB:", err);
+    res.status(500).send("Failed to retrieve plant from MongoDB");
+  }
 });
-
 
 /**
  * Get a plant by its ID
@@ -71,24 +69,23 @@ router.get('/latin/:plantName', async (req, res) => {
  *       500:
  *         description: Failed to retrieve plant from MongoDB
  */
-router.get('/:plantId', async (req, res) => {
-    const plantId = req.params.plantId;
+router.get("/:plantId", async (req, res) => {
+  const plantId = req.params.plantId;
 
-    try {
-      const db = getDB();
-      const collection = db.collection('plant');
+  try {
+    const db = getDB();
+    const collection = db.collection("plant");
 
-      const plant = await collection.findOne({ _id: new ObjectId(plantId) });
-      if (!plant) {
-        return res.status(404).send('Plant not found');
-      }
-      res.status(200).json(plant);
-    } catch(err) {
-      console.error('Failed to retrieve plant from MongoDB:', err);
-      res.status(500).send('Failed to retrieve plant from MongoDB');
-    };
+    const plant = await collection.findOne({ _id: new ObjectId(plantId) });
+    if (!plant) {
+      return res.status(404).send("Plant not found");
+    }
+    res.status(200).json(plant);
+  } catch (err) {
+    console.error("Failed to retrieve plant from MongoDB:", err);
+    res.status(500).send("Failed to retrieve plant from MongoDB");
+  }
 });
-
 
 /**
  * Get all plants
@@ -99,6 +96,17 @@ router.get('/:plantId', async (req, res) => {
  *     description: Retrieve all plants from the database.
  *     tags:
  *       - Plant
+ *     parameters:
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: The maximum number of plants to retrieve
+ *       - in: query
+ *         name: offset
+ *         schema:
+ *           type: integer
+ *         description: The number of plants to skip
  *     responses:
  *       200:
  *         description: List of plants
@@ -109,17 +117,25 @@ router.get('/:plantId', async (req, res) => {
  *       500:
  *         description: Failed to retrieve plants from MongoDB
  */
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
+  const pageParam = parseInt(req.query.pageParam) || 1;
+  const limit = 15;
+  const offset = (pageParam - 1) * limit;
+
   try {
     const db = getDB();
-    const collection = db.collection('plant');
+    const collection = db.collection("plant");
 
-    let plants = await collection.find({}).toArray();
+    const plants = await collection
+      .find({})
+      .skip(offset)
+      .limit(limit)
+      .toArray();
     res.status(200).json(plants);
-  } catch(err) {
-      console.error('Failed to retrieve plants from MongoDB:', err);
-      res.status(500).send('Failed to retrieve plants from MongoDB');
-  };
+  } catch (err) {
+    console.error("Failed to retrieve plants from MongoDB:", err);
+    res.status(500).send("Failed to retrieve plants from MongoDB");
+  }
 });
 
 module.exports = router;

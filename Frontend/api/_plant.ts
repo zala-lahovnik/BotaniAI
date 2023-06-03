@@ -1,9 +1,13 @@
 import { instance } from './_axios_base_url';
 import { type Plant } from '../types/_plant';
 
-export const getAllPlants = async () => {
-  const response = instance.get('/plant');
-  return (await response).data as Plant[];
+export const getAllPlants = async (pageParam: number) => {
+  const response = await instance.get('/plant', {
+    params: {
+      pageParam,
+    },
+  });
+  return response.data as Plant[];
 };
 
 export const getPlantById = async (plantId: string) => {
