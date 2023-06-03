@@ -47,7 +47,7 @@ router.delete('/:userId/personal-garden/:plantId', async (req, res) => {
         }
 
         const personalGarden = user.personalGarden;
-        const updatedGarden = personalGarden.filter(obj => !obj._id.toString() === (plantId));
+        const updatedGarden = personalGarden.filter(obj => obj._id.toString() !== (plantId));
 
         await userCollection.updateOne(
             { _id: userId },
