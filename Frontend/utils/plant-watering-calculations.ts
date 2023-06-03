@@ -75,12 +75,8 @@ export const sortPlantsByWateringStatus = (
   const sortedPlants = [...plants];
 
   sortedPlants.sort((a, b) => {
-    const lastWateredIndexA = a.watering.wateringArray.findIndex(
-      (plant) => plant.watered
-    );
-    const lastWateredIndexB = b.watering.wateringArray.findIndex(
-      (plant) => plant.watered
-    );
+    const lastWateredIndexA = findLastWateredIndex(a.watering.wateringArray);
+    const lastWateredIndexB = findLastWateredIndex(b.watering.wateringArray);
 
     const lastWateredDateA = new Date(
       a.watering.wateringArray[lastWateredIndexA].date
@@ -138,6 +134,15 @@ export const sortPlantsByWateringStatus = (
   });
 
   return sortedPlants;
+};
+
+const findLastWateredIndex = (wateringArray: any[]): number => {
+  for (let i = wateringArray.length - 1; i >= 0; i--) {
+    if (wateringArray[i].watered) {
+      return i;
+    }
+  }
+  return -1; // Return -1 if no object with watered: true is found
 };
 
 export const getNextWateringDay = (

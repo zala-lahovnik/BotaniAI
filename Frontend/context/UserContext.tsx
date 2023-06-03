@@ -12,6 +12,7 @@ export enum UserActionType {
 
 type Action =
   | { type: UserActionType.UPDATE_USER; payload: User }
+  | { type: UserActionType.UPDATE_USER; payload: PersonalGardenPlant[] }
   | {
       type: UserActionType.UPDATE_PERSONAL_GARDEN;
       payload: PersonalGardenPlant;
@@ -55,8 +56,9 @@ const userReducer = (
     case UserActionType.UPDATE_PERSONAL_GARDEN:
       return {
         ...state,
-        personalGarden: [...state.personalGarden, action.payload],
+        personalGarden: action.payload as PersonalGardenPlant[],
       };
+
     case UserActionType.UPDATE_HISTORY:
       return {
         ...state,

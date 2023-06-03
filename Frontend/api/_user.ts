@@ -61,7 +61,7 @@ export const updateUserNotifications = async (
   return response.data;
 };
 
-type UpdatePlant = {
+export type UpdatePlant = {
   description: string;
   customName: string;
   firstDay: string;
