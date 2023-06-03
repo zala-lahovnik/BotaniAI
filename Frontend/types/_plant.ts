@@ -40,3 +40,8 @@ export interface PersonalGardenPlant {
   };
   image: any;
 }
+
+export interface PersonalGardenWateringArrayType {
+  date: string;
+  watered: boolean;
+}

@@ -4,20 +4,20 @@ import { global } from '../../styles/globals';
 export const styles = StyleSheet.create({
   card: {
     marginVertical: 10,
+    padding: 5,
+    borderRadius: 10,
+    height: 100,
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowRadius: 3,
     elevation: 4,
-    backgroundColor: 'white',
-    padding: 5,
-    borderRadius: 10,
-    height: 100,
-    position: 'relative',
-    overflow: 'hidden',
   },
   cardLayout: {
     flexDirection: 'row',

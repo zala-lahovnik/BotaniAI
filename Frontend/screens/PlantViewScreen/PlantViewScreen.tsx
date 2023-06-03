@@ -9,8 +9,8 @@ import {
   View,
 } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { useContext, useEffect, useRef, useState } from 'react';
-import { CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
+import { useContext, useEffect, useState } from 'react';
+import { Calendar, CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
 import moment from 'moment';
 import { styles } from './PlantViewStyles';
 import { BottomNavigationBar } from '../../components';
@@ -23,6 +23,11 @@ import {
   updatePlant,
 } from '../../api/_user';
 import { UserContext } from '../../context/UserContext';
+import {
+  createNewWateringDaysPro,
+  getWateringDaysPro,
+} from '../../utils/plant-watering-calculations';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<any>;
 
@@ -50,39 +55,43 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   }, [plant.image])
 
   useEffect(() => {
-    if (date && days) {
-      setMarkedDates(getBeforeTodayPlusFive().updatedMarkedDates);
-    }
-  }, [date, days]);
-  function getBeforeTodayPlusFive() {
-    let sortedData: { date: string; watered: boolean }[];
-    if (dates && dates.length > 0) {
-      const filteredData = dates.filter((item) =>
-        moment(item.date).isSameOrBefore(today)
-      );
-      sortedData = filteredData.sort((a, b) =>
-        moment(b.date).diff(moment(a.date))
-      );
+    if (plant._id)
+      setMarkedDates(updateMarkedDays().updatedMarkedDates);
+  }, [days]);
+
+  useEffect(() => {
+    if (today >= date) {
+      if (plant._id)
+        setDates(getWateringDaysPro(days, date, plant.watering?.wateringArray || []))
     } else {
-      sortedData = [{ date: date, watered: false }];
+      if (plant._id)
+        setDates(getWateringDaysPro(days, today, plant.watering?.wateringArray || []))
+      console.log('Date cannot be in the future');
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Please select the last time you watered the plant.',
+        position: "bottom",
+        visibilityTime: 1500,
+      });
+      setDate(today)
     }
-    let nextFive: { date: string; watered: boolean }[] = [];
-    let startDate: string = date;
-    if (startDate && moment(startDate).isAfter(today)) {
-      nextFive = getNextFiveDays(startDate);
-    } else {
-      startDate = sortedData[0].date;
-      nextFive = getNextFiveDays(startDate);
-    }
-    const updatedDates: { date: string; watered: boolean; }[] = [...sortedData, ...nextFive];
-    const updatedMarkedDates: {
+  }, [date])
+
+  function updateMarkedDays() {
+    console.log('update', days, date, []);
+    const sortedDatesPro = getWateringDaysPro(plant.watering?.days || days, plant.watering?.firstDay || date, plant.watering?.wateringArray || [])
+    const newMarkedDatesPro: {
       [date: string]: { selected: boolean; selectedColor: string };
     } = {};
-    for (const dateObj of updatedDates) {
-      const { date, watered } = dateObj;
-      const selectedColor: string = watered ? '#1672EC' : '#adc487';
-      updatedMarkedDates[date] = { selected: true, selectedColor };
-    }
+
+    sortedDatesPro.forEach((item) => {
+      const selectedColor: string = item.watered ? '#1672EC' : '#adc487';
+      newMarkedDatesPro[item.date] = { selected: true, selectedColor };
+    })
+    setMarkedDates(newMarkedDatesPro)
+    setDates(sortedDatesPro)
+
     const newPlant: {
       image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
     } = {
@@ -91,33 +100,11 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       numberOfDays: days,
       amountOfWater: water,
       description: description,
-      wateringArray: updatedDates,
+      wateringArray: sortedDatesPro,
       image: plant.image,
     };
     updatePlant(loggedUser.userId, plant._id, newPlant);
-    return { updatedMarkedDates: updatedMarkedDates, dates: updatedDates };
-  }
-  function getNextFiveDays(startDate: string) {
-    let startingDate: Date = new Date(startDate);
-    if (moment(startDate).isSameOrBefore(today)) {
-      startingDate = new Date(today);
-      setDate(today);
-    }
-    let i: number = 0;
-    let nextFive: { date: string; watered: boolean }[] = [];
-
-    if (edit[1] === true) {
-      const previousDate = new Date(startingDate);
-      previousDate.setDate(startingDate.getDate() - parseInt(days));
-      nextFive.push({ date: previousDate.toISOString().slice(0, 10), watered: true })
-    }
-    while (i <= 5) {
-      const newDate: string = new Date(
-        startingDate.getTime() + i * parseInt(days) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-      nextFive.push({ date: newDate, watered: false });
-      i++;
-    }
-    return nextFive;
+    return { updatedMarkedDates: newMarkedDatesPro, dates: sortedDatesPro };
   }
 
   function handleBack() {
@@ -128,16 +115,31 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   }
   function handleDelete() {
     setModalVisible1(!modalVisible1)
+
+
     if (edit[1] === true) {
       handleBack()
     }
     deletePlantFromPersonalGarden(loggedUser.userId, plant._id);
     navigation.navigate('PlantListScreen');
+
   }
   async function handleEditFalse() {
     setModalVisible2(!modalVisible2)
 
+    const sortedDatesPro = getWateringDaysPro(days, date, plant.watering?.wateringArray || [])
+    const newMarkedDatesPro: {
+      [date: string]: { selected: boolean; selectedColor: string };
+    } = {};
+
+    sortedDatesPro.forEach((item) => {
+      const selectedColor: string = item.watered ? '#1672EC' : '#adc487';
+      newMarkedDatesPro[item.date] = { selected: true, selectedColor };
+    })
+    setMarkedDates(newMarkedDatesPro)
     if (edit[1] === true) {
+      const newDates = createNewWateringDaysPro(days, date)
+
       const plantData: PersonalGardenObject = {
         userId: loggedUser.userId,
         latin: plant.latin,
@@ -147,7 +149,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         firstDay: date,
         numberOfDays: parseInt(days),
         amountOfWater: parseInt(water),
-        wateringArray: getNextFiveDays(date),
+        wateringArray: newDates,
         image: plant.imageToSave || plant.image,
       };
       setEdit([edit[0], false]);
@@ -159,8 +161,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         console.error('Failed to add plant:', error);
       }
     }
-    const newMDates = getBeforeTodayPlusFive()
-    setMarkedDates(newMDates.updatedMarkedDates);
     const newPlant: {
       image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
     } = {
@@ -169,7 +169,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       numberOfDays: days,
       amountOfWater: water,
       description: description,
-      wateringArray: newMDates.dates,
+      wateringArray: sortedDatesPro,
       image: plant.image
     };
     updatePlant(loggedUser.userId, plant._id, newPlant);
@@ -180,13 +180,11 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   return (
     <View style={{ flex: 1 }}>
       <View style={[styles.container, { marginBottom: 90 }]}>
-
-
         <Modal animationType="slide" transparent={true} visible={modalVisible1} onRequestClose={() => { setModalVisible1(!modalVisible1); }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={{ fontWeight: 'bold', fontSize: 24 }} >Delete plant?</Text>
-              <Text style={{ paddingBottom: 20, paddingTop: 10 }}>Do you wish to delete this plant?</Text>
+              <Text style={{ paddingBottom: 20, paddingTop: 10, fontSize: 18 }}>Do you wish to delete this plant?</Text>
               <View style={{ flexDirection: 'row', marginVertical: 5 }}>
                 <Pressable style={[{ backgroundColor: '#B00020', padding: 10 }, styles.modalText]} onPress={handleDelete}><Text style={{ color: 'white', textAlign: 'center' }}>Delete</Text></Pressable>
                 <Pressable style={[{ backgroundColor: '#124A3F' }, styles.modalText]} onPress={() => setModalVisible1(!modalVisible1)}><Text style={{ color: 'white', textAlign: 'center' }}> Cancel</Text></Pressable>
@@ -194,12 +192,11 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             </View>
           </View>
         </Modal>
-
         <Modal animationType="slide" transparent={true} visible={modalVisible2} onRequestClose={() => { setModalVisible2(!modalVisible2); }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={{ fontWeight: 'bold', fontSize: 24 }} >Save plant?</Text>
-              <Text style={{ paddingBottom: 20, paddingTop: 10 }}>Do you wish to save this plant?</Text>
+              <Text style={{ paddingBottom: 20, paddingTop: 10, fontSize: 18 }}>Do you wish to save this plant?</Text>
               <View style={{ flexDirection: 'row', marginVertical: 5 }}>
                 <Pressable style={[{ backgroundColor: '#124A3F' }, styles.modalText]} onPress={handleEditFalse}><Text style={{ color: 'white', textAlign: 'center' }}>Save</Text></Pressable>
                 <Pressable style={[{ backgroundColor: '#B00020' }, styles.modalText]} onPress={() => setModalVisible2(!modalVisible2)}><Text style={{ color: 'white', textAlign: 'center' }}> Cancel</Text></Pressable>
@@ -207,12 +204,6 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             </View>
           </View>
         </Modal>
-
-
-
-
-
-
         <Pressable style={styles.puscica}>
           <Ionicons
             name="arrow-back"
@@ -222,27 +213,25 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           />
         </Pressable>
         <Text style={styles.ime}>{plant.latin}</Text>
-        {
-          edit[0] ? (
-            <Pressable style={styles.edit} onPress={() => setModalVisible2(!modalVisible2)}>
-              <Ionicons
-                name="checkmark-done"
-                size={24}
-                color="black"
-              />
-            </Pressable>
-          ) : (
-            <Pressable style={styles.edit}>
-              <AntDesign
-                name="edit"
-                size={24}
-                color="black"
-                onPress={handleEditTrue}
-              />
-            </Pressable>
-          )
-        }
-      </View >
+        {edit[0] ? (
+          <Pressable style={styles.edit} onPress={() => setModalVisible2(!modalVisible2)}>
+            <Ionicons
+              name="checkmark-done"
+              size={24}
+              color="black"
+            />
+          </Pressable>
+        ) : (
+          <Pressable style={styles.edit}>
+            <AntDesign
+              name="edit"
+              size={24}
+              color="black"
+              onPress={handleEditTrue}
+            />
+          </Pressable>
+        )}
+      </View>
       <ScrollView >
         <Image source={{ uri: onlineImageUri }} style={styles.image} />
         {edit[0] ? (
@@ -299,6 +288,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             <View>
               <CalendarProvider date={minDate}>
                 <ExpandableCalendar
+                  aria-expanded={true}
                   firstDay={1}
                   onDayPress={(day) => setDate(day.dateString)}
                   theme={{
@@ -314,6 +304,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
                   }}
                 />
               </CalendarProvider>
+
             </View>
           </View>
         ) : (
@@ -337,23 +328,22 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
               <Text style={styles.text3}>{description}</Text>
             </View>
             <View>
-              <CalendarProvider date={minDate}>
-                <ExpandableCalendar
-                  firstDay={1}
-                  markedDates={markedDates}
-                  theme={{
-                    calendarBackground: '#ffffff',
-                    selectedDayBackgroundColor: 'white',
-                    monthTextColor: 'black',
-                    dayTextColor: 'black',
-                    todayTextColor: '#adadac',
-                    selectedDayTextColor: 'black',
-                    textSectionTitleColor: 'black',
-                    textDisabledColor: 'grey',
-                    arrowColor: 'black',
-                  }}
-                />
-              </CalendarProvider>
+              <Calendar
+                minDate={minDate}
+                firstDay={1}
+                markedDates={markedDates}
+                theme={{
+                  calendarBackground: '#ffffff',
+                  selectedDayBackgroundColor: 'white',
+                  monthTextColor: 'black',
+                  dayTextColor: 'black',
+                  todayTextColor: '#adadac',
+                  selectedDayTextColor: 'black',
+                  textSectionTitleColor: 'black',
+                  textDisabledColor: 'grey',
+                  arrowColor: 'black',
+                }}
+              />
             </View>
           </View>
         )}
@@ -369,7 +359,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           </View>
         </Pressable>
       </ScrollView>
-      <BottomNavigationBar navigation={navigation} route={route} />
+      <BottomNavigationBar navigation={navigation} route={route} /><Toast />
     </View >
   );
 };
