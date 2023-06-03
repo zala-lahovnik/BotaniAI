@@ -1,6 +1,7 @@
 import {
   Alert,
   Image,
+  Modal,
   Pressable,
   ScrollView,
   Text,
@@ -8,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
 import moment from 'moment';
 import { styles } from './PlantViewStyles';
@@ -39,6 +40,8 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   const [dates, setDates] = useState<{ date: string; watered: boolean }[]>(plant.watering?.wateringArray);
   const { user: loggedUser, dispatch } = useContext(UserContext);
   const [onlineImageUri, setOnlineImageUri] = useState('')
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
 
   useEffect(() => {
     getOnlineImageUri(plant.image || '').then((result) => {
@@ -124,78 +127,92 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     setEdit([true, edit[1]]);
   }
   function handleDelete() {
-    Alert.alert('Delete plant', `Do you wish to delete this plant?`, [
-      {
-        text: 'No',
-        style: 'cancel',
-      },
-      {
-        text: 'Yes',
-        onPress: () => {
-
-          if (edit[1] === true) {
-            handleBack()
-          }
-          deletePlantFromPersonalGarden(loggedUser.userId, plant._id);
-          navigation.navigate('PlantListScreen');
-        },
-      },
-    ]);
+    setModalVisible1(!modalVisible1)
+    if (edit[1] === true) {
+      handleBack()
+    }
+    deletePlantFromPersonalGarden(loggedUser.userId, plant._id);
+    navigation.navigate('PlantListScreen');
   }
   async function handleEditFalse() {
-    Alert.alert('Save', `Do you wish to save this plant?`, [
-      {
-        text: 'No',
-        style: 'cancel',
-      },
-      {
-        text: 'Yes',
-        onPress: async () => {
-          if (edit[1] === true) {
-            const plantData: PersonalGardenObject = {
-              userId: loggedUser.userId,
-              latin: plant.latin,
-              common: plant.common,
-              customName: name,
-              description: description,
-              firstDay: date,
-              numberOfDays: parseInt(days),
-              amountOfWater: parseInt(water),
-              wateringArray: getNextFiveDays(date),
-              image: plant.imageToSave || plant.image,
-            };
-            setEdit([edit[0], false]);
-            try {
-              await addPlantToPersonalGarden(plantData);
-              console.log('Plant added successfully');
-              navigation.navigate("PlantListScreen")
-            } catch (error) {
-              console.error('Failed to add plant:', error);
-            }
-          }
-          const newMDates = getBeforeTodayPlusFive()
-          setMarkedDates(newMDates.updatedMarkedDates);
-          const newPlant: {
-            image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
-          } = {
-            customName: name,
-            firstDay: date,
-            numberOfDays: days,
-            amountOfWater: water,
-            description: description,
-            wateringArray: newMDates.dates,
-            image: plant.image
-          };
-          updatePlant(loggedUser.userId, plant._id, newPlant);
-          setEdit([false, edit[1]]);
-        },
-      },
-    ]);
+    setModalVisible2(!modalVisible2)
+
+    if (edit[1] === true) {
+      const plantData: PersonalGardenObject = {
+        userId: loggedUser.userId,
+        latin: plant.latin,
+        common: plant.common,
+        customName: name,
+        description: description,
+        firstDay: date,
+        numberOfDays: parseInt(days),
+        amountOfWater: parseInt(water),
+        wateringArray: getNextFiveDays(date),
+        image: plant.imageToSave || plant.image,
+      };
+      setEdit([edit[0], false]);
+      try {
+        await addPlantToPersonalGarden(plantData);
+        console.log('Plant added successfully');
+        navigation.navigate("PlantListScreen")
+      } catch (error) {
+        console.error('Failed to add plant:', error);
+      }
+    }
+    const newMDates = getBeforeTodayPlusFive()
+    setMarkedDates(newMDates.updatedMarkedDates);
+    const newPlant: {
+      image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
+    } = {
+      customName: name,
+      firstDay: date,
+      numberOfDays: days,
+      amountOfWater: water,
+      description: description,
+      wateringArray: newMDates.dates,
+      image: plant.image
+    };
+    updatePlant(loggedUser.userId, plant._id, newPlant);
+    setEdit([false, edit[1]]);
+
 
   }
   return (
     <View style={{ flex: 1 }}>
       <View style={[styles.container, { marginBottom: 90 }]}>
+
+
+        <Modal animationType="slide" transparent={true} visible={modalVisible1} onRequestClose={() => { setModalVisible1(!modalVisible1); }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={{ fontWeight: 'bold', fontSize: 24 }} >Delete plant?</Text>
+              <Text style={{ paddingBottom: 20, paddingTop: 10 }}>Do you wish to delete this plant?</Text>
+              <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+                <Pressable style={[{ backgroundColor: '#B00020', padding: 10 }, styles.modalText]} onPress={handleDelete}><Text style={{ color: 'white', textAlign: 'center' }}>Delete</Text></Pressable>
+                <Pressable style={[{ backgroundColor: '#124A3F' }, styles.modalText]} onPress={() => setModalVisible1(!modalVisible1)}><Text style={{ color: 'white', textAlign: 'center' }}> Cancel</Text></Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal animationType="slide" transparent={true} visible={modalVisible2} onRequestClose={() => { setModalVisible2(!modalVisible2); }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={{ fontWeight: 'bold', fontSize: 24 }} >Save plant?</Text>
+              <Text style={{ paddingBottom: 20, paddingTop: 10 }}>Do you wish to save this plant?</Text>
+              <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+                <Pressable style={[{ backgroundColor: '#124A3F' }, styles.modalText]} onPress={handleEditFalse}><Text style={{ color: 'white', textAlign: 'center' }}>Save</Text></Pressable>
+                <Pressable style={[{ backgroundColor: '#B00020' }, styles.modalText]} onPress={() => setModalVisible2(!modalVisible2)}><Text style={{ color: 'white', textAlign: 'center' }}> Cancel</Text></Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+
+
+
+
+
         <Pressable style={styles.puscica}>
           <Ionicons
             name="arrow-back"
@@ -205,25 +222,27 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           />
         </Pressable>
         <Text style={styles.ime}>{plant.latin}</Text>
-        {edit[0] ? (
-          <Pressable style={styles.edit} onPress={handleEditFalse}>
-            <Ionicons
-              name="checkmark-done"
-              size={24}
-              color="black"
-            />
-          </Pressable>
-        ) : (
-          <Pressable style={styles.edit}>
-            <AntDesign
-              name="edit"
-              size={24}
-              color="black"
-              onPress={handleEditTrue}
-            />
-          </Pressable>
-        )}
-      </View>
+        {
+          edit[0] ? (
+            <Pressable style={styles.edit} onPress={() => setModalVisible2(!modalVisible2)}>
+              <Ionicons
+                name="checkmark-done"
+                size={24}
+                color="black"
+              />
+            </Pressable>
+          ) : (
+            <Pressable style={styles.edit}>
+              <AntDesign
+                name="edit"
+                size={24}
+                color="black"
+                onPress={handleEditTrue}
+              />
+            </Pressable>
+          )
+        }
+      </View >
       <ScrollView >
         <Image source={{ uri: onlineImageUri }} style={styles.image} />
         {edit[0] ? (
@@ -338,7 +357,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             </View>
           </View>
         )}
-        <Pressable style={styles.buttonContainer} onPress={handleDelete}>
+        <Pressable style={styles.buttonContainer} onPress={() => setModalVisible1(!modalVisible1)}>
           <View style={styles.button}>
             <Ionicons
               name="trash"
