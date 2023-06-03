@@ -1,14 +1,4 @@
-import {
-    Alert,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    Text,
-    TextInput,
-    TouchableWithoutFeedback,
-    View,
-} from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, Pressable, Text, TextInput, TouchableWithoutFeedback, View, } from 'react-native';
 import { useState, useContext } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -20,6 +10,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 export const RegisterScreen = () => {
     const navigation = useNavigation() as NativeStackNavigationProp<any>;
     const [email, setEmail] = useState('');
@@ -43,19 +34,43 @@ export const RegisterScreen = () => {
     function handleRegister() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            Alert.alert('Error', 'Invalid email address.');
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Invalid email address.',
+                position: "bottom",
+                visibilityTime: 1500,
+            });
             return;
         }
         if (password !== confirm) {
-            Alert.alert('Error', 'Passwords do not match.');
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Passwords do not match.',
+                position: "bottom",
+                visibilityTime: 1500,
+            });
             return;
         }
         if (password.length < 6) {
-            Alert.alert('Error', 'Password should be at least 6 characters long.');
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Password should be at least 6 characters long.',
+                position: "bottom",
+                visibilityTime: 1500,
+            });
             return;
         }
         if (first.length < 2 && last.length < 2) {
-            Alert.alert('Error', 'Enter your name.');
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Enter your name.',
+                position: "bottom",
+                visibilityTime: 1500,
+            });
             return;
         }
         setDisabled(true);
@@ -101,8 +116,7 @@ export const RegisterScreen = () => {
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ flex: 1 }}
-        >
+            style={{ flex: 1 }}>
             <StatusBar style="auto" />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View style={[styles.container]}>
@@ -178,7 +192,7 @@ export const RegisterScreen = () => {
                         <Text style={styles.buttonText}>Continue</Text>
                     </Pressable>
                 </View>
-            </TouchableWithoutFeedback>
+            </TouchableWithoutFeedback><Toast />
         </KeyboardAvoidingView>
     );
 };
