@@ -7,6 +7,7 @@ export enum UserActionType {
   UPDATE_USER = 'UPDATE_USER',
   CLEAR_USER = 'CLEAR_USER',
   UPDATE_PERSONAL_GARDEN = 'UPDATE_PERSONAL_GARDEN',
+  DELETE_PLANT_FROM_PERSONAL_GARDEN = 'DELETE_PLANT_FROM_PERSONAL_GARDEN',
   UPDATE_HISTORY = 'UPDATE_HISTORY',
 }
 
@@ -15,7 +16,11 @@ type Action =
   | { type: UserActionType.UPDATE_USER; payload: PersonalGardenPlant[] }
   | {
       type: UserActionType.UPDATE_PERSONAL_GARDEN;
-      payload: PersonalGardenPlant;
+      payload: PersonalGardenPlant[];
+    }
+  | {
+      type: UserActionType.DELETE_PLANT_FROM_PERSONAL_GARDEN;
+      payload: PersonalGardenPlant['_id'];
     }
   | { type: UserActionType.UPDATE_HISTORY; payload: HistoryPlant }
   | { type: UserActionType.CLEAR_USER };
@@ -59,6 +64,13 @@ const userReducer = (
         personalGarden: action.payload as PersonalGardenPlant[],
       };
 
+    case UserActionType.DELETE_PLANT_FROM_PERSONAL_GARDEN:
+      return {
+        ...state,
+        personalGarden: state.personalGarden.filter(
+          (plant) => plant._id !== action.payload
+        ),
+      };
     case UserActionType.UPDATE_HISTORY:
       return {
         ...state,
