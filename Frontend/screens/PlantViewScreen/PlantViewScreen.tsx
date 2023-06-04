@@ -62,7 +62,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   useEffect(() => {
     console.log('date iz koledara', date);
     if (days && date) {
-      if (today <= date) {
+      if (today < date) {
         console.log('Date cannot be in the future');
         Toast.show({
           type: 'error',
@@ -73,7 +73,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         });
         setDate(today)
       }
-      if(plant._id)
+      if (plant._id)
         setMarkedDates(updateMarkedDays().updatedMarkedDates);
     }
   }, [days, date]);
