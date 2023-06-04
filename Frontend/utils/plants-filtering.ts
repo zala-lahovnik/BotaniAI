@@ -10,3 +10,15 @@ export const filterPlants = (
     return plantName.includes(filterName);
   });
 };
+
+export const replacePlantInUsersPersonalGarden = (personalGarden: Array<PersonalGardenPlant>, plant: PersonalGardenPlant) => {
+  const filteredGarden = personalGarden.filter((item) => item._id === plant._id)
+  if(filteredGarden.length > 0) {
+    const index = personalGarden.indexOf(filteredGarden[0])
+    personalGarden[index] = plant
+  } else {
+    personalGarden.push(plant)
+  }
+
+  return personalGarden
+}
