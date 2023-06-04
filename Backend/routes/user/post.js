@@ -7,7 +7,6 @@ const os = require('os');
 const path = require('path');
 const fs = require('fs');
 const admin = require('firebase-admin');
-const authMiddleware = require('../../middleware/authMiddleware');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -118,7 +117,7 @@ router.post('/add-user', upload.none(), async (req, res, next) => {
  *       500:
  *         description: Failed to add plant to MongoDB
  */
-router.post('/add-personal-garden', upload.none(), authMiddleware, async (req, res, next) => {
+router.post('/add-personal-garden', upload.none(), async (req, res, next) => {
     if (req.params.userId !== req.userId) {
         return res.status(401).json({ message: 'Unauthorized access' });
     }
@@ -193,7 +192,7 @@ router.post('/add-personal-garden', upload.none(), authMiddleware, async (req, r
  *       500:
  *         description: Failed to add plant to MongoDB
  */
-router.post('/add-history', upload.any(), authMiddleware, async (req, res, next) => {
+router.post('/add-history', upload.any(), async (req, res, next) => {
     if (req.params.userId !== req.userId) {
         return res.status(401).json({ message: 'Unauthorized access' });
     }

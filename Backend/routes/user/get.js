@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { ObjectId } = require("mongodb");
 const { getDB } = require("../../db/db");
-const authMiddleware = require("../../middleware/authMiddleware");
 
 /**
  * Get a specific user by ID
