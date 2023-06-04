@@ -80,6 +80,8 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
             date: new Date().toISOString(),
             result: result,
             image: photo.base64,
+            latin: plantData.latin,
+            watering: plantData.watering
           });
           setCurrentImageName(uploadResult.imageName)
 
@@ -89,9 +91,13 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
             customName: plantData.common,
             date: new Date().toISOString(),
             result: result,
-            image: uploadResult.imageName
+            image: uploadResult.imageName,
+            latin: plantData.latin,
+            watering: plantData.watering
           }})
         } catch (err) {
+          // TODO add toast that saving failed
+          setCurrentImageName('.')
           console.log('Error while uploading image', err);
         }
       }
@@ -100,17 +106,18 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
   const onPressOnContinueButton = () => {
     if (fetchedPlantData)
       navigation.navigate('PlantDetails', {
-        latin: fetchedPlantData?.latin,
-        common: fetchedPlantData?.common,
-        description: fetchedPlantData?.description,
-        watering: fetchedPlantData?.watering,
-        sunlight: fetchedPlantData?.sunlight,
-        plantingTime: fetchedPlantData?.plantingTime,
-        soil: fetchedPlantData?.soil,
-        wateringDetail: fetchedPlantData?.wateringDetail,
-        fertilization: fetchedPlantData?.fertilization,
-        toxicity: fetchedPlantData?.toxicity,
-        imageToSave: currentImageName || fetchedPlantData?.image
+        latin: fetchedPlantData.latin,
+        common: fetchedPlantData.common,
+        description: fetchedPlantData.description,
+        watering: fetchedPlantData.watering,
+        sunlight: fetchedPlantData.sunlight,
+        plantingTime: fetchedPlantData.plantingTime,
+        soil: fetchedPlantData.soil,
+        wateringDetail: fetchedPlantData.wateringDetail,
+        fertilization: fetchedPlantData.fertilization,
+        toxicity: fetchedPlantData.toxicity,
+        image: fetchedPlantData.image,
+        imageToSave: currentImageName || fetchedPlantData.image
       });
   };
 

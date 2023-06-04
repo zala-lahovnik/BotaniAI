@@ -33,6 +33,8 @@ type HistoryObject = {
   date: string;
   result: number;
   image: any;
+  latin: string;
+  watering: string;
 };
 export const addPlantToHistory = async (data: HistoryObject) => {
   const response = await instance.post('/user/add-history', data);

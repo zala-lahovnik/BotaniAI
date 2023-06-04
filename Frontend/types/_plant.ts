@@ -24,6 +24,8 @@ export interface HistoryPlant {
   date: string; // DATE OBJECT ISO:
   result: number;
   image: string;
+  latin: string;
+  watering: string;
 }
 
 export interface PersonalGardenPlant {

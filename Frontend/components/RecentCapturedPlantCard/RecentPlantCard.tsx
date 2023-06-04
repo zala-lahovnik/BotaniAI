@@ -75,7 +75,7 @@ export const RecentPlantCard = ({
               color="black"
             />
           </View>
-          <Text style={styles.latinNameText}>FETCH ZA LATIN IZ PLANTID</Text>
+          <Text style={styles.latinNameText}>{plant.latin || ''}</Text>
         </View>
         <TouchableOpacity
           onPress={toggleExpand}
@@ -94,7 +94,7 @@ export const RecentPlantCard = ({
         <RecentPlantDetails
           plantImage={plant.image || ''}
           classificationPercent={classificationPercent}
-          watering={'NEVEM NEK PODATEK'}
+          watering={plant.watering}
         />
       </Animated.View>
     </View>
