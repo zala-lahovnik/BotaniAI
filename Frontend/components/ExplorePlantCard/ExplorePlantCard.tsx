@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { styles } from '../PlantWateringInfoCard/PlantWateringInfoCardStyles';
-import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ArrowRight from 'react-native-vector-icons/AntDesign';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { type Plant } from '../../types/_plant';
@@ -41,7 +34,7 @@ export const ExplorePlantCard = ({ plant, navigation }: Props) => {
         navigation.navigate('PlantDetails', {
           plantId: plant?._id,
           ...plant,
-          image: imageUri,
+          image: plant.image,
         })
       }
       style={[styles.card, style.card]}
