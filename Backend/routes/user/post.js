@@ -181,6 +181,10 @@ router.post('/add-personal-garden', upload.none(), authMiddleware, async (req, r
  *                 type: string
  *               result:
  *                  type: number
+ *               latin:
+ *                  type: string
+ *               watering:
+ *                  type: string
  *               image:
  *                 type: string
  *     responses:
@@ -194,7 +198,7 @@ router.post('/add-history', upload.any(), authMiddleware, async (req, res, next)
         return res.status(401).json({ message: 'Unauthorized access' });
     }
     try {
-        const { userId, plantId, customName, date, result, image } = req.body;
+        const { userId, plantId, customName, date, result, latin, watering, image } = req.body;
 
         const db = getDB();
         const collection = db.collection('user');
@@ -221,7 +225,7 @@ router.post('/add-history', upload.any(), authMiddleware, async (req, res, next)
             { _id: userId },
             {
                 $push: {
-                    history: { _id: historyPlantId, plantId: plantId, customName: customName, date: new Date(date), result: result, image: fileName }
+                    history: { _id: historyPlantId, plantId: plantId, customName: customName, date: new Date(date), result: result, latin: latin, watering: watering, image: fileName }
                 }
             }
         );
