@@ -34,9 +34,6 @@ const { getDB } = require('../../db/db');
  *         description: Failed to delete plant from personal garden
  */
 router.delete('/:userId/personal-garden/:plantId', async (req, res) => {
-    if (req.params.userId !== req.userId) {
-        return res.status(401).json({ message: 'Unauthorized access' });
-    }
     try {
         const db = getDB();
         const userId = req.params.userId;

@@ -118,9 +118,6 @@ router.post('/add-user', upload.none(), async (req, res, next) => {
  *         description: Failed to add plant to MongoDB
  */
 router.post('/add-personal-garden', upload.none(), async (req, res, next) => {
-    if (req.params.userId !== req.userId) {
-        return res.status(401).json({ message: 'Unauthorized access' });
-    }
     try {
         const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
 
@@ -193,9 +190,6 @@ router.post('/add-personal-garden', upload.none(), async (req, res, next) => {
  *         description: Failed to add plant to MongoDB
  */
 router.post('/add-history', upload.any(), async (req, res, next) => {
-    if (req.params.userId !== req.userId) {
-        return res.status(401).json({ message: 'Unauthorized access' });
-    }
     try {
         const { userId, plantId, customName, date, result, latin, watering, image } = req.body;
 
