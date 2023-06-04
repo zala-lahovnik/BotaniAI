@@ -67,7 +67,7 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   image: {
-    width: '70%',
+    width: '60%',
     aspectRatio: 1,
     marginBottom: '5%',
     borderRadius: 50,
