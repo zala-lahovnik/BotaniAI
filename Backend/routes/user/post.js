@@ -131,15 +131,17 @@ router.post('/add-personal-garden', upload.none(), async (req, res, next) => {
             wateringArray: wateringArray
         }
 
+        const addedId = new ObjectId
+
         await collection.updateOne(
             { _id: userId },
             {
                 $push: {
-                    personalGarden: { _id: new ObjectId, latin: latin, common: common, customName: customName, description: description, watering: watering, image: image }
+                    personalGarden: { _id: addedId, latin: latin, common: common, customName: customName, description: description, watering: watering, image: image }
                 }
             }
         );
-        res.status(200).send(`Plant added, to user: ${userId}`);
+        res.status(200).json({plantId: addedId});
     } catch(err) {
         console.error('Failed to add plant to MongoDB:', err);
         if (err == 'RangeError: offset is out of bounds') {
