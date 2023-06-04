@@ -10,7 +10,9 @@ export const Onboarding = () => {
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef = useRef<any>(null);
     const viewableItemsChanged = useRef(({ viewableItems }: any) => {
-        setCurrentIndex(viewableItems[0].index);
+        if (viewableItems && viewableItems.length > 0) {
+            setCurrentIndex(viewableItems[0].index);
+        }
     }).current;
     const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
     const scrollTo = () => {

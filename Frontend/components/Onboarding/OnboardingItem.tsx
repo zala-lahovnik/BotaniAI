@@ -41,11 +41,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     image: {
-        aspectRatio: 1,
+        width: 350,
+        height: 350
     },
     image2: {
-        aspectRatio: 1,
-        flex: 0.4
+        width: 200,
+        height: 200
     },
     textContainer: {
         alignItems: 'center',
