@@ -25,12 +25,14 @@ import {
   PersonalGardenObject,
   updatePlant,
 } from '../../api/_user';
-import { UserContext } from '../../context/UserContext';
+import { UserActionType, UserContext } from '../../context/UserContext';
 import {
   createNewWateringDaysPro,
   getWateringDaysPro,
 } from '../../utils/plant-watering-calculations';
 import Toast from 'react-native-toast-message';
+import { PersonalGardenPlant } from '../../types/_plant';
+import { replacePlantInUsersPersonalGarden } from '../../utils/plants-filtering';
 
 type Props = NativeStackScreenProps<any>;
 
@@ -57,10 +59,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     }).catch((err) => { console.log(err) })
   }, [plant.image])
 
-  console.log('plant._id', plant._id);
-
   useEffect(() => {
-    console.log('date iz koledara', date);
     if (days && date) {
       if (today < date) {
         console.log('Date cannot be in the future');
@@ -102,7 +101,34 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       wateringArray: sortedDatesPro,
       image: plant.image,
     };
-    updatePlant(loggedUser.userId, plant._id, newPlant);
+    updatePlant(loggedUser.userId, plant._id, newPlant).then(() => {
+      let tempPersonalGarden = [...loggedUser.personalGarden]
+      const dispatchObject: PersonalGardenPlant = {
+        _id: plant._id,
+        latin: plant.latin,
+        common: plant.common,
+        customName: name,
+        description: description,
+        watering: {
+          firstDay: date,
+          numberOfDays: days,
+          amountOfWater: water,
+          wateringArray: sortedDatesPro,
+        },
+        image: plant.imageToSave || plant.image,
+      }
+      tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
+      dispatch({type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden})
+    }).catch((err) => {
+      console.log('Error updating plant', err);
+      Toast.show({
+        type: 'error',
+        text1: 'Error while updating',
+        text2: 'Something went wrong. Please try again.',
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+    });
     return { updatedMarkedDates: newMarkedDatesPro, dates: sortedDatesPro };
   }
 
@@ -112,17 +138,26 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   function handleEditTrue() {
     setEdit([true, edit[1]]);
   }
-  function handleDelete() {
+  async function handleDelete() {
     setModalVisible1(!modalVisible1)
-
 
     if (edit[1] === true) {
       handleBack()
     }
-    // TODO delete plant from user locally
-    deletePlantFromPersonalGarden(loggedUser.userId, plant._id);
-    navigation.navigate('PlantListScreen');
 
+    await deletePlantFromPersonalGarden(loggedUser.userId, plant._id).then(() => {
+      dispatch({type: UserActionType.DELETE_PLANT_FROM_PERSONAL_GARDEN, payload: plant._id})
+      navigation.navigate('PlantListScreen');
+    }).catch((err) => {
+      console.log('Error deleting plant', err);
+      Toast.show({
+        type: 'error',
+        text1: 'Error while deleting',
+        text2: 'Something went wrong. Please try again.',
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+    });
   }
   async function handleEditFalse() {
     setModalVisible2(!modalVisible2)
@@ -152,14 +187,46 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         wateringArray: newDates,
         image: plant.imageToSave || plant.image,
       };
-      setEdit([edit[0], false]);
       try {
-        // TODO add plant locally to user
-        await addPlantToPersonalGarden(plantData);
-        console.log('Plant added successfully');
-        navigation.navigate("PlantListScreen")
+        await addPlantToPersonalGarden(plantData).then((response) => {
+          const tempPersonalGarden = [...loggedUser.personalGarden]
+
+          const dispatchObject: PersonalGardenPlant = {
+            _id: response.plantId,
+            latin: plant.latin,
+            common: plant.common,
+            customName: name,
+            description: description,
+            watering: {
+              firstDay: date,
+              numberOfDays: days,
+              amountOfWater: water,
+              wateringArray: newDates,
+            },
+            image: plant.imageToSave || plant.image,
+          }
+          tempPersonalGarden.push(dispatchObject)
+          dispatch({type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden})
+          navigation.navigate("PlantListScreen", {plants: tempPersonalGarden})
+        }).catch((err) => {
+          console.log('Error saving plant', err);
+          Toast.show({
+            type: 'error',
+            text1: 'Error while saving',
+            text2: 'Something went wrong. Please try again.',
+            position: "bottom",
+            visibilityTime: 3000,
+          });
+        });
       } catch (error) {
         console.error('Failed to add plant:', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Error while saving',
+          text2: 'Something went wrong. Please try again.',
+          position: "bottom",
+          visibilityTime: 3000,
+        });
       }
     }
     const newPlant: {
@@ -173,12 +240,38 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       wateringArray: sortedDatesPro,
       image: plant.image
     };
-    // TODO add plant to user locally
-    updatePlant(loggedUser.userId, plant._id, newPlant);
-    setEdit([false, edit[1]]);
-
-
+    if(plant._id)
+      await updatePlant(loggedUser.userId, plant._id, newPlant).then((response) => {
+        let tempPersonalGarden = [...loggedUser.personalGarden]
+        const dispatchObject: PersonalGardenPlant = {
+          _id: plant._id,
+          latin: plant.latin,
+          common: plant.common,
+          customName: name,
+          description: description,
+          watering: {
+            firstDay: date,
+            numberOfDays: days,
+            amountOfWater: water,
+            wateringArray: sortedDatesPro,
+          },
+          image: plant.imageToSave || plant.image,
+        }
+        tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
+        dispatch({type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden})
+      }).catch((err) => {
+        console.log('Error updating plant', err);
+        Toast.show({
+          type: 'error',
+          text1: 'Error while updating',
+          text2: 'Something went wrong. Please try again.',
+          position: "bottom",
+          visibilityTime: 3000,
+        });
+      });
+      setEdit([false, edit[1]]);
   }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={[styles.container, { marginBottom: 90 }]}>
@@ -234,7 +327,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           </Pressable>
         )}
       </View>
-      <ScrollView >
+      <ScrollView>
         <Image source={{ uri: onlineImageUri }} style={styles.image} />
         {edit[0] ? (
           <View>
@@ -349,7 +442,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             </View>
           </View>
         )}
-        <Pressable style={styles.buttonContainer} onPress={() => setModalVisible1(!modalVisible1)}>
+        <Pressable style={[styles.buttonContainer, {marginBottom: 70}]} onPress={() => setModalVisible1(!modalVisible1)}>
           <View style={styles.button}>
             <Ionicons
               name="trash"
@@ -361,7 +454,8 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           </View>
         </Pressable>
       </ScrollView>
-      <BottomNavigationBar navigation={navigation} route={route} /><Toast />
+      <BottomNavigationBar navigation={navigation} route={route} />
+      <Toast />
     </View >
   );
 };
