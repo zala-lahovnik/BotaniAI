@@ -118,7 +118,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         image: plant.imageToSave || plant.image,
       }
       tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
-      dispatch({type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden})
+      dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
     }).catch((err) => {
       console.log('Error updating plant', err);
       Toast.show({
@@ -146,7 +146,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     }
 
     await deletePlantFromPersonalGarden(loggedUser.userId, plant._id).then(() => {
-      dispatch({type: UserActionType.DELETE_PLANT_FROM_PERSONAL_GARDEN, payload: plant._id})
+      dispatch({ type: UserActionType.DELETE_PLANT_FROM_PERSONAL_GARDEN, payload: plant._id })
       navigation.navigate('PlantListScreen');
     }).catch((err) => {
       console.log('Error deleting plant', err);
@@ -158,6 +158,51 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         visibilityTime: 3000,
       });
     });
+  }
+  function handleEdit() {
+    console.log("name")
+    console.log(name)
+    if (name == "") {
+      Toast.show({
+        type: 'error',
+        text1: 'Error with details',
+        text2: 'Please name the plant.',
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+      return
+    } else if (date == "" || date.length != 10) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error with details',
+        text2: 'Please chose the last time you watered the plant.',
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+      return
+    }
+    else if (!(parseInt(water) > 0)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error with details',
+        text2: 'Please chose the amount you water the plant.',
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+      return
+    }
+    else if (!(parseInt(days) > 0)) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error with details',
+        text2: 'Please write how many days is in between waterings.',
+        position: "bottom",
+        visibilityTime: 3000,
+      });
+      return
+    }
+
+    setModalVisible2(!modalVisible2)
   }
   async function handleEditFalse() {
     setModalVisible2(!modalVisible2)
@@ -206,8 +251,8 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             image: plant.imageToSave || plant.image,
           }
           tempPersonalGarden.push(dispatchObject)
-          dispatch({type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden})
-          navigation.navigate("PlantListScreen", {plants: tempPersonalGarden})
+          dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
+          navigation.navigate("PlantListScreen", { plants: tempPersonalGarden })
         }).catch((err) => {
           console.log('Error saving plant', err);
           Toast.show({
@@ -240,7 +285,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       wateringArray: sortedDatesPro,
       image: plant.image
     };
-    if(plant._id)
+    if (plant._id)
       await updatePlant(loggedUser.userId, plant._id, newPlant).then((response) => {
         let tempPersonalGarden = [...loggedUser.personalGarden]
         const dispatchObject: PersonalGardenPlant = {
@@ -258,7 +303,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           image: plant.imageToSave || plant.image,
         }
         tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
-        dispatch({type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden})
+        dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
       }).catch((err) => {
         console.log('Error updating plant', err);
         Toast.show({
@@ -269,7 +314,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           visibilityTime: 3000,
         });
       });
-      setEdit([false, edit[1]]);
+    setEdit([false, edit[1]]);
   }
 
   return (
@@ -309,7 +354,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         </Pressable>
         <Text style={styles.ime}>{plant.latin}</Text>
         {edit[0] ? (
-          <Pressable style={styles.edit} onPress={() => setModalVisible2(!modalVisible2)}>
+          <Pressable style={styles.edit} onPress={handleEdit}>
             <Ionicons
               name="checkmark-done"
               size={24}
@@ -381,6 +426,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
                 value={description} />
             </View>
             <View>
+              <Text style={{ textAlign: "center", marginTop: 10, marginBottom: 5, fontSize: 16, color: '#134a3e' }}>Select the last time you watered the plant</Text>
               <CalendarProvider date={minDate}>
                 <ExpandableCalendar
                   aria-expanded={true}
@@ -442,7 +488,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
             </View>
           </View>
         )}
-        <Pressable style={[styles.buttonContainer, {marginBottom: 70}]} onPress={() => setModalVisible1(!modalVisible1)}>
+        <Pressable style={[styles.buttonContainer, { marginBottom: 70 }]} onPress={() => setModalVisible1(!modalVisible1)}>
           <View style={styles.button}>
             <Ionicons
               name="trash"
