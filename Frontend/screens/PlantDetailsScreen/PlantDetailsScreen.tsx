@@ -136,7 +136,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
           source={{ uri: imageUri || '' }}
           resizeMode="cover"
           style={{
-            height: 220,
+            height: 310,
             width: '100%',
             opacity: 0.8,
           }}
