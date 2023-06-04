@@ -1,5 +1,4 @@
 import {
-  Alert,
   Image,
   Modal,
   Pressable,
@@ -10,7 +9,11 @@ import {
 } from 'react-native';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useContext, useEffect, useState } from 'react';
-import { Calendar, CalendarProvider, ExpandableCalendar } from 'react-native-calendars';
+import {
+  Calendar,
+  CalendarProvider,
+  ExpandableCalendar,
+} from 'react-native-calendars';
 import moment from 'moment';
 import { styles } from './PlantViewStyles';
 import { BottomNavigationBar } from '../../components';
@@ -54,32 +57,28 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     }).catch((err) => { console.log(err) })
   }, [plant.image])
 
-  useEffect(() => {
-    if (plant._id)
-      setMarkedDates(updateMarkedDays().updatedMarkedDates);
-  }, [days]);
+  console.log('plant._id', plant._id);
 
   useEffect(() => {
-    if (today >= date) {
-      if (plant._id)
-        setDates(getWateringDaysPro(days, date, plant.watering?.wateringArray || []))
-    } else {
-      if (plant._id)
-        setDates(getWateringDaysPro(days, today, plant.watering?.wateringArray || []))
-      console.log('Date cannot be in the future');
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Please select the last time you watered the plant.',
-        position: "bottom",
-        visibilityTime: 1500,
-      });
-      setDate(today)
+    console.log('date iz koledara', date);
+    if (days && date) {
+      if (today <= date) {
+        console.log('Date cannot be in the future');
+        Toast.show({
+          type: 'error',
+          text1: 'Date error',
+          text2: 'Please select the last time you watered the plant.',
+          position: "bottom",
+          visibilityTime: 3000,
+        });
+        setDate(today)
+      }
+      if(plant._id)
+        setMarkedDates(updateMarkedDays().updatedMarkedDates);
     }
-  }, [date])
+  }, [days, date]);
 
   function updateMarkedDays() {
-    console.log('update', days, date, []);
     const sortedDatesPro = getWateringDaysPro(plant.watering?.days || days, plant.watering?.firstDay || date, plant.watering?.wateringArray || [])
     const newMarkedDatesPro: {
       [date: string]: { selected: boolean; selectedColor: string };
@@ -120,6 +119,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     if (edit[1] === true) {
       handleBack()
     }
+    // TODO delete plant from user locally
     deletePlantFromPersonalGarden(loggedUser.userId, plant._id);
     navigation.navigate('PlantListScreen');
 
@@ -154,6 +154,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       };
       setEdit([edit[0], false]);
       try {
+        // TODO add plant locally to user
         await addPlantToPersonalGarden(plantData);
         console.log('Plant added successfully');
         navigation.navigate("PlantListScreen")
@@ -172,6 +173,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       wateringArray: sortedDatesPro,
       image: plant.image
     };
+    // TODO add plant to user locally
     updatePlant(loggedUser.userId, plant._id, newPlant);
     setEdit([false, edit[1]]);
 
