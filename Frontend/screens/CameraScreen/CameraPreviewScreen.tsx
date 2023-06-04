@@ -19,6 +19,7 @@ import { Plant } from '../../types/_plant';
 import { global } from '../../styles/globals';
 import { addPlantToHistory } from '../../api/_user';
 import { UserActionType, UserContext } from '../../context/UserContext';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -96,8 +97,14 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
             watering: plantData.watering
           }})
         } catch (err) {
-          // TODO add toast that saving failed
           setCurrentImageName('.')
+          Toast.show({
+            type: 'error',
+            text1: 'Error while saving',
+            text2: 'Couldn\'t save classification prediction',
+            position: "top",
+            visibilityTime: 5000,
+          })
           console.log('Error while uploading image', err);
         }
       }
@@ -129,6 +136,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         leftAction={() => navigation.goBack()}
         route={route}
       />
+      <Toast />
       <View
         style={{
           backgroundColor: 'transparent',
