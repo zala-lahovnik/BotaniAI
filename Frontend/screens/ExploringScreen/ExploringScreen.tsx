@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ActivityIndicator, FlatList, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -8,7 +8,7 @@ import {
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { getAllPlants } from '../../api/_plant';
 
 export const ExploringScreen = ({
@@ -16,14 +16,34 @@ export const ExploringScreen = ({
   route,
 }: NativeStackScreenProps<any>) => {
   const insets = useSafeAreaInsets();
+  const offset = useRef(0);
 
-  const { isLoading, isError, data } = useQuery(['plants'], () =>
-    getAllPlants()
-  );
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery(
+      ['plants'],
+      ({ pageParam = 1 }) => getAllPlants(pageParam),
+      {
+        getNextPageParam: (lastPage, allPages) => {
+          return lastPage.length > 0 ? allPages.length + 1 : undefined;
+        },
+        getPreviousPageParam: (firstPage, allPages) => {
+          return offset.current > 1 ? offset.current - 1 : undefined;
+        },
+        staleTime: 1000 * 60 * 60 * 24,
+      }
+    );
+
+  const plants = data?.pages.flatMap((page) => page) || [];
+
+  const handleLoadMore = () => {
+    if (hasNextPage) {
+      offset.current += 1;
+      fetchNextPage();
+    }
+  };
 
   return (
     <>
-
       <View
         style={{
           flex: 1,
@@ -39,7 +59,11 @@ export const ExploringScreen = ({
         <View style={{ flex: 1 }}>
           {isLoading && (
             <View
-              style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
             >
               <ActivityIndicator
                 size="large"
@@ -48,7 +72,8 @@ export const ExploringScreen = ({
             </View>
           )}
           <FlatList
-            data={data?.sort((a,b) => {if(a.latin > b.latin){return 1;} else if(b.latin > a.latin) {return -1;} else { return 0;}}) || []}
+            // ref={flatListRef}
+            data={plants}
             renderItem={({ item }) => (
               <ExplorePlantCard
                 plant={item}
@@ -59,12 +84,17 @@ export const ExploringScreen = ({
             )}
             keyExtractor={(item) => item._id}
             showsVerticalScrollIndicator={false}
-            style={{ marginBottom: 30, marginHorizontal: 20 }}
+            style={{ marginBottom: 40, marginHorizontal: 20 }}
             onEndReachedThreshold={0.5}
-            // TODO: add pagination
-            onEndReached={() => {
-              console.log('end reached');
-            }}
+            onEndReached={handleLoadMore}
+            ListFooterComponent={
+              isFetchingNextPage ? (
+                <ActivityIndicator
+                  size="large"
+                  color={global.color.primary.backgroundColor}
+                />
+              ) : null
+            }
           />
         </View>
         <BottomNavigationBar navigation={navigation} route={route} />

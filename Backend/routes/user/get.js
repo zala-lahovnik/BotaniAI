@@ -1,8 +1,7 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { ObjectId } = require('mongodb');
-const { getDB } = require('../../db/db');
-const authMiddleware = require('../../middleware/authMiddleware');
+const { ObjectId } = require("mongodb");
+const { getDB } = require("../../db/db");
 
 /**
  * Get a specific user by ID
@@ -28,25 +27,26 @@ const authMiddleware = require('../../middleware/authMiddleware');
  *       500:
  *         description: Internal server error
  */
-router.get('/:userId', authMiddleware, async (req, res) => {
-    if (req.params.userId !== req.userId) {
-      return res.status(401).json({ message: 'Unauthorized access' });
-    }
-    const userId = req.params.userId;
+router.get("/:userId", async (req, res) => {
+  const userId = req.params.userId;
 
-    try {
-      const db = getDB();
-      const collection = db.collection('user');
-      
-      const user = await collection.findOne({ _id: userId })
-      if (!user) {
-        return res.status(404).send('User not found');
-      }
-      res.status(200).json(user);
-    } catch(err) {
-      console.error('Failed to retrieve user from MongoDB:', err);
-      res.status(500).send('Failed to retrieve user from MongoDB');
+  try {
+    const db = getDB();
+    const collection = db.collection("user");
+
+    let user = await collection.findOne({ _id: userId });
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    user = {
+      ...user,
+      history: user.history.reverse().slice(0, 15),
     };
+    res.status(200).json(user);
+  } catch (err) {
+    console.error("Failed to retrieve user from MongoDB:", err);
+    res.status(500).send("Failed to retrieve user from MongoDB");
+  }
 });
 
 /**
@@ -73,26 +73,23 @@ router.get('/:userId', authMiddleware, async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/:userId/personal-garden', authMiddleware, async (req, res) => {
-    if (req.params.userId !== req.userId) {
-      return res.status(401).json({ message: 'Unauthorized access' });
-    }
-    const userId = req.userId;
-    try {
-      const db = getDB();
-      const collection = db.collection('user');
+router.get("/:userId/personal-garden", async (req, res) => {
+  const userId = req.userId;
+  try {
+    const db = getDB();
+    const collection = db.collection("user");
 
-      const user = await collection.findOne({ _id: userId });
-      if (!user || !user.personalGarden) {
-        return res.status(404).send('User or plants not found');
-      }
-      res.status(200).json(user.personalGarden);
-    } catch(err) {
-      console.error('Failed to retrieve plants from MongoDB:', err);
-      res.status(500).send('Failed to retrieve plants from MongoDB');
-    };
+    const user = await collection.findOne({ _id: userId });
+    if (!user || !user.personalGarden) {
+      return res.status(404).send("User or plants not found");
+    }
+    res.status(200).json(user.personalGarden);
+  } catch (err) {
+    console.error("Failed to retrieve plants from MongoDB:", err);
+    res.status(500).send("Failed to retrieve plants from MongoDB");
+  }
 });
-  
+
 /**
  * Get history of a specific user
  * @swagger
@@ -117,41 +114,37 @@ router.get('/:userId/personal-garden', authMiddleware, async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get('/:userId/history', authMiddleware, async (req, res) => {
-    if (req.params.userId !== req.userId) {
-      return res.status(401).json({ message: 'Unauthorized access' });
+router.get("/:userId/history", async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const db = getDB();
+    const userCollection = db.collection("user");
+    const plantCollection = db.collection("plant");
+
+    const user = await userCollection.findOne({ _id: userId });
+    if (!user) {
+      return res.status(404).send("User not found");
     }
-    const userId = req.params.userId;
 
-    try {
-      const db = getDB();
-      const userCollection = db.collection('user');
-      const plantCollection = db.collection('plant');
+    const plantIds = user.history.map((obj) => new ObjectId(obj.plantId));
 
-      const user = await userCollection.findOne({ _id: userId });
-      if (!user) {
-        return res.status(404).send('User not found');
-      }
-
-      const plantIds = user.history.map(obj => new ObjectId(obj.plantId));
-
-      let plants = plantCollection.find({ _id: { $in: plantIds } }).toArray();
-      const userPlants = user.history.map(obj => {
-        const plant = plants.find(p => p._id.equals(obj.plantId));
-        return {
-            plantId: obj.plantId,
-            customName: obj.customName,
-            date: obj.date,
-            image: obj.image,
-            plant: plant || null
-        };
-      });
-      res.status(200).json(userPlants);
-    } catch(err) {
-      console.error('Failed to retrieve user\'s plants:', err);
-      res.status(500).send('Failed to retrieve user\'s plants');
-    };
+    let plants = plantCollection.find({ _id: { $in: plantIds } }).toArray();
+    const userPlants = user.history.map((obj) => {
+      const plant = plants.find((p) => p._id.equals(obj.plantId));
+      return {
+        plantId: obj.plantId,
+        customName: obj.customName,
+        date: obj.date,
+        image: obj.image,
+        plant: plant || null,
+      };
+    });
+    res.status(200).json(userPlants);
+  } catch (err) {
+    console.error("Failed to retrieve user's plants:", err);
+    res.status(500).send("Failed to retrieve user's plants");
+  }
 });
-
 
 module.exports = router;

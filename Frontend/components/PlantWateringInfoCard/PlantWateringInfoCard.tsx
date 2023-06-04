@@ -1,5 +1,11 @@
-import React, { useCallback, useRef } from 'react';
-import { Animated, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import {
+  ActivityIndicator,
+  Animated,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Divider } from 'react-native-elements';
 import { PlantImage } from '../PlantItemCardOverlay/PlantItemCardOverlay';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -16,7 +22,7 @@ import {
 import { global } from '../../styles/globals';
 import { PersonalGardenPlant } from '../../types/_plant';
 import { UserActionType, UserContext } from '../../context/UserContext';
-import { updatePlant } from '../../api/_user';
+import { updatePlant, type UpdatePlant } from '../../api/_user';
 
 const PlantWateringInfo = ({
   children,
@@ -56,6 +62,7 @@ export const PlantWateringInfoCard = ({
 }: Props) => {
   const cardAnimation = useRef(new Animated.Value(0)).current;
   const [expanded, setExpanded] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const { user, dispatch } = React.useContext(UserContext);
 
@@ -76,23 +83,44 @@ export const PlantWateringInfoCard = ({
     }).start();
   };
 
-  // TODO: FIX DATE UPDATE
-  const handleUpdateWateringDate = useCallback(
-    async (plant: PersonalGardenPlant) => {
-      try {
-        const response = await updatePlant(user?.userId, plant._id, plant);
-        if (response) {
-          dispatch({
-            type: UserActionType.UPDATE_PERSONAL_GARDEN,
-            payload: plant,
-          });
-        }
-      } catch (e) {
-        console.error(e);
+  const handleUpdateWateringDate = async (plant: PersonalGardenPlant) => {
+    let requestPayload: UpdatePlant = {
+      customName: plant.customName,
+      firstDay: plant.watering.firstDay,
+      numberOfDays: plant.watering.numberOfDays,
+      amountOfWater: plant.watering.amountOfWater,
+      wateringArray: plant.watering.wateringArray,
+      image: plant.image,
+      description: plant.description,
+    };
+
+    try {
+      setLoading(true);
+      const response = await updatePlant(
+        user?.userId,
+        plant._id,
+        requestPayload
+      );
+      if (response) {
+        let usersPersonalGarden = [...user.personalGarden];
+        usersPersonalGarden = usersPersonalGarden.map((item) => {
+          if (item._id === plant._id) {
+            return plant;
+          }
+          return item;
+        });
+
+        dispatch({
+          type: UserActionType.UPDATE_PERSONAL_GARDEN,
+          payload: usersPersonalGarden,
+        });
       }
-    },
-    []
-  );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const cardTranslateX = cardAnimation.interpolate({
     inputRange: [0, 1],
@@ -175,33 +203,42 @@ export const PlantWateringInfoCard = ({
           },
         ]}
       >
-        <TouchableOpacity
-          style={styles.wateredButtonTouchable}
-          activeOpacity={0.8}
-          onPress={() => {
-            // TODO: WHAT IF WATERING IS MISSED
+        {!loading ? (
+          <TouchableOpacity
+            style={styles.wateredButtonTouchable}
+            activeOpacity={0.8}
+            onPress={() => {
+              // TODO: WHAT IF WATERING IS MISSED
 
-            let dispatchPlant = {
-              ...plant,
-              watering: {
-                ...plant.watering,
-                wateringArray: plant.watering.wateringArray.map((item) =>
-                  item.date === new Date().toISOString().split('T')[0]
-                    ? { ...item, watered: true }
-                    : item
-                ),
-              },
-            };
-            return handleUpdateWateringDate(dispatchPlant);
-          }}
-        >
-          <Text style={styles.wateredButtonText}>Watered</Text>
-          <Checkmark
-            name={'checkmark'}
-            size={28}
-            color={global.color.heading.color}
-          />
-        </TouchableOpacity>
+              let dispatchPlant = {
+                ...plant,
+                watering: {
+                  ...plant.watering,
+                  wateringArray: plant.watering.wateringArray.map((item) =>
+                    item.date === new Date().toISOString().split('T')[0]
+                      ? { ...item, watered: true }
+                      : item
+                  ),
+                },
+              };
+              return handleUpdateWateringDate(dispatchPlant);
+            }}
+          >
+            <Text style={styles.wateredButtonText}>Watered</Text>
+            <Checkmark
+              name={'checkmark'}
+              size={28}
+              color={global.color.heading.color}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.wateredButtonTouchable}>
+            <ActivityIndicator
+              size="small"
+              color={global.color.heading.color}
+            />
+          </View>
+        )}
       </Animated.View>
     </TouchableOpacity>
   );

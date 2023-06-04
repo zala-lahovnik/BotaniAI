@@ -1,12 +1,10 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { getDB } = require('../../db/db');
-const multer = require('multer');
-const authMiddleware = require('../../middleware/authMiddleware');
+const { getDB } = require("../../db/db");
+const multer = require("multer");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
 
 /**
  * Update a plant in user's personal garden
@@ -45,6 +43,8 @@ const upload = multer({ storage: storage });
  *                  type: number
  *               amountOfWater:
  *                  type: number
+ *               description:
+ *                  type: string
  *               wateringArray:
  *                  type: array
  *                  items:
@@ -63,51 +63,60 @@ const upload = multer({ storage: storage });
  *       500:
  *         description: Failed to update plant attributes
  */
-router.put('/:userId/personal-garden/:plantId', upload.none(), authMiddleware, async (req, res) => {
-    if (req.params.userId !== req.userId) {
-      return res.status(401).json({ message: 'Unauthorized access' });
-    }
+router.put(
+  "/:userId/personal-garden/:plantId",
+  upload.none(),
+  async (req, res) => {
     try {
-        const db = getDB();
-        const userId = req.params.userId;
-        const plantId = req.params.plantId;
-        const { customName, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
+      const db = getDB();
+      const userId = req.params.userId;
+      const plantId = req.params.plantId;
+      const {
+        customName,
+        firstDay,
+        numberOfDays,
+        amountOfWater,
+        wateringArray,
+        image,
+        description,
+      } = req.body;
 
-        const watering = {
-            firstDay: firstDay,
-            numberOfDays: numberOfDays,
-            amountOfWater: amountOfWater,
-            wateringArray: wateringArray
+      const watering = {
+        firstDay: firstDay,
+        numberOfDays: numberOfDays,
+        amountOfWater: amountOfWater,
+        wateringArray: wateringArray,
+      };
+
+      const userCollection = db.collection("user");
+
+      const user = await userCollection.findOne({ _id: userId });
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+
+      const personalGarden = user.personalGarden;
+      const updatedGarden = personalGarden.map((obj) => {
+        if (obj._id.toString() === plantId) {
+          obj.customName = customName;
+          obj.watering = watering;
+          obj.image = image;
+          obj.description = description;
         }
+        return obj;
+      });
 
-        const userCollection = db.collection('user');
-
-        const user = await userCollection.findOne({ _id: userId });
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        const personalGarden = user.personalGarden;
-        const updatedGarden = personalGarden.map(obj => {
-            if (obj._id.toString() === plantId) {
-                obj.customName = customName;
-                obj.watering = watering;
-                obj.image = image;
-            }
-            return obj;
-        });
-
-        await userCollection.updateOne(
-            { _id: userId },
-            { $set: { personalGarden: updatedGarden } }
-        );
-        res.status(200).send('Plant common attribute updated');
-    } catch(err) {
-        console.error('Failed to update plant', err);
-        res.status(500).send('Failed to update plant');
-    };
-});
-
+      await userCollection.updateOne(
+        { _id: userId },
+        { $set: { personalGarden: updatedGarden } }
+      );
+      res.status(200).send("Plant common attribute updated");
+    } catch (err) {
+      console.error("Failed to update plant", err);
+      res.status(500).send("Failed to update plant");
+    }
+  }
+);
 
 /**
  * Update user notifications
@@ -142,31 +151,28 @@ router.put('/:userId/personal-garden/:plantId', upload.none(), authMiddleware, a
  *       500:
  *         description: Failed to update notifications
  */
-router.put('/:userId', upload.none(), authMiddleware, async (req, res) => {
-    if (req.params.userId !== req.userId) {
-        return res.status(401).json({ message: 'Unauthorized access' });
+router.put("/:userId", upload.none(), async (req, res) => {
+  try {
+    const db = getDB();
+    const userId = req.params.userId;
+    const { notifications } = req.body;
+
+    const userCollection = db.collection("user");
+
+    const user = await userCollection.findOne({ _id: userId });
+    if (!user) {
+      return res.status(404).send("User not found");
     }
-    try {
-        const db = getDB();
-        const userId = req.params.userId;
-        const { notifications } = req.body;
 
-        const userCollection = db.collection('user');
-
-        const user = await userCollection.findOne({ _id: userId });
-        if (!user) {
-            return res.status(404).send('User not found');
-        }
-
-        await userCollection.updateOne(
-            { _id: userId },
-            { $set: { notifications: notifications } }
-        )
-        res.status(200).send('Notifications updated');
-    } catch(err) {
-        console.error('There was an error updating user:', err);
-        res.status(500).send('There was an error updating user');
-    };
+    await userCollection.updateOne(
+      { _id: userId },
+      { $set: { notifications: notifications } }
+    );
+    res.status(200).send("Notifications updated");
+  } catch (err) {
+    console.error("There was an error updating user:", err);
+    res.status(500).send("There was an error updating user");
+  }
 });
 
 module.exports = router;

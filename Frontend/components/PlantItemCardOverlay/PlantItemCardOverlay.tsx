@@ -222,6 +222,7 @@ export const PlantItemCardOverlay = ({
           navigation.navigate('PlantViewScreen', {
             _id: plantId,
             latin: latin,
+            common: plantCommon,
             customName: plantCustomName,
             description: plantDescription,
             watering: plantWatering,

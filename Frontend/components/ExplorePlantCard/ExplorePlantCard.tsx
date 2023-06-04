@@ -12,23 +12,27 @@ import ArrowRight from 'react-native-vector-icons/AntDesign';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { type Plant } from '../../types/_plant';
 import { getOnlineImageUri } from '../../firebase/firebase';
+import { Skeleton } from '@rneui/base';
+import { LinearGradient } from 'react-native-svg';
 
 type Props = NativeStackScreenProps<any> & {
   plant: Plant;
 };
 
 export const ExplorePlantCard = ({ plant, navigation }: Props) => {
-  const [imageUri, setImageUri] = useState(plant.image || '')
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [imageUri, setImageUri] = useState(plant.image || '');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    getOnlineImageUri(plant.image || '').then((result) => {
-      setImageUri(result)
-      setTimeout(() => {
-        setIsLoaded(true)
-      }, 1000)
-    }).catch((err) => {console.log(err)})
-  }, [plant.image])
+    getOnlineImageUri(plant.image || '')
+      .then((result) => {
+        setImageUri(result);
+        setIsLoaded(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [plant.image]);
 
   return (
     <TouchableOpacity
@@ -37,19 +41,21 @@ export const ExplorePlantCard = ({ plant, navigation }: Props) => {
         navigation.navigate('PlantDetails', {
           plantId: plant?._id,
           ...plant,
+          image: imageUri,
         })
       }
       style={[styles.card, style.card]}
     >
-      {isLoaded ?
+      {isLoaded ? (
         <Image source={{ uri: imageUri }} style={style.image} />
-        :
-        <ActivityIndicator
-          size="large"
-          color="#124A3F"
-          style={{ marginBottom: '10%', marginTop: '20%' }}
+      ) : (
+        <Skeleton
+          LinearGradientComponent={LinearGradient}
+          animation="wave"
+          width={70}
+          height={80}
         />
-      }
+      )}
       <View style={{ flex: 1, height: '100%' }}>
         <Text style={styles.cardTitle}>{plant?.latin}</Text>
         <Text style={style.description}>{plant?.common}</Text>

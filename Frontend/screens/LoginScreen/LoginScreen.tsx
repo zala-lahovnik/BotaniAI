@@ -31,6 +31,7 @@ import { UserActionType, UserContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoadingModal } from '../../components';
 import { StatusBar } from 'expo-status-bar';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<any>;
 export const LoginScreen = ({ navigation }: Props) => {
@@ -68,7 +69,15 @@ export const LoginScreen = ({ navigation }: Props) => {
         handleUserLogin(user.uid);
       })
       .then(() => navigation.navigate('PlantListScreen'))
-      .catch((error: { message: any }) => alert(error.message));
+      .catch((error: { message: any }) =>
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Error during log in.',
+          position: "bottom",
+          visibilityTime: 1500,
+        })
+      );
   }
 
   const handleUserLogin = async (userId: string) => {
@@ -108,7 +117,13 @@ export const LoginScreen = ({ navigation }: Props) => {
         const accessToken = r.params.access_token;
         getUserInfo(accessToken);
       } else {
-        // TODO: make toast message for error
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Error during google sign in.',
+          position: "bottom",
+          visibilityTime: 1500,
+        });
         setLoading(false);
       }
     });
@@ -148,7 +163,7 @@ export const LoginScreen = ({ navigation }: Props) => {
                   if (data) {
                     dispatch({
                       type: UserActionType.UPDATE_USER,
-                      payload: {...data, userId: data._id},
+                      payload: { ...data, userId: data._id },
                     });
                   }
                 })
@@ -184,7 +199,6 @@ export const LoginScreen = ({ navigation }: Props) => {
       console.log(error);
     }
   };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -262,7 +276,7 @@ export const LoginScreen = ({ navigation }: Props) => {
             </Text>
           </Pressable>
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback><Toast />
     </KeyboardAvoidingView>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useLayoutEffect, useRef } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -41,6 +41,10 @@ export const WateringScreen = ({ navigation, route }: Props) => {
   } catch (error) {
     personalGarden = personalGardenCopy;
   }
+
+  useLayoutEffect(() => {
+    prev_watered_date.current = '';
+  }, [user.personalGarden]);
 
   return (
     <View style={{ paddingTop: insets.top, flex: 1 }}>
