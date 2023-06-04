@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -72,116 +72,111 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
   }
 
   return (
-    <>
-      {user ? (
-        <Drawer
-          open={drawerOpen}
-          onOpen={() => setDrawerOpen(true)}
-          onClose={() => setDrawerOpen(false)}
-          renderDrawerContent={() => {
-            return <DrawerLayout navigation={navigation} route={route} />;
+    <Drawer
+      open={drawerOpen}
+      onOpen={() => user.userId ? setDrawerOpen(true) : setDrawerOpen(false)}
+      onClose={() => user.userId ? setDrawerOpen(false) : setDrawerOpen(false)}
+      renderDrawerContent={() => {
+        return <DrawerLayout navigation={navigation} route={route} />;
+      }}
+      drawerStyle={{
+        paddingTop: insets.top,
+        backgroundColor: global.color.primary.backgroundColor,
+      }}
+    >
+      <View
+        style={{
+          paddingTop: insets.top,
+          flex: 1,
+        }}
+      >
+        <Header
+          navigation={navigation}
+          route={route}
+          text={text}
+          home
+          leftAction={() => {
+            setDrawerOpen(true);
           }}
-          drawerStyle={{
-            paddingTop: insets.top,
-            backgroundColor: global.color.primary.backgroundColor,
+        />
+        {user.userId ? (<></>) : (<NotLoggedIn />)}
+        <View
+          style={[
+            global.spacing.container,
+            { flex: 1, marginVertical: 20 },
+          ]}
+        >
+          <SearchInputField
+            search={search}
+            setSearch={setSearch}
+            plants={user.personalGarden as PersonalGardenPlant[]}
+          />
+          <View
+            style={[
+              {
+                flex: 1,
+              },
+            ]}
+          >
+            <View
+              style={{
+                marginVertical: 10,
+              }}
+            ></View>
+            {user?.personalGarden && (
+              <PlantItemsList
+                navigation={navigation}
+                route={route}
+                plants={filterPlants(user.personalGarden, search)}
+              />
+            )}
+          </View>
+        </View>
+
+        <BottomNavigationBar navigation={navigation} route={route} />
+      </View>
+      <BottomModal
+        isVisible={modalOpen && firstRender.current}
+        onClose={() => setModalOpen(false)}
+      >
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          style={{
+            height: '100%',
+            width: '100%',
+            padding: 20,
+            flex: 1,
+            flexDirection: 'row',
           }}
         >
-          <View
-            style={{
-              paddingTop: insets.top,
-              flex: 1,
-            }}
-          >
-            <Header
-              navigation={navigation}
-              route={route}
-              text={text}
-              home
-              leftAction={() => {
-                setDrawerOpen(true);
-              }}
-            />
-            <View
-              style={[
-                global.spacing.container,
-                { flex: 1, marginVertical: 20 },
-              ]}
-            >
-              <SearchInputField
-                search={search}
-                setSearch={setSearch}
-                plants={user.personalGarden as PersonalGardenPlant[]}
-              />
-              <View
-                style={[
-                  {
-                    flex: 1,
-                  },
-                ]}
-              >
-                <View
-                  style={{
-                    marginVertical: 10,
-                  }}
-                ></View>
-                {user?.personalGarden && (
-                  <PlantItemsList
+          {sortPlantsByWateringStatus(personalGarden).map(
+            (plant, index) => {
+              const wateringArray = plant.watering.wateringArray;
+              const lastIndex = getLastWateredDateIndex(wateringArray);
+              const next_watering_index = lastIndex + 1;
+
+              const next_watering = getNextWateringDay(
+                new Date(wateringArray[lastIndex].date),
+                new Date(wateringArray[next_watering_index].date)
+              );
+              if (
+                next_watering === WateringStatus.NotWatered ||
+                next_watering === WateringStatus.Today
+              ) {
+                return (
+                  <ModalPlantCard
+                    key={index}
                     navigation={navigation}
-                    route={route}
-                    plants={filterPlants(user.personalGarden, search)}
+                    {...plant}
                   />
-                )}
-              </View>
-            </View>
-
-            <BottomNavigationBar navigation={navigation} route={route} />
-          </View>
-          <BottomModal
-            isVisible={modalOpen && firstRender.current}
-            onClose={() => setModalOpen(false)}
-          >
-            <ScrollView
-              showsHorizontalScrollIndicator={false}
-              horizontal={true}
-              style={{
-                height: '100%',
-                width: '100%',
-                padding: 20,
-                flex: 1,
-                flexDirection: 'row',
-              }}
-            >
-              {sortPlantsByWateringStatus(personalGarden).map(
-                (plant, index) => {
-                  const wateringArray = plant.watering.wateringArray;
-                  const lastIndex = getLastWateredDateIndex(wateringArray);
-                  const next_watering_index = lastIndex + 1;
-
-                  const next_watering = getNextWateringDay(
-                    new Date(wateringArray[lastIndex].date),
-                    new Date(wateringArray[next_watering_index].date)
-                  );
-                  if (
-                    next_watering === WateringStatus.NotWatered ||
-                    next_watering === WateringStatus.Today
-                  ) {
-                    return (
-                      <ModalPlantCard
-                        key={index}
-                        navigation={navigation}
-                        {...plant}
-                      />
-                    );
-                  }
-                }
-              )}
-            </ScrollView>
-          </BottomModal>
-        </Drawer>
-      ) : (
-        <NotLoggedIn />
-      )}
-    </>
+                );
+              }
+            }
+          )}
+        </ScrollView>
+      </BottomModal>
+    </Drawer>
   );
 };
 

@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.2,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#134b3f',
@@ -19,7 +19,6 @@ export const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: '10%',
   },
   buttonText: {
     textTransform: 'uppercase',
@@ -28,12 +27,5 @@ export const styles = StyleSheet.create({
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  puscica: {
-    position: 'absolute',
-    left: 10,
-    top: 10,
-    marginTop: '10%',
-    marginLeft: 11,
   },
 });

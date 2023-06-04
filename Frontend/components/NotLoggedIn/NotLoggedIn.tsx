@@ -14,9 +14,6 @@ export const NotLoggedIn = () => {
   }
   return (
     <View style={styles.container}>
-      <Pressable style={styles.puscica} onPress={handleBack}>
-        <Ionicons name="arrow-back" size={24} color="white" />
-      </Pressable>
       <Text style={styles.text}>
         To access this function you must be logged in.
       </Text>

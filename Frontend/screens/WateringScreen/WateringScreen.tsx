@@ -5,6 +5,7 @@ import {
   BottomNavigationBar,
   Header,
   PlantWateringInfoCard,
+  NotLoggedIn
 } from '../../components';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { global } from '../../styles/globals';
@@ -54,6 +55,7 @@ export const WateringScreen = ({ navigation, route }: Props) => {
         text={'Watering'}
         leftAction={() => navigation.navigate('PlantListScreen')}
       />
+      {user.userId ? (<></>) : (<NotLoggedIn />)}
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ marginBottom: 30 }}

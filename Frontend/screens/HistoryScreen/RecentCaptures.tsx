@@ -23,83 +23,78 @@ export const RecentCaptures = ({ navigation, route }: Props) => {
   const insets = useSafeAreaInsets();
 
   return (
-    <>
-      {(user.userId !== '') ? (
-        <View style={{ paddingTop: insets.top, flex: 1 }}>
-          <Header
-            navigation={navigation}
-            route={route}
-            text={'Recent Captures'}
-            leftAction={() => navigation.goBack()}
-          />
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{ marginBottom: 30 }}
-          >
-            <View style={[global.spacing.container, { flex: 1 }]}>
-              {user.history.map((plant, index) => {
-                const date = plant.date;
-                const captureTime = getImageCaptureTime(new Date(date));
-                if (prev_captured_ref.current !== captureTime) {
-                  prev_captured_ref.current = captureTime;
-                  return (
-                    <View key={plant._id}>
-                      {index !== 0 && (
-                        <Divider
-                          style={[
-                            {
-                              marginVertical: 20,
-                              marginHorizontal: 10,
-                            },
-                          ]}
-                          orientation="horizontal"
-                          width={2}
-                          color={global.color.primary.backgroundColor as string}
-                        />
-                      )}
-                      <Text
-                        style={[
-                          {
-                            fontSize: 18,
-                            fontWeight: 'bold',
-                            fontStyle: 'italic',
-                            color: global.color.primary.backgroundColor,
-                          },
-                        ]}
-                      >
-                        {captureTime}
-                      </Text>
-                      <RecentPlantCard
-                        plant={plant}
-                        captureTime={captureTime}
-                        date={new Date(date)}
-                        navigation={navigation}
-                        route={route}
-                        classificationPercent={plant.result}
-                      />
-                    </View>
-                  );
-                } else {
-                  return (
-                    <RecentPlantCard
-                      key={plant._id}
-                      plant={plant}
-                      captureTime={captureTime}
-                      date={new Date(date)}
-                      navigation={navigation}
-                      route={route}
-                      classificationPercent={plant.result}
+    <View style={{ paddingTop: insets.top, flex: 1 }}>
+      <Header
+        navigation={navigation}
+        route={route}
+        text={'Recent Captures'}
+        leftAction={() => navigation.goBack()}
+      />
+      {user.userId ? (<></>) : (<NotLoggedIn />)}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ marginBottom: 30 }}
+      >
+        <View style={[global.spacing.container, { flex: 1 }]}>
+          {user.history.map((plant, index) => {
+            const date = plant.date;
+            const captureTime = getImageCaptureTime(new Date(date));
+            if (prev_captured_ref.current !== captureTime) {
+              prev_captured_ref.current = captureTime;
+              return (
+                <View key={plant._id}>
+                  {index !== 0 && (
+                    <Divider
+                      style={[
+                        {
+                          marginVertical: 20,
+                          marginHorizontal: 10,
+                        },
+                      ]}
+                      orientation="horizontal"
+                      width={2}
+                      color={global.color.primary.backgroundColor as string}
                     />
-                  );
-                }
-              })}
-            </View>
-          </ScrollView>
-          <BottomNavigationBar navigation={navigation} route={route} />
+                  )}
+                  <Text
+                    style={[
+                      {
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        fontStyle: 'italic',
+                        color: global.color.primary.backgroundColor,
+                      },
+                    ]}
+                  >
+                    {captureTime}
+                  </Text>
+                  <RecentPlantCard
+                    plant={plant}
+                    captureTime={captureTime}
+                    date={new Date(date)}
+                    navigation={navigation}
+                    route={route}
+                    classificationPercent={plant.result}
+                  />
+                </View>
+              );
+            } else {
+              return (
+                <RecentPlantCard
+                  key={plant._id}
+                  plant={plant}
+                  captureTime={captureTime}
+                  date={new Date(date)}
+                  navigation={navigation}
+                  route={route}
+                  classificationPercent={plant.result}
+                />
+              );
+            }
+          })}
         </View>
-      ) : (
-        <NotLoggedIn />
-      )}
-    </>
+      </ScrollView>
+      <BottomNavigationBar navigation={navigation} route={route} />
+    </View>
   );
 };
