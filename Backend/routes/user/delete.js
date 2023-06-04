@@ -53,6 +53,7 @@ router.delete('/:userId/personal-garden/:plantId', async (req, res) => {
             { _id: userId },
             { $set: { personalGarden: updatedGarden } }
         );
+        return res.status(200).send('Plant deleted successfully')
     } catch (err) {
         console.error('Failed to delete plant from personal garden:', err);
         res.status(500).send('Failed to delete plant from personal garden');
