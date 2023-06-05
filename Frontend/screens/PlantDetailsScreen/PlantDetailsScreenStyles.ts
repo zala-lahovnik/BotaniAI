@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    marginTop: -20,
+    marginTop: -35,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
