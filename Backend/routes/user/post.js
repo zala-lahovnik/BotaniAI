@@ -7,6 +7,8 @@ const os = require('os');
 const path = require('path');
 const fs = require('fs');
 const admin = require('firebase-admin');
+const cron = require('node-cron');
+const { Expo } = require('expo-server-sdk');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -234,5 +236,89 @@ router.post('/add-history', upload.any(), async (req, res, next) => {
         }
     };
 });
+
+
+router.post('/fcm-token/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const { fcmToken } = req.body;
+  
+    try {
+        const db = getDB();
+        const usersCollection = db.collection('user');
+  
+        const user = await usersCollection.findOneAndUpdate(
+            { _id: userId },
+            { $set: { fcmToken } },
+            { upsert: true }
+        );
+  
+        console.log('FCM token updated for user:', user);
+            
+        res.sendStatus(200);
+    } catch (error) {
+        console.log('Error updating FCM token:', error);
+        res.sendStatus(500);
+    }
+});
+
+cron.schedule('45 9 * * *', async () => {
+    try {
+        const db = getDB();
+        const usersCollection = db.collection('user');
+
+        const users = await usersCollection.find({ notifications: true }).toArray();
+    
+        users.forEach(async user => {
+            const plants = user.personalGarden;
+            
+            let plantsToBeWatered = [];
+    
+            plants.forEach(plant => {
+                const wateringArray = plant.watering.wateringArray;
+                
+                wateringArray.forEach(watering => {
+                    const today = new Date().toISOString().slice(0, 10);
+                    const { date, watered } = watering;
+            
+                    if ((date === today) && !watered) {
+                        plantsToBeWatered.push(plant);
+                    }
+                });
+            });
+
+            if (plantsToBeWatered.length > 0) {
+                await sendNotification(user.fcmToken);
+            }
+        });
+    } catch(error) {
+        console.log('Error while trying to send notifications: ' + error);
+    }
+});
+
+
+
+async function sendNotification(token) {
+  const expoPushToken = token;
+
+  if (!Expo.isExpoPushToken(expoPushToken)) {
+    console.log('Invalid Expo push token:', expoPushToken);
+    return;
+  }
+
+  const expo = new Expo();
+
+  const notification = {
+    to: expoPushToken,
+    title: 'Plant Watering Reminder',
+    body: 'Remember to water your plants!'
+  };
+
+  try {
+    const response = await expo.sendPushNotificationsAsync([notification]);
+    console.log('Notification sent successfully:', response);
+  } catch (error) {
+    console.log('Error sending notification:', error);
+  }
+}
 
 module.exports = router;
