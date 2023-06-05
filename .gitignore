@@ -1,1 +1,5 @@
 .idea
+firebase-debug.log
+ui-debug.log
+.scannerwork
+sonar-project.properties
