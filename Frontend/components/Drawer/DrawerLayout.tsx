@@ -21,6 +21,7 @@ import { UserActionType, UserContext } from '../../context/UserContext';
 import { Switch } from '@rneui/themed';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { updateUserNotifications } from '../../api/_user';
+import NotificationHandler from '../../utils/NotificationHandler';
 
 export const DrawerLayout = ({
   navigation,
@@ -39,6 +40,7 @@ export const DrawerLayout = ({
         type: UserActionType.UPDATE_USER,
         payload: { notifications: value },
       });
+      NotificationHandler();
     } catch (e) {
       console.log(e);
     }

@@ -15,14 +15,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.davori123.Frontend"
+      "package": "com.davori123.Frontend",
+      "permissions": ["NOTIFICATIONS", "SYSTEM_ALERT_WINDOW"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -44,6 +48,9 @@
         {
           "photosPermission": "The app accesses your photos to classify plants."
         }
+      ],
+      [
+        "expo-notifications"
       ]
     ]
   }
