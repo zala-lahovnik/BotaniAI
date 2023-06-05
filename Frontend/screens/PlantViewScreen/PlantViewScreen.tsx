@@ -252,7 +252,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           }
           tempPersonalGarden.push(dispatchObject)
           dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
-          navigation.navigate("PlantListScreen", { plants: tempPersonalGarden })
+          navigation.navigate("PlantListScreen")
         }).catch((err) => {
           console.log('Error saving plant', err);
           Toast.show({
