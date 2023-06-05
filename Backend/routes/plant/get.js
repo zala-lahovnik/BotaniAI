@@ -128,6 +128,7 @@ router.get("/", async (req, res) => {
 
     const plants = await collection
       .find({})
+      .sort({ latin: 1 })
       .skip(offset)
       .limit(limit)
       .toArray();
