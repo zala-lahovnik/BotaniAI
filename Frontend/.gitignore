@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 
 /firebase/firebase-config.js
+/api/backend.ts
 
 # macOS
 .DS_Store
