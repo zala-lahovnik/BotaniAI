@@ -21,7 +21,16 @@ import { UserActionType, UserContext } from '../../context/UserContext';
 import { Switch } from '@rneui/themed';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { updateUserNotifications } from '../../api/_user';
-import NotificationHandler from '../../utils/NotificationHandler';
+import * as Notifications from 'expo-notifications';
+import { registerForPushNotifications } from '../../utils/NotificationHandler';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 export const DrawerLayout = ({
   navigation,
@@ -40,7 +49,6 @@ export const DrawerLayout = ({
         type: UserActionType.UPDATE_USER,
         payload: { notifications: value },
       });
-      NotificationHandler();
     } catch (e) {
       console.log(e);
     }
@@ -56,6 +64,18 @@ export const DrawerLayout = ({
     }, 1000);
     return () => clearTimeout(timeout);
   }, [checked, handleChange]);
+
+
+  useEffect(() => {
+    if (checked) {
+      registerForPushNotifications(user.userId);
+      Notifications.addNotificationReceivedListener(handleNotification);
+    }
+  }, [checked]);
+
+  const handleNotification = (notification: any) => {
+    console.log('Received notification:', notification);
+  };
 
   return (
     <View style={styles.container}>
