@@ -17,6 +17,7 @@ import { styles } from './PlantWateringInfoCardStyles';
 import {
   getLastWateredDateIndex,
   getNumberBetweenDates,
+  getWateringDaysPro,
   getWateringPercentage,
 } from '../../utils/plant-watering-calculations';
 import { global } from '../../styles/globals';
@@ -51,18 +52,22 @@ const PlantWateringInfo = ({
 
 type Props = NativeStackScreenProps<any> & {
   plant: PersonalGardenPlant;
-  showWateredButton?: boolean;
+  wateringToday: boolean;
+  wateringMissed: boolean;
 };
 
 export const PlantWateringInfoCard = ({
   navigation,
   route,
   plant,
-  showWateredButton,
+  wateringToday,
+  wateringMissed,
 }: Props) => {
   const cardAnimation = useRef(new Animated.Value(0)).current;
   const [expanded, setExpanded] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  const showWateredButton = wateringToday || wateringMissed;
 
   const { user, dispatch } = React.useContext(UserContext);
 
@@ -208,20 +213,31 @@ export const PlantWateringInfoCard = ({
             style={styles.wateredButtonTouchable}
             activeOpacity={0.8}
             onPress={() => {
-              // TODO: WHAT IF WATERING IS MISSED
+              let wateringArray = plant.watering.wateringArray;
+              let today = new Date().toISOString().split('T')[0];
+              let lastWateredIndex = getLastWateredDateIndex(wateringArray);
+              wateringArray = [
+                ...wateringArray.slice(0, lastWateredIndex + 1),
+                {
+                  date: today,
+                  watered: true,
+                },
+              ];
 
+              let modifiedWateringArray = getWateringDaysPro(
+                plant.watering.numberOfDays,
+                plant.watering.firstDay,
+                wateringArray || []
+              );
               let dispatchPlant = {
                 ...plant,
                 watering: {
                   ...plant.watering,
-                  wateringArray: plant.watering.wateringArray.map((item) =>
-                    item.date === new Date().toISOString().split('T')[0]
-                      ? { ...item, watered: true }
-                      : item
-                  ),
+                  wateringArray: modifiedWateringArray,
                 },
               };
-              return handleUpdateWateringDate(dispatchPlant);
+
+              handleUpdateWateringDate(dispatchPlant as PersonalGardenPlant);
             }}
           >
             <Text style={styles.wateredButtonText}>Watered</Text>

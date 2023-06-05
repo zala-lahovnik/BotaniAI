@@ -17,13 +17,17 @@ type Props = {
 };
 
 export const ModalPlantCard = ({ navigation, customName, image }: Props) => {
-  const [imageUri, setImageUri] = useState(image || '')
+  const [imageUri, setImageUri] = useState(image || '');
 
   useEffect(() => {
-    getOnlineImageUri(image).then((result) => {
-      setImageUri(result)
-    }).catch((err) => { console.log(err) })
-  }, [image])
+    getOnlineImageUri(image)
+      .then((result) => {
+        setImageUri(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [image]);
 
   return (
     <TouchableOpacity
@@ -34,7 +38,7 @@ export const ModalPlantCard = ({ navigation, customName, image }: Props) => {
     >
       <ImageBackground
         blurRadius={1.1}
-        source={{ uri:  imageUri || ''}}
+        source={{ uri: imageUri || '' }}
         resizeMode={'cover'}
         style={styles.card}
       >

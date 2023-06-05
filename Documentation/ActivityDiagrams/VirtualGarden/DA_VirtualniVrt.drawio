@@ -1,252 +1,106 @@
-<mxfile host="app.diagrams.net" modified="2023-05-27T13:53:02.171Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" etag="_fr9MivlfVcaBVCGMxvh" version="21.3.4" type="device">
+<mxfile host="app.diagrams.net" modified="2023-06-05T15:36:09.393Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="tSZXEYpaeDNuAbbQHPm2" version="21.3.7" type="device">
   <diagram name="Page-1" id="w36pJh0tPYuzfkmxa03p">
-    <mxGraphModel dx="2577" dy="872" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1877" dy="581" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="djv_0frjH2jrnHzl75IO-1" value="Uporabnik" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="-420" y="30" width="580" height="1010" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-1" value="Uporabnik" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="-180" y="30" width="340" height="510" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-2" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="277.5" y="30" width="30" height="30" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-2" value="" style="ellipse;html=1;shape=startState;fillColor=#000000;strokeColor=#ff0000;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="162.5" y="30" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-3" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;verticalAlign=bottom;endArrow=open;endSize=8;strokeColor=#ff0000;rounded=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-2" target="djv_0frjH2jrnHzl75IO-4">
+        <mxCell id="tk4osSH9beHIg1FJtr60-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.502;exitY=0.838;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-2" target="djv_0frjH2jrnHzl75IO-4" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="147.5" y="120" as="targetPoint" />
+            <mxPoint x="205" y="60" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-4" value="Klikne na gumb za virtualni vrt" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="232.5" y="80" width="120" height="60" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-4" value="Klikne na gumb za virtualni vrt" style="rounded=1;whiteSpace=wrap;html=1;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="117.5" y="80" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-77" value="PREGLED" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-15" target="djv_0frjH2jrnHzl75IO-76">
+        <mxCell id="djv_0frjH2jrnHzl75IO-102" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-76" target="djv_0frjH2jrnHzl75IO-103" edge="1">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="102.5" y="400" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="217.5" y="205" />
+              <mxPoint x="175" y="250" />
+              <mxPoint x="175" y="410" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-15" target="djv_0frjH2jrnHzl75IO-78">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="367.5" y="205" />
-            </Array>
-          </mxGeometry>
+        <mxCell id="djv_0frjH2jrnHzl75IO-76" value="Pregleda rastline, ki jih že ima v vrtu" style="rounded=1;whiteSpace=wrap;html=1;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="115" y="190" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-80" value="DODAJANJE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="djv_0frjH2jrnHzl75IO-79">
-          <mxGeometry x="0.6035" y="1" relative="1" as="geometry">
-            <mxPoint x="-1" y="-16" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-15" value="" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="275" y="190" width="35" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-100" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-16" target="djv_0frjH2jrnHzl75IO-99">
+        <mxCell id="djv_0frjH2jrnHzl75IO-107" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-103" target="djv_0frjH2jrnHzl75IO-106" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-16" value="Pregleda rastline, ki jih že ima v vrtu" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="232.5" y="860" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-75" value="Pregled ali dodajanje?" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="292.5" y="170" width="85" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-102" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-76" target="djv_0frjH2jrnHzl75IO-103">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="217.5" y="400" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="217.5" y="370" />
-              <mxPoint x="160.5" y="370" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-76" value="Pregleda rastline, ki jih že ima v vrtu" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="157.5" y="270" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-78" value="Klikne na gumb za dodajanje" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="307.5" y="270" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-86" value="DODAJANJE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-83" target="djv_0frjH2jrnHzl75IO-85">
-          <mxGeometry x="0.5" y="10" relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="472.5" y="395" />
-            </Array>
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-88" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-83" target="djv_0frjH2jrnHzl75IO-87">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-89" value="PREKLIC" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="djv_0frjH2jrnHzl75IO-88">
-          <mxGeometry x="-0.0316" y="-1" relative="1" as="geometry">
-            <mxPoint as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-83" value="" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="392.5" y="380" width="35" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-84" value="Preklic ali dodajanje" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="422.5" y="360" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-91" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-85" target="djv_0frjH2jrnHzl75IO-90">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-85" value="Izpolni informacije o rastlini" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="412.5" y="430" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-87" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="347.5" y="440" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-90" value="Klikne na gumb za dodajanje" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="412.5" y="510" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-99" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="277.5" y="950" width="30" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-107" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-103" target="djv_0frjH2jrnHzl75IO-106">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-113" value="UREJANJE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="djv_0frjH2jrnHzl75IO-107">
+        <mxCell id="djv_0frjH2jrnHzl75IO-113" value="UREJANJE" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="djv_0frjH2jrnHzl75IO-107" vertex="1" connectable="0">
           <mxGeometry x="0.2152" y="-1" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-109" value="BRISANJE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-103" target="djv_0frjH2jrnHzl75IO-108">
+        <mxCell id="djv_0frjH2jrnHzl75IO-109" value="BRISANJE" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-103" target="djv_0frjH2jrnHzl75IO-108" edge="1">
           <mxGeometry x="0.6667" y="30" relative="1" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-103" value="" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="142.5" y="400" width="35" height="30" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-103" value="" style="rhombus;whiteSpace=wrap;html=1;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="157.5" y="330" width="35" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-105" value="Urejanje, brisanje ali pregled podrobnosti?" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="72.5" y="360" width="95" height="30" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-105" value="Urejanje, brisanje ali pregled podrobnosti?" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="55" y="270" width="127.5" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-119" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-106" target="djv_0frjH2jrnHzl75IO-114">
+        <mxCell id="djv_0frjH2jrnHzl75IO-119" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-106" target="djv_0frjH2jrnHzl75IO-114" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-106" value="Urejanje podrobnosti rastline v vrtu" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="10" y="450" width="75" height="60" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-106" value="Urejanje rastline" style="rounded=1;whiteSpace=wrap;html=1;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="25" y="380" width="75" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-118" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-108" target="djv_0frjH2jrnHzl75IO-115">
+        <mxCell id="djv_0frjH2jrnHzl75IO-118" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-108" target="djv_0frjH2jrnHzl75IO-115" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-108" value="Brisanje rastline iz virtualnega vrta" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="116.5" y="450" width="87" height="60" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-108" value="Izbris rastline" style="rounded=1;whiteSpace=wrap;html=1;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="131.5" y="380" width="87" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-117" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-110" target="djv_0frjH2jrnHzl75IO-116">
+        <mxCell id="djv_0frjH2jrnHzl75IO-117" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-110" target="djv_0frjH2jrnHzl75IO-116" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-110" value="Pregled podrobnosti o rastlini v vrtu" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="228" y="450" width="72" height="60" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-110" value="Pregled podrobnosti" style="rounded=1;whiteSpace=wrap;html=1;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="243" y="380" width="72" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-111" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-103" target="djv_0frjH2jrnHzl75IO-110">
+        <mxCell id="djv_0frjH2jrnHzl75IO-111" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="djv_0frjH2jrnHzl75IO-1" source="djv_0frjH2jrnHzl75IO-103" target="djv_0frjH2jrnHzl75IO-110" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-112" value="PREGLED&lt;br&gt;PODROBNOSTI" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="djv_0frjH2jrnHzl75IO-111">
+        <mxCell id="djv_0frjH2jrnHzl75IO-112" value="PREGLED&lt;br&gt;PODROBNOSTI" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="djv_0frjH2jrnHzl75IO-111" vertex="1" connectable="0">
           <mxGeometry x="0.0321" relative="1" as="geometry">
             <mxPoint x="10" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-114" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="32.5" y="530" width="30" height="30" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-114" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="47.5" y="460" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-115" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="145" y="530" width="30" height="30" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-115" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="160" y="460" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-116" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="djv_0frjH2jrnHzl75IO-1">
-          <mxGeometry x="249" y="530" width="30" height="30" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-116" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" parent="djv_0frjH2jrnHzl75IO-1" vertex="1">
+          <mxGeometry x="264" y="460" width="30" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-27" value="Aplikacija" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="160" y="30" width="280" height="1010" as="geometry" />
+        <mxCell id="djv_0frjH2jrnHzl75IO-27" value="Aplikacija" style="swimlane;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="30" width="280" height="510" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-28" value="Preusmeri na zaslon za virtualni vrt" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-27">
+        <mxCell id="djv_0frjH2jrnHzl75IO-28" value="Preusmeri na zaslon za virtualni vrt" style="rounded=1;whiteSpace=wrap;html=1;" parent="djv_0frjH2jrnHzl75IO-27" vertex="1">
           <mxGeometry x="80" y="80" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-30" value="Preusmeri na zaslon za dodajanje rastline" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-27">
-          <mxGeometry x="80" y="270" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-96" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="djv_0frjH2jrnHzl75IO-27" source="djv_0frjH2jrnHzl75IO-33" target="djv_0frjH2jrnHzl75IO-37">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-33" value="Ustvari objekt za shranjevanje rastline" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-27">
-          <mxGeometry x="80" y="510" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-98" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="djv_0frjH2jrnHzl75IO-27" source="djv_0frjH2jrnHzl75IO-34" target="djv_0frjH2jrnHzl75IO-41">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-34" value="Prejme odgovor" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-27">
-          <mxGeometry x="80" y="750" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-37" value="Pošlje zahtevek" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-27">
-          <mxGeometry x="80" y="590" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-41" value="Preusmeri na zaslon za virtualni vrt" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-27">
-          <mxGeometry x="80" y="860" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-47" value="Zaledni sistem" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" vertex="1" parent="1">
-          <mxGeometry x="440" y="30" width="200" height="1010" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="djv_0frjH2jrnHzl75IO-47" source="djv_0frjH2jrnHzl75IO-49" target="djv_0frjH2jrnHzl75IO-50">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-49" value="Prejme zahtevek" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-47">
-          <mxGeometry x="40" y="590" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-50" value="Shrani rastlino v PB" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-47">
-          <mxGeometry x="40" y="670" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-51" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="djv_0frjH2jrnHzl75IO-47" source="djv_0frjH2jrnHzl75IO-50" target="djv_0frjH2jrnHzl75IO-95">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="100" y="860" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-95" value="Vrne odgovor o statusu shranjevanja" style="whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="djv_0frjH2jrnHzl75IO-47">
-          <mxGeometry x="40" y="750" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-64" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-4" target="djv_0frjH2jrnHzl75IO-28">
+        <mxCell id="djv_0frjH2jrnHzl75IO-64" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="djv_0frjH2jrnHzl75IO-4" target="djv_0frjH2jrnHzl75IO-28" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="60" y="320" as="sourcePoint" />
             <mxPoint x="110" y="270" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-65" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-28" target="djv_0frjH2jrnHzl75IO-15">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="330" y="270" as="sourcePoint" />
-            <mxPoint x="20" y="220" as="targetPoint" />
+        <mxCell id="c-v6jBUVmcoTRHABE8bm-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="djv_0frjH2jrnHzl75IO-28" target="djv_0frjH2jrnHzl75IO-76" edge="1">
+          <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="300" y="190" />
-              <mxPoint x="-127" y="190" />
+              <mxPoint x="300" y="250" />
             </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-70" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-37" target="djv_0frjH2jrnHzl75IO-49">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-81" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-78" target="djv_0frjH2jrnHzl75IO-30">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="219.99999999999977" y="330" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-30" target="djv_0frjH2jrnHzl75IO-83">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="90" y="420" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="300" y="370" />
-              <mxPoint x="28" y="370" />
-              <mxPoint x="28" y="410" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-92" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-90" target="djv_0frjH2jrnHzl75IO-33">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-97" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-95" target="djv_0frjH2jrnHzl75IO-34">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="djv_0frjH2jrnHzl75IO-71" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="djv_0frjH2jrnHzl75IO-41" target="djv_0frjH2jrnHzl75IO-16">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points" />
           </mxGeometry>
         </mxCell>
       </root>

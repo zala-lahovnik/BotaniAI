@@ -34,7 +34,7 @@ const PlantInfoIconStyle = {
         color={global.color.primary.backgroundColor}
       />
     ),
-    color: global.color.secondary.color,
+    color: '#558568',
   },
   sunlight: {
     name: 'Sunlight',
@@ -45,17 +45,17 @@ const PlantInfoIconStyle = {
         color={global.color.primary.backgroundColor}
       />
     ),
-    color: '#FCF1E3',
+    color: '#fcd4a6',
   },
   watering: {
     name: 'Watering',
     icon: <Water name={'water'} size={20} color={'#AEBDEE'} />,
-    color: '#E6EAFA',
+    color: '#a3b5fd',
   },
   plantingTime: {
     name: 'Planting Time',
     icon: <Calender name={'calendar'} size={20} color={'#CFA2E9'} />,
-    color: '#F8E8F8',
+    color: '#dc95dc',
   },
 };
 
@@ -72,16 +72,16 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     fertilization,
     toxicity,
     image,
-    imageToSave
+    imageToSave,
   } = route.params as Plant;
 
   const [expanded, setExpanded] = useState(false);
   const truncatedDescription =
     description.split('').slice(0, 150).join('') + '...';
   const isTruncated = description.split('').length > 150;
-  const { user } = useContext(UserContext)
-  const [imageUri, setImageUri] = useState(image || '')
-  const [isLoaded, setIsLoaded] = useState(false)
+  const { user } = useContext(UserContext);
+  const [imageUri, setImageUri] = useState(image || '');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const handleExpand = () => {
     setExpanded(!expanded);
@@ -99,7 +99,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         label: Object.keys(item)[0],
         ...item,
         ...PlantInfoIconStyle[
-        Object.keys(item)[0] as keyof typeof PlantInfoIconStyle
+          Object.keys(item)[0] as keyof typeof PlantInfoIconStyle
         ],
       };
     })
@@ -115,13 +115,17 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     }, []);
 
   useEffect(() => {
-    getOnlineImageUri(image || '').then((result) => {
-      setImageUri(result)
-      setTimeout(() => {
-        setIsLoaded(true)
-      }, 1000)
-    }).catch((err) => { console.log(err) })
-  }, [image])
+    getOnlineImageUri(image || '')
+      .then((result) => {
+        setImageUri(result);
+        setTimeout(() => {
+          setIsLoaded(true);
+        }, 1000);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [image]);
 
   return (
     <View
@@ -129,7 +133,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         flex: 1,
       }}
     >
-      {isLoaded ?
+      {isLoaded ? (
         <ImageBackground
           blurRadius={0.5}
           fadeDuration={500}
@@ -141,13 +145,13 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             opacity: 0.8,
           }}
         />
-        :
+      ) : (
         <ActivityIndicator
           size="large"
           color="#124A3F"
           style={{ marginBottom: '10%', marginTop: '20%' }}
         />
-      }
+      )}
       <BackButton navigation={navigation} />
       <View style={[styles.container]}>
         <View>
@@ -167,6 +171,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
               <Text
                 style={{
                   fontSize: 12,
+                  fontWeight: '600',
                 }}
               >
                 {toxicity}
@@ -222,7 +227,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
                     >
                       <View
                         style={{
-                          backgroundColor: object.color,
+                          backgroundColor: object.color + '40',
                           borderRadius: 10,
                           padding: 10,
                           alignItems: 'center',
@@ -264,7 +269,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             onPress={() =>
               navigation.navigate('PlantViewScreen', {
                 latin: latin,
-                image: imageToSave || image || "",
+                image: imageToSave || image || '',
                 edit: true,
                 common: common,
               })

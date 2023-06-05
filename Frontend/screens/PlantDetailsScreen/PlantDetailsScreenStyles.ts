@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    marginTop: -20,
+    marginTop: -35,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   plantCategoryPill: {
     paddingVertical: 5,
     paddingHorizontal: 10,
-    backgroundColor: global.color.secondary.color,
+    backgroundColor: 'rgba(255,80,80,0.4)',
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
