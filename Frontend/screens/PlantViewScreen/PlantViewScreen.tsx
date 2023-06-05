@@ -60,7 +60,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   }, [plant.image])
 
   useEffect(() => {
-    if (days && date) {
+    if (days !== '' && date !== '') {
       if (today < date) {
         console.log('Date cannot be in the future');
         Toast.show({
@@ -101,34 +101,36 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       wateringArray: sortedDatesPro,
       image: plant.image,
     };
-    updatePlant(loggedUser.userId, plant._id, newPlant).then(() => {
-      let tempPersonalGarden = [...loggedUser.personalGarden]
-      const dispatchObject: PersonalGardenPlant = {
-        _id: plant._id,
-        latin: plant.latin,
-        common: plant.common,
-        customName: name,
-        description: description,
-        watering: {
-          firstDay: date,
-          numberOfDays: days,
-          amountOfWater: water,
-          wateringArray: sortedDatesPro,
-        },
-        image: plant.imageToSave || plant.image,
-      }
-      tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
-      dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
-    }).catch((err) => {
-      console.log('Error updating plant', err);
-      Toast.show({
-        type: 'error',
-        text1: 'Error while updating',
-        text2: 'Something went wrong. Please try again.',
-        position: "bottom",
-        visibilityTime: 3000,
+    if(plant._id) {
+      updatePlant(loggedUser.userId, plant._id, newPlant).then(() => {
+        let tempPersonalGarden = [...loggedUser.personalGarden]
+        const dispatchObject: PersonalGardenPlant = {
+          _id: plant._id,
+          latin: plant.latin,
+          common: plant.common,
+          customName: name,
+          description: description,
+          watering: {
+            firstDay: date,
+            numberOfDays: days,
+            amountOfWater: water,
+            wateringArray: sortedDatesPro,
+          },
+          image: plant.imageToSave || plant.image,
+        }
+        tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
+        dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
+      }).catch((err) => {
+        console.log('Error updating plant', err);
+        Toast.show({
+          type: 'error',
+          text1: 'Error while updating',
+          text2: 'Something went wrong. Please try again.',
+          position: "bottom",
+          visibilityTime: 3000,
+        });
       });
-    });
+    }
     return { updatedMarkedDates: newMarkedDatesPro, dates: sortedDatesPro };
   }
 
@@ -162,7 +164,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   function handleEdit() {
     console.log("name")
     console.log(name)
-    if (name == "") {
+    if (name === "") {
       Toast.show({
         type: 'error',
         text1: 'Error with details',
@@ -171,11 +173,11 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         visibilityTime: 3000,
       });
       return
-    } else if (date == "" || date.length != 10) {
+    } else if (date === "" || date.length !== 10) {
       Toast.show({
         type: 'error',
         text1: 'Error with details',
-        text2: 'Please chose the last time you watered the plant.',
+        text2: 'Please choose the last time you watered the plant.',
         position: "bottom",
         visibilityTime: 3000,
       });
@@ -185,7 +187,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       Toast.show({
         type: 'error',
         text1: 'Error with details',
-        text2: 'Please chose the amount you water the plant.',
+        text2: 'Please choose the amount you water the plant.',
         position: "bottom",
         visibilityTime: 3000,
       });
@@ -273,48 +275,50 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
           visibilityTime: 3000,
         });
       }
-    }
-    const newPlant: {
-      image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
-    } = {
-      customName: name,
-      firstDay: date,
-      numberOfDays: days,
-      amountOfWater: water,
-      description: description,
-      wateringArray: sortedDatesPro,
-      image: plant.image
-    };
-    if (plant._id)
-      await updatePlant(loggedUser.userId, plant._id, newPlant).then((response) => {
-        let tempPersonalGarden = [...loggedUser.personalGarden]
-        const dispatchObject: PersonalGardenPlant = {
-          _id: plant._id,
-          latin: plant.latin,
-          common: plant.common,
-          customName: name,
-          description: description,
-          watering: {
-            firstDay: date,
-            numberOfDays: days,
-            amountOfWater: water,
-            wateringArray: sortedDatesPro,
-          },
-          image: plant.imageToSave || plant.image,
-        }
-        tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
-        dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
-      }).catch((err) => {
-        console.log('Error updating plant', err);
-        Toast.show({
-          type: 'error',
-          text1: 'Error while updating',
-          text2: 'Something went wrong. Please try again.',
-          position: "bottom",
-          visibilityTime: 3000,
+    } else {
+      const newPlant: {
+        image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
+      } = {
+        customName: name,
+        firstDay: date,
+        numberOfDays: days,
+        amountOfWater: water,
+        description: description,
+        wateringArray: sortedDatesPro,
+        image: plant.image
+      };
+      setDates(sortedDatesPro)
+      if (plant._id)
+        await updatePlant(loggedUser.userId, plant._id, newPlant).then(() => {
+          let tempPersonalGarden = [...loggedUser.personalGarden]
+          const dispatchObject: PersonalGardenPlant = {
+            _id: plant._id,
+            latin: plant.latin,
+            common: plant.common,
+            customName: name,
+            description: description,
+            watering: {
+              firstDay: date,
+              numberOfDays: days,
+              amountOfWater: water,
+              wateringArray: sortedDatesPro,
+            },
+            image: plant.imageToSave || plant.image,
+          }
+          tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
+          dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
+        }).catch((err) => {
+          console.log('Error updating plant', err);
+          Toast.show({
+            type: 'error',
+            text1: 'Error while updating',
+            text2: 'Something went wrong. Please try again.',
+            position: "bottom",
+            visibilityTime: 3000,
+          });
         });
-      });
-    setEdit([false, edit[1]]);
+      setEdit([false, edit[1]]);
+    }
   }
 
   return (
