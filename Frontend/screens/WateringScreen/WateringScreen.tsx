@@ -101,10 +101,8 @@ export const WateringScreen = ({ navigation, route }: Props) => {
                     plant={plant}
                     navigation={navigation}
                     route={route}
-                    showWateredButton={
-                      next_watering === WateringStatus.Today ||
-                      next_watering === WateringStatus.NotWatered
-                    }
+                    wateringToday={next_watering === WateringStatus.Today}
+                    wateringMissed={next_watering === WateringStatus.NotWatered}
                   />
                 </View>
               );
@@ -115,10 +113,8 @@ export const WateringScreen = ({ navigation, route }: Props) => {
                   plant={plant}
                   navigation={navigation}
                   route={route}
-                  showWateredButton={
-                    next_watering === WateringStatus.Today ||
-                    next_watering === WateringStatus.NotWatered
-                  }
+                  wateringToday={next_watering === WateringStatus.Today}
+                  wateringMissed={next_watering === WateringStatus.NotWatered}
                 />
               );
             }

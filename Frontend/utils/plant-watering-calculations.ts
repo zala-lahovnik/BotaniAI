@@ -145,7 +145,7 @@ const findLastWateredIndex = (wateringArray: any[]): number => {
       return i;
     }
   }
-  return -1; // Return -1 if no object with watered: true is found
+  return -1;
 };
 
 export const getNextWateringDay = (
@@ -227,19 +227,21 @@ export const getLastWateredDateIndex = (
 };
 
 export const createNewWateringDaysPro = (gap: string, firstDate: string) => {
-  const firstWateringDate: any = new Date(firstDate)
-  const today: any = new Date()
-  let newWateringDates: Array<PersonalGardenWateringArrayType> = []
+  const firstWateringDate: any = new Date(firstDate);
+  const today: any = new Date();
+  let newWateringDates: Array<PersonalGardenWateringArrayType> = [];
 
-  const diffTime = firstWateringDate - today
-  const diffDays = diffTime / (1000 * 60 * 60 * 24)
-  const pastRepetitions = Math.abs(Math.round(diffDays / Number(gap)))
+  const diffTime = firstWateringDate - today;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  const pastRepetitions = Math.abs(Math.round(diffDays / Number(gap)));
 
-  for(let i = 0; i < (5 + pastRepetitions); i++) {
+  for (let i = 0; i < 5 + pastRepetitions; i++) {
     const newDate = new Date(
       firstWateringDate.getTime() + Number(gap) * i * 86400000
     );
-    if(newDate.toISOString().slice(0,10) <= today.toISOString().slice(0,10)) {
+    if (
+      newDate.toISOString().slice(0, 10) <= today.toISOString().slice(0, 10)
+    ) {
       newWateringDates.push({
         date: newDate.toISOString().slice(0, 10),
         watered: true,
@@ -256,81 +258,91 @@ export const createNewWateringDaysPro = (gap: string, firstDate: string) => {
     if (itemA.date - itemB.date) return 1;
     else if (itemA.date < itemB.date) return -11;
     else return 0;
-  })
+  });
 
-  const noDuplicatesArray = Array.from(new Set(newWateringDates))
+  const noDuplicatesArray = Array.from(new Set(newWateringDates));
 
-  return noDuplicatesArray
-}
+  return noDuplicatesArray;
+};
 
-export const getWateringDaysPro = (gapDays: any, firstDay: string, wateringArray: Array<any>) => {
-  const today: any = new Date().setHours(0,0,0,0);
-  const tempFirstDay = new Date(firstDay).setHours(0,0,0,0)
-  if(tempFirstDay >= today)
-    firstDay = new Date().toISOString().slice(0,10)
+export const getWateringDaysPro = (
+  gapDays: any,
+  firstDay: string,
+  wateringArray: Array<any>
+) => {
+  const today: any = new Date().setHours(0, 0, 0, 0);
+  const tempFirstDay = new Date(firstDay).setHours(0, 0, 0, 0);
+  if (tempFirstDay >= today) firstDay = new Date().toISOString().slice(0, 10);
 
-  const gap = parseInt(gapDays) || 7
+  const gap = parseInt(gapDays) || 7;
 
-  let pastWateringDatesTrue: any = []
-  if(wateringArray.length > 0) {
-    pastWateringDatesTrue = wateringArray
-      .filter((item) => {
-        const itemDate = new Date(item.date).setHours(0,0,0,0);
-        return itemDate <= today && item.watered === true;
-      })
-      .sort((itemA: any, itemB: any) => {
-        if (itemA.date - itemB.date) return 1;
-        else if (itemA.date < itemB.date) return -1;
-        else return 0;
-      }) || [];
+  let pastWateringDatesTrue: any = [];
+  if (wateringArray.length > 0) {
+    pastWateringDatesTrue =
+      wateringArray
+        .filter((item) => {
+          const itemDate = new Date(item.date).setHours(0, 0, 0, 0);
+          return itemDate <= today && item.watered === true;
+        })
+        .sort((itemA: any, itemB: any) => {
+          if (itemA.date - itemB.date) return 1;
+          else if (itemA.date < itemB.date) return -1;
+          else return 0;
+        }) || [];
   }
 
-  let pastWateringDates = []
-  if(wateringArray.length > 0)
-    pastWateringDates = wateringArray.filter((item) => {
-      return new Date(item.date).setHours(0,0,0,0) <= today
-    }).sort((itemA: any, itemB: any) => {
-      if (itemA.date - itemB.date) return 1;
-      else if (itemA.date < itemB.date) return -11;
-      else return 0;
-    }) || [];
+  let pastWateringDates = [];
+  if (wateringArray.length > 0)
+    pastWateringDates =
+      wateringArray
+        .filter((item) => {
+          return new Date(item.date).setHours(0, 0, 0, 0) <= today;
+        })
+        .sort((itemA: any, itemB: any) => {
+          if (itemA.date - itemB.date) return 1;
+          else if (itemA.date < itemB.date) return -11;
+          else return 0;
+        }) || [];
 
   let newWateringDates: Array<PersonalGardenWateringArrayType> = [];
   //keep all past watering dates that are true
   pastWateringDatesTrue.forEach((item: any) => {
-    if(!newWateringDates.includes(item))
-      newWateringDates.push(item);
+    if (!newWateringDates.includes(item)) newWateringDates.push(item);
   });
 
-  if(pastWateringDatesTrue.length > 0) {
-    if ((pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date === pastWateringDates[pastWateringDates.length - 1].date)
-      && wateringArray.length > 0) {
-
+  if (pastWateringDatesTrue.length > 0) {
+    if (
+      pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date ===
+        pastWateringDates[pastWateringDates.length - 1].date &&
+      wateringArray.length > 0
+    ) {
       const lastWateringDate = new Date(
         pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date
       );
 
-      const currentFirstDay = new Date(firstDay)
+      const currentFirstDay = new Date(firstDay);
 
       if (lastWateringDate <= currentFirstDay) {
-
-        const createdNewDates = createNewWateringDaysPro(gapDays, firstDay)
-        if(currentFirstDay.getTime() === lastWateringDate.getTime())
-          createdNewDates.shift()
+        const createdNewDates = createNewWateringDaysPro(gapDays, firstDay);
+        if (currentFirstDay.getTime() === lastWateringDate.getTime())
+          createdNewDates.shift();
 
         createdNewDates.forEach((item) => {
-          newWateringDates.push(item)
-        })
+          newWateringDates.push(item);
+        });
 
-        const isCurrentInArray = newWateringDates.filter((item) => item.date === currentFirstDay.toISOString().slice(0,10))
-        if(isCurrentInArray.length === 0)
+        const isCurrentInArray = newWateringDates.filter(
+          (item) => item.date === currentFirstDay.toISOString().slice(0, 10)
+        );
+        if (isCurrentInArray.length === 0)
           newWateringDates.push({
             date: currentFirstDay.toISOString().slice(0, 10),
             watered: true,
           });
-
-      } else if (pastWateringDates[pastWateringDates.length - 1].watered === false) {
-        const fixedToday = new Date()
+      } else if (
+        pastWateringDates[pastWateringDates.length - 1].watered === false
+      ) {
+        const fixedToday = new Date();
         for (let i = 0; i <= 5; i++) {
           const nextDate = new Date(fixedToday.getTime() + gap * i * 86400000);
           newWateringDates.push({
@@ -350,7 +362,7 @@ export const getWateringDaysPro = (gapDays: any, firstDay: string, wateringArray
         }
       }
     } else {
-      const fixedToday = new Date()
+      const fixedToday = new Date();
       for (let i = 0; i <= 5; i++) {
         const nextDate = new Date(fixedToday.getTime() + gap * i * 86400000);
         newWateringDates.push({
@@ -360,7 +372,7 @@ export const getWateringDaysPro = (gapDays: any, firstDay: string, wateringArray
       }
     }
   } else {
-    newWateringDates = createNewWateringDaysPro(gapDays, firstDay)
+    newWateringDates = createNewWateringDaysPro(gapDays, firstDay);
   }
 
   newWateringDates = newWateringDates.sort((itemA: any, itemB: any) => {
@@ -369,8 +381,10 @@ export const getWateringDaysPro = (gapDays: any, firstDay: string, wateringArray
     else return 0;
   });
 
-  const noDuplicatesArray: PersonalGardenWateringArrayType[] = [...new Set(newWateringDates)]
+  const noDuplicatesArray: PersonalGardenWateringArrayType[] = [
+    ...new Set(newWateringDates),
+  ];
 
   console.log('finished creating dates', noDuplicatesArray);
   return noDuplicatesArray;
-}
+};

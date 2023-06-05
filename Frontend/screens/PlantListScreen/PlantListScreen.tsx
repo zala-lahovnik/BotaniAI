@@ -71,11 +71,15 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
     personalGarden = personalGardenCopy;
   }
 
+  const sortedByWatering = sortPlantsByWateringStatus(personalGarden);
+
   return (
     <Drawer
       open={drawerOpen}
-      onOpen={() => user.userId ? setDrawerOpen(true) : setDrawerOpen(false)}
-      onClose={() => user.userId ? setDrawerOpen(false) : setDrawerOpen(false)}
+      onOpen={() => (user.userId ? setDrawerOpen(true) : setDrawerOpen(false))}
+      onClose={() =>
+        user.userId ? setDrawerOpen(false) : setDrawerOpen(false)
+      }
       renderDrawerContent={() => {
         return <DrawerLayout navigation={navigation} route={route} />;
       }}
@@ -99,12 +103,9 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
             setDrawerOpen(true);
           }}
         />
-        {user.userId ? (<></>) : (<NotLoggedIn />)}
+        {user.userId ? <></> : <NotLoggedIn />}
         <View
-          style={[
-            global.spacing.container,
-            { flex: 1, marginVertical: 20 },
-          ]}
+          style={[global.spacing.container, { flex: 1, marginVertical: 20 }]}
         >
           <SearchInputField
             search={search}
@@ -115,6 +116,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
             style={[
               {
                 flex: 1,
+                marginBottom: 20,
               },
             ]}
           >
@@ -136,7 +138,17 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
         <BottomNavigationBar navigation={navigation} route={route} />
       </View>
       <BottomModal
-        isVisible={modalOpen && firstRender.current}
+        isVisible={
+          modalOpen &&
+          firstRender.current &&
+          new Date(
+            sortedByWatering[0].watering.wateringArray[
+              getLastWateredDateIndex(
+                sortedByWatering[0].watering.wateringArray
+              ) + 1
+            ].date
+          ) <= new Date(new Date().toISOString().split('T')[0])
+        }
         onClose={() => setModalOpen(false)}
       >
         <ScrollView
@@ -150,30 +162,28 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
             flexDirection: 'row',
           }}
         >
-          {sortPlantsByWateringStatus(personalGarden).map(
-            (plant, index) => {
-              const wateringArray = plant.watering.wateringArray;
-              const lastIndex = getLastWateredDateIndex(wateringArray);
-              const next_watering_index = lastIndex + 1;
+          {sortedByWatering.map((plant, index) => {
+            const wateringArray = plant.watering.wateringArray;
+            const lastIndex = getLastWateredDateIndex(wateringArray);
+            const next_watering_index = lastIndex + 1;
 
-              const next_watering = getNextWateringDay(
-                new Date(wateringArray[lastIndex].date),
-                new Date(wateringArray[next_watering_index].date)
+            const next_watering = getNextWateringDay(
+              new Date(wateringArray[lastIndex].date),
+              new Date(wateringArray[next_watering_index].date)
+            );
+            if (
+              next_watering === WateringStatus.NotWatered ||
+              next_watering === WateringStatus.Today
+            ) {
+              return (
+                <ModalPlantCard
+                  key={index}
+                  navigation={navigation}
+                  {...plant}
+                />
               );
-              if (
-                next_watering === WateringStatus.NotWatered ||
-                next_watering === WateringStatus.Today
-              ) {
-                return (
-                  <ModalPlantCard
-                    key={index}
-                    navigation={navigation}
-                    {...plant}
-                  />
-                );
-              }
             }
-          )}
+          })}
         </ScrollView>
       </BottomModal>
     </Drawer>
