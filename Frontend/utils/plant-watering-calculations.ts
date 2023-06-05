@@ -235,7 +235,7 @@ export const createNewWateringDaysPro = (gap: string, firstDate: string) => {
   const diffDays = diffTime / (1000 * 60 * 60 * 24);
   const pastRepetitions = Math.abs(Math.round(diffDays / Number(gap)));
 
-  for (let i = 0; i < 5 + pastRepetitions; i++) {
+  for (let i = 0; i < (5 + pastRepetitions); i++) {
     const newDate = new Date(
       firstWateringDate.getTime() + Number(gap) * i * 86400000
     );
@@ -256,7 +256,7 @@ export const createNewWateringDaysPro = (gap: string, firstDate: string) => {
 
   newWateringDates = newWateringDates.sort((itemA: any, itemB: any) => {
     if (itemA.date - itemB.date) return 1;
-    else if (itemA.date < itemB.date) return -11;
+    else if (itemA.date < itemB.date) return -1;
     else return 0;
   });
 
@@ -300,7 +300,7 @@ export const getWateringDaysPro = (
         })
         .sort((itemA: any, itemB: any) => {
           if (itemA.date - itemB.date) return 1;
-          else if (itemA.date < itemB.date) return -11;
+          else if (itemA.date < itemB.date) return -1;
           else return 0;
         }) || [];
 
@@ -377,7 +377,7 @@ export const getWateringDaysPro = (
 
   newWateringDates = newWateringDates.sort((itemA: any, itemB: any) => {
     if (itemA.date - itemB.date) return 1;
-    else if (itemA.date < itemB.date) return -11;
+    else if (itemA.date < itemB.date) return -1;
     else return 0;
   });
 
