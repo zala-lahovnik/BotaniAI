@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
+  Animated,
+  Easing,
   ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import WaterIcon from 'react-native-vector-icons/Ionicons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,7 +34,7 @@ export const ModalPlantCard = ({ navigation, customName, image }: Props) => {
 
   return (
     <TouchableOpacity
-      style={{ marginHorizontal: 10 }}
+      style={{ marginHorizontal: 10, zIndex: 1000 }}
       onPress={() => {
         navigation.navigate('Water');
       }}
@@ -48,7 +51,15 @@ export const ModalPlantCard = ({ navigation, customName, image }: Props) => {
           color={'#fff'}
           style={styles.waterIcon}
         />
-        <Text style={styles.text}>{customName}</Text>
+        <View style={styles.textContainer}>
+          <Animated.Text
+            style={[styles.text]}
+            numberOfLines={1}
+            // ellipsizeMode={'clip'}
+          >
+            {customName}
+          </Animated.Text>
+        </View>
       </ImageBackground>
     </TouchableOpacity>
   );
@@ -67,14 +78,23 @@ const styles = StyleSheet.create({
   },
   waterIcon: {
     position: 'absolute',
-    top: '50%',
+    top: '45%',
     right: '50%',
     transform: [{ translateX: 25 }, { translateY: -35 }],
   },
-  text: {
+  textContainer: {
     position: 'absolute',
-    bottom: 5,
-    left: 5,
+    right: 10,
+    bottom: 0,
+    left: 0,
+    height: 30,
+    width: '130%',
+    overflow: 'hidden',
+  },
+  text: {
     fontStyle: 'italic',
+    fontWeight: 'bold',
+    fontSize: 15,
+    width: '100%',
   },
 });
