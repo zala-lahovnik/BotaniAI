@@ -26,7 +26,7 @@ export const BottomModal = ({ children, isVisible, onClose }: Props) => {
             <Pressable onPress={onClose}>
               <Close
                 name="close"
-                color={global.color.heading.color}
+                color={'white'}
                 size={25}
               />
             </Pressable>
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   title: {
-    color: global.color.heading.color,
+    color: 'white',
     fontSize: 17,
     fontWeight: '600',
   },
