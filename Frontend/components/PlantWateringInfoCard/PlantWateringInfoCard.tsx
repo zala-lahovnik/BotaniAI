@@ -193,7 +193,7 @@ export const PlantWateringInfoCard = ({
               <Watering name={'water'} size={16} color={'#000'} />
             </PlantWateringInfo>
             <PlantWateringInfo
-              text={`${getNumberBetweenDates(lastWateredDate)} days since last`}
+              text={`${getNumberBetweenDates(lastWateredDate)} day${getNumberBetweenDates(lastWateredDate) > 1 ? 's' : ''} ago`}
             >
               <Calender name={'calendar-clock'} size={16} color={'#000'} />
             </PlantWateringInfo>
