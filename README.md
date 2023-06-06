@@ -54,19 +54,24 @@ export const GOOGLE_IOS="GOOGLE_IOS_VALUE"
 export const GOOGLE_EXPO="GOOGLE_EXPO_VALUE"
 ```
 
-6. If you choose not to use Firebase Functions, make sure to comment out the relevant code sections, but note that the app may lose some key features.
+6. If you decide not to use Firebase Functions, don't worry! Simply comment out the relevant code sections. But keep in mind, some of the app's key features might be missed along the way.
 
-7. Install the project dependencies by running the following command inside the `Frontend` directory:
+7. In the ```Frontend\api``` folder, locate the ```backend.ts``` file. Let it know the location of your backend server by adding this captivating line:
+```ts
+export const BACKEND_BASE_URI = 'BACKEND_BASE_URI_VALUE'
+```
+Replace ```BACKEND_BASE_URI_VALUE``` with the actual URI of your backend server, and let the frontend and backend dance together harmoniously.
+
+8. Install the project dependencies by running the following command inside the `Frontend` directory:
 ```
 npm i
 ```
 
-8. Start the application using the following command:
+9. Start the application using the following command:
 ```
 npx expo start
 ```
-
-9. You can now view the mobile app in ExpoGo by scanning the QR code! 📱🔍
+10. You can now view the mobile app in ExpoGo by scanning the QR code! 📱🔍
 
 ## Backend Setup
 

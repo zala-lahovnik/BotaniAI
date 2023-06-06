@@ -8,6 +8,8 @@ import React, {
 import {
   Alert,
   Image,
+  Modal,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -38,6 +40,7 @@ export const DrawerLayout = ({
 }: NativeStackScreenProps<any>) => {
   const { user, dispatch } = useContext(UserContext);
   const [checked, setChecked] = useState(user.notifications);
+  const [modalVisible, setModalVisible] = useState(false);
   const isFirstRender = useRef(true);
 
   const handleChange = useCallback(async (value: boolean): Promise<any> => {
@@ -66,6 +69,15 @@ export const DrawerLayout = ({
   }, [checked, handleChange]);
 
 
+  function handleLogout() {
+    setModalVisible(!modalVisible)
+
+    dispatch({ type: UserActionType.CLEAR_USER });
+    navigation.navigate('LoginScreen');
+
+  }
+
+
   useEffect(() => {
     if (checked) {
       registerForPushNotifications(user.userId);
@@ -84,22 +96,7 @@ export const DrawerLayout = ({
           <>
             <Text style={styles.headerText}>SIGN OUT</Text>
             <TouchableOpacity
-              onPress={() => {
-                Alert.alert('Logout', 'Are you sure you want to logout!', [
-                  {
-                    text: 'No',
-                    onPress: () => {},
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'Yes',
-                    onPress: () => {
-                      dispatch({ type: UserActionType.CLEAR_USER });
-                      navigation.navigate('LoginScreen');
-                    },
-                  },
-                ]);
-              }}
+              onPress={() => { setModalVisible(!modalVisible); }}
               style={{}}
               activeOpacity={0.8}
             >
@@ -199,6 +196,17 @@ export const DrawerLayout = ({
           Get notified when plants need water
         </Text>
       </View>
+      <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => { setModalVisible(!modalVisible); }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={{ fontWeight: 'bold', fontSize: 24 }} >Logout?</Text>
+            <Text style={{ paddingBottom: 20, paddingTop: 10, fontSize: 18 }}>Are you sure you want to logout</Text>
+            <View style={{ flexDirection: 'row', marginVertical: 5 }}>
+              <Pressable style={[{ backgroundColor: '#B00020', padding: 10 }, styles.modalText]} onPress={handleLogout}><Text style={{ color: 'white', textAlign: 'center' }}>Yes</Text></Pressable>
+              <Pressable style={[{ backgroundColor: '#124A3F' }, styles.modalText]} onPress={() => setModalVisible(!modalVisible)}><Text style={{ color: 'white', textAlign: 'center' }}> Cancel</Text></Pressable>
+            </View>
+          </View>
+        </View></Modal>
     </View>
   );
 };
@@ -250,5 +258,37 @@ const styles = StyleSheet.create({
     color: global.color.heading.color,
     fontStyle: 'italic',
     opacity: 0.9,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+    backgroundColor: 'rgba(205,227,214,0.9)',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  modalText: {
+    flex: 1,
+    marginRight: 8,
+    paddingVertical: 10,
+    borderRadius: 10,
+    padding: 10,
   },
 });

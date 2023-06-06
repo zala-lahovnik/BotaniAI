@@ -47,16 +47,16 @@ const PlantNextWatering = ({
             fontStyle: 'italic',
           }}
         >
-          {waterNeededInDays < 0 ? '' : 'In '}
+          {waterNeededInDays < 0 ? '' : (waterNeededInDays === 0 || waterNeededInDays === 1) ? '' : 'In '}
           <Text
             style={{
               fontWeight: 'bold',
               fontSize: 16,
             }}
           >
-            {Math.abs(waterNeededInDays)}
+            {waterNeededInDays === 0 ? 'Today' : waterNeededInDays === 1 ? 'Tomorrow' : Math.abs(waterNeededInDays)}
           </Text>
-          {waterNeededInDays < 0 ? ' days ago' : ' days'}
+          {waterNeededInDays < 0 ? ' days ago' : (waterNeededInDays === 0 || waterNeededInDays === 1 ) ? '' : ' days'}
         </Text>
         <Divider
           style={{ width: '50%' }}
