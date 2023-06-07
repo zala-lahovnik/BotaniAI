@@ -38,6 +38,7 @@ type Props = NativeStackScreenProps<any>;
 
 export const PlantViewScreen = ({ navigation, route }: Props) => {
   const { ...plant } = route.params || {};
+  const plantCopy = JSON.parse(JSON.stringify(plant))
   const today: string = new Date().toISOString().split('T')[0];
   const [edit, setEdit] = useState<[boolean, boolean]>([plant.edit, plant.edit] || [false, false]);
   const [name, setName] = useState<string>(plant.customName || "");
@@ -78,7 +79,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   }, [days, date]);
 
   function updateMarkedDays() {
-    const sortedDatesPro = getWateringDaysPro(plant.watering?.days || days, plant.watering?.firstDay || date, plant.watering?.wateringArray || [])
+    const sortedDatesPro = getWateringDaysPro(plantCopy.watering.numberOfDays || days, plantCopy.watering.firstDay, plantCopy.watering?.wateringArray || [])
     const newMarkedDatesPro: {
       [date: string]: { selected: boolean; selectedColor: string };
     } = {};
@@ -93,11 +94,11 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     const newPlant: {
       image: any; customName: string; firstDay: string; numberOfDays: string; amountOfWater: string; description: string; wateringArray: { date: string; watered: boolean; }[];
     } = {
-      customName: name,
-      firstDay: date,
-      numberOfDays: days,
-      amountOfWater: water,
-      description: description,
+      customName: plantCopy.customName || plant.customName,
+      firstDay: plantCopy.watering.firstDay,
+      numberOfDays: plantCopy.watering.numberOfDays || 7,
+      amountOfWater: plantCopy.watering.amountOfWater || 50,
+      description: plantCopy.description,
       wateringArray: sortedDatesPro,
       image: plant.image,
     };
@@ -105,18 +106,18 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
       updatePlant(loggedUser.userId, plant._id, newPlant).then(() => {
         let tempPersonalGarden = [...loggedUser.personalGarden]
         const dispatchObject: PersonalGardenPlant = {
-          _id: plant._id,
-          latin: plant.latin,
-          common: plant.common,
-          customName: name,
-          description: description,
+          _id: plantCopy._id,
+          latin: plantCopy.latin,
+          common: plantCopy.common,
+          customName: plantCopy.name || plant.customName,
+          description: plantCopy.description,
           watering: {
-            firstDay: date,
-            numberOfDays: days,
-            amountOfWater: water,
+            firstDay: plantCopy.watering.firstDay,
+            numberOfDays: plantCopy.watering.numberOfDays,
+            amountOfWater: plantCopy.watering.amountOfWater,
             wateringArray: sortedDatesPro,
           },
-          image: plant.imageToSave || plant.image,
+          image: plantCopy.image,
         }
         tempPersonalGarden = replacePlantInUsersPersonalGarden(tempPersonalGarden, dispatchObject)
         dispatch({ type: UserActionType.UPDATE_PERSONAL_GARDEN, payload: tempPersonalGarden })
@@ -322,7 +323,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} key={plantCopy._id}>
       <View style={[styles.container, { marginBottom: 90 }]}>
         <Modal animationType="slide" transparent={true} visible={modalVisible1} onRequestClose={() => { setModalVisible1(!modalVisible1); }}>
           <View style={styles.centeredView}>
