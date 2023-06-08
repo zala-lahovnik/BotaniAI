@@ -283,17 +283,16 @@ export const getWateringDaysPro = (
   }
 
   let pastWateringDates: PersonalGardenPlant['watering']['wateringArray'] = [];
-  if (wateringArray.length > 0)
-    pastWateringDates =
-      wateringArray
-        .filter((item) => {
-          return new Date(item.date).setHours(0, 0, 0, 0) <= today;
-        })
-        .sort((itemA: any, itemB: any) => {
-          if (itemA.date - itemB.date) return 1;
-          else if (itemA.date < itemB.date) return -1;
-          else return 0;
-        }) || [];
+
+  pastWateringDates = createNewWateringDaysPro(gapDays, firstDay)
+  pastWateringDates = pastWateringDates.filter((item) => {
+    return new Date(item.date).setHours(0, 0, 0, 0) <= today;
+  })
+    .sort((itemA: any, itemB: any) => {
+      if (itemA.date - itemB.date) return 1;
+      else if (itemA.date < itemB.date) return -1;
+      else return 0;
+    }) || [];
 
   let newWateringDates: Array<PersonalGardenWateringArrayType> = [];
   //keep all past watering dates that are true
@@ -302,53 +301,41 @@ export const getWateringDaysPro = (
   });
 
   if (pastWateringDatesTrue.length > 0) {
-    if (
-      pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date ===
-        pastWateringDates[pastWateringDates.length - 1].date &&
-      wateringArray.length > 0
-    ) {
-      const lastWateringDate = new Date(
-        pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date
-      );
+    const lastWateringDate = new Date(
+    pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date
+    );
 
-      const currentFirstDay = new Date(firstDay);
+    const nextExpectedWateringDate = new Date(pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date)
+    nextExpectedWateringDate.setDate(nextExpectedWateringDate.getDate() + gap)
 
-      if (lastWateringDate <= currentFirstDay) {
-        const createdNewDates = createNewWateringDaysPro(gapDays, firstDay);
-        if (currentFirstDay.getTime() === lastWateringDate.getTime())
-          createdNewDates.shift();
+    const currentFirstDay = new Date(firstDay);
 
-        createdNewDates.forEach((item) => {
-          newWateringDates.push(item);
-        });
+    if(lastWateringDate < currentFirstDay) {
+      let createdWateringDates = createNewWateringDaysPro(gapDays, firstDay)
 
-        const isCurrentInArray = newWateringDates.filter(
-          (item) => item.date === currentFirstDay.toISOString().slice(0, 10)
+      createdWateringDates.forEach((item) => {
+        if (!newWateringDates.includes(item)) newWateringDates.push(item);
+      })
+    } else if (
+        pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date ===
+        pastWateringDates[pastWateringDates.length - 1].date
+      ) {
+      for (let i = 1; i <= 5; i++) {
+        const newDate = new Date(
+          lastWateringDate.getTime() + gap * i * 86400000
         );
-        if (isCurrentInArray.length === 0)
-          newWateringDates.push({
-            date: currentFirstDay.toISOString().slice(0, 10),
-            watered: true,
-          });
-      } else if (!pastWateringDates[pastWateringDates.length - 1].watered) {
-        const fixedToday = new Date();
-        for (let i = 0; i <= 5; i++) {
-          const nextDate = new Date(fixedToday.getTime() + gap * i * 86400000);
-          newWateringDates.push({
-            date: nextDate.toISOString().slice(0, 10),
-            watered: false,
-          });
-        }
-      } else {
-        for (let i = 1; i <= 5; i++) {
-          const newDate = new Date(
-            lastWateringDate.getTime() + gap * i * 86400000
-          );
-          newWateringDates.push({
-            date: newDate.toISOString().slice(0, 10),
-            watered: false,
-          });
-        }
+        newWateringDates.push({
+          date: newDate.toISOString().slice(0, 10),
+          watered: false,
+        });
+      }
+    } else if(nextExpectedWateringDate >= new Date()) {
+      for (let i = 1; i <= 5; i++) {
+        const nextDate = new Date(lastWateringDate.getTime() + gap * i * 86400000);
+        newWateringDates.push({
+          date: nextDate.toISOString().slice(0, 10),
+          watered: false,
+        });
       }
     } else {
       const fixedToday = new Date();
@@ -377,3 +364,64 @@ export const getWateringDaysPro = (
   console.log('finished creating dates', noDuplicatesArray);
   return noDuplicatesArray;
 };
+
+
+//
+// if (
+//   pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date ===
+//   pastWateringDates[pastWateringDates.length - 1].date &&
+//   wateringArray.length > 0
+// ) {
+//   const lastWateringDate = new Date(
+//     pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date
+//   );
+//
+//   const currentFirstDay = new Date(firstDay);
+//
+//   if (lastWateringDate <= currentFirstDay) {
+//     const createdNewDates = createNewWateringDaysPro(gapDays, firstDay);
+//     if (currentFirstDay.getTime() === lastWateringDate.getTime())
+//       createdNewDates.shift();
+//
+//     createdNewDates.forEach((item) => {
+//       newWateringDates.push(item);
+//     });
+//
+//     const isCurrentInArray = newWateringDates.filter(
+//       (item) => item.date === currentFirstDay.toISOString().slice(0, 10)
+//     );
+//     if (isCurrentInArray.length === 0)
+//       newWateringDates.push({
+//         date: currentFirstDay.toISOString().slice(0, 10),
+//         watered: true,
+//       });
+//   } else if (!pastWateringDates[pastWateringDates.length - 1].watered) {
+//     const fixedToday = new Date();
+//     for (let i = 0; i <= 5; i++) {
+//       const nextDate = new Date(fixedToday.getTime() + gap * i * 86400000);
+//       newWateringDates.push({
+//         date: nextDate.toISOString().slice(0, 10),
+//         watered: false,
+//       });
+//     }
+//   } else {
+//     for (let i = 1; i <= 5; i++) {
+//       const newDate = new Date(
+//         lastWateringDate.getTime() + gap * i * 86400000
+//       );
+//       newWateringDates.push({
+//         date: newDate.toISOString().slice(0, 10),
+//         watered: false,
+//       });
+//     }
+//   }
+// } else {
+//   const fixedToday = new Date();
+//   for (let i = 0; i <= 5; i++) {
+//     const nextDate = new Date(fixedToday.getTime() + gap * i * 86400000);
+//     newWateringDates.push({
+//       date: nextDate.toISOString().slice(0, 10),
+//       watered: false,
+//     });
+//   }
+// }
