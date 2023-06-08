@@ -12,10 +12,8 @@ jobs:
         with:
           node-version: 18
       - name: Install dependencies
-        with:
-          working-directory: ./Frontend
-          run: npm i
+        working-directory: ./Frontend
+        run: npm i
       - name: Run tests
-        with:
-          working-directory: ./Frontend
-          run: npx run test
+        working-directory: ./Frontend
+        run: npx run test
