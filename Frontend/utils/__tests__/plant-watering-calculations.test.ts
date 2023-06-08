@@ -6,6 +6,7 @@ import {
   getNextWateringDay,
   getNumberBetweenDates,
   getNumberOfDaysTillNextWatering,
+  getWateringDaysPro,
   getWateringPercentage,
   sortPlantsByWateringStatus,
   WateringStatus,
@@ -241,4 +242,182 @@ describe('createNewWateringDaysPro', () => {
 
     expect(result).toEqual(expectedDates());
   });
+});
+
+describe('getWateringDatesPro', () => {
+  it('If you missed a watering day, should create watering array, keep past watered dates, add new 5 starting from today and set them to false', () => {
+    const gap = '4';
+    let firstDate: string | Date = new Date(
+      new Date().setDate(new Date().getDate() - 9)
+    )
+      .toISOString()
+      .split('T')[0];
+
+    // starting watering array has two dates in the past which have watered true and the last one has watered false
+    // meaning we missed a day in the past
+    let startingWateringArray = []
+    for(let i = 0; i < 7; i++) {
+      const newDate = new Date(
+        new Date(firstDate).getTime() + Number(gap) * i * 86400000
+      );
+      if (i < 2) {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: true})
+      } else {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: false})
+      }
+    }
+
+    const expectedDates = () => {
+      let dates = [];
+      firstDate = new Date(firstDate);
+
+      for(let i = 0; i < 2; i++) {
+        const newDate = new Date(
+          new Date(firstDate).getTime() + Number(gap) * i * 86400000
+        );
+        dates.push({date: newDate.toISOString().slice(0,10), watered: true})
+      }
+
+      for(let i = 0; i < 6; i++) {
+        const newDate = new Date(new Date().getTime() + Number(gap) * i * 86400000)
+        dates.push({date: newDate.toISOString().slice(0,10), watered: false})
+      }
+      return dates;
+    };
+
+    const result = getWateringDaysPro(gap, firstDate, startingWateringArray);
+
+    expect(result).toEqual(expectedDates());
+  });
+
+  it('Should create new array from the new first watered day entered keeping the past ones that are true', () => {
+    let firstDate: string | Date = new Date(
+      new Date().setDate(new Date().getDate() - 2)
+    ).toISOString().slice(0,10)
+    const firstDayThatHasBeenWatered = new Date(new Date().setDate(new Date().getDate() - 9))
+    const gapDays = '5'
+
+    let startingWateringArray = []
+    for(let i = 0; i < 7; i++) {
+      const newDate = new Date(
+        new Date(firstDayThatHasBeenWatered).getTime() + Number(gapDays) * i * 86400000
+      );
+      if(newDate.toISOString().slice(0,10) < new Date().toISOString().slice(0,10)) {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: true})
+      } else {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: false})
+      }
+    }
+
+    const expectedDates = () => {
+      const dates = []
+
+      for(let i = 0; i < 8; i++) {
+        const newDate = new Date(
+          new Date(firstDayThatHasBeenWatered).getTime() + Number(gapDays) * i * 86400000
+        );
+        if(newDate.toISOString().slice(0,10) <= new Date(firstDate).toISOString().slice(0,10)) {
+          dates.push({date: newDate.toISOString().slice(0,10), watered: true})
+        } else {
+          const currentLastDayOfWatering = new Date(new Date(firstDate).getTime() + Number(gapDays) * (i-2) * 86400000)
+          if(currentLastDayOfWatering.toISOString().slice(0,10) <= new Date().toISOString().slice(0,10)) {
+            dates.push({date: currentLastDayOfWatering.toISOString().slice(0,10), watered: true})
+          } else {
+            dates.push({date: currentLastDayOfWatering.toISOString().slice(0,10), watered: false})
+          }
+        }
+      }
+      return dates
+    }
+
+    const result = getWateringDaysPro(gapDays, firstDate, startingWateringArray)
+
+    expect(result).toEqual(expectedDates());
+  })
+
+  it('Should add one more date to the end of array', () => {
+    const gapDays = '4';
+    let firstDate: string | Date = new Date(
+      new Date().setDate(new Date().getDate() - 9)
+    )
+      .toISOString()
+      .split('T')[0];
+
+    let startingWateringArray = []
+    for(let i = 0; i < 7; i++) {
+      const newDate = new Date(
+        new Date(firstDate).getTime() + Number(gapDays) * i * 86400000
+      );
+      if(newDate.toISOString().slice(0,10) < new Date().toISOString().slice(0,10)) {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: true})
+      } else {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: false})
+      }
+    }
+
+    const expectedDates = () => {
+      const dates = []
+
+      for(let i = 0; i < 8; i++) {
+        const newDate = new Date(
+          new Date(firstDate).getTime() + Number(gapDays) * i * 86400000
+        );
+        if(newDate.toISOString().slice(0,10) <= new Date().toISOString().slice(0,10)) {
+          dates.push({date: newDate.toISOString().slice(0,10), watered: true})
+        } else {
+          dates.push({date: newDate.toISOString().slice(0,10), watered: false})
+        }
+      }
+      return dates
+    }
+
+    const result = getWateringDaysPro(gapDays, firstDate, startingWateringArray)
+    expect(result).toEqual(expectedDates());
+  })
+
+  it('Changing the last day that you watered a plant to a past date (before the last time the plant has been watered) shouldn not change anything', () => {
+    const gapDays = '4';
+    let firstDate: string | Date = new Date(
+      new Date().setDate(new Date().getDate() - 9)
+    )
+      .toISOString()
+      .split('T')[0];
+
+    let startingWateringArray = []
+    for(let i = 0; i < 7; i++) {
+      const newDate = new Date(
+        new Date(firstDate).getTime() + Number(gapDays) * i * 86400000
+      );
+      if(newDate.toISOString().slice(0,10) < new Date().toISOString().slice(0,10)) {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: true})
+      } else {
+        startingWateringArray.push({date: newDate.toISOString().slice(0,10), watered: false})
+      }
+    }
+
+    const expectedDates = () => {
+      const dates = []
+
+      for(let i = 0; i < 8; i++) {
+        const newDate = new Date(
+          new Date(firstDate).getTime() + Number(gapDays) * i * 86400000
+        );
+        if(newDate.toISOString().slice(0,10) <= new Date().toISOString().slice(0,10)) {
+          dates.push({date: newDate.toISOString().slice(0,10), watered: true})
+        } else {
+          dates.push({date: newDate.toISOString().slice(0,10), watered: false})
+        }
+      }
+      return dates
+    }
+
+    let newFirstDay: string | Date = new Date(
+      new Date().setDate(new Date().getDate() - 20)
+    )
+      .toISOString()
+      .split('T')[0];
+
+    const result = getWateringDaysPro(gapDays, newFirstDay, startingWateringArray)
+    expect(result).toEqual(expectedDates());
+  })
 });
