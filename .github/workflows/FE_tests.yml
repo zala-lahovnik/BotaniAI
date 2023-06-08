@@ -16,4 +16,4 @@ jobs:
         run: npm i
       - name: Run tests
         working-directory: ./Frontend
-        run: npx run test
+        run: npm run test
