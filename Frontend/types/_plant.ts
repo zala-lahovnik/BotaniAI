@@ -14,7 +14,7 @@ export interface Plant {
   folder_num: number;
   fertilization: string;
   image: string;
-  imageToSave ?: string
+  imageToSave?: string;
 }
 
 export interface HistoryPlant {
@@ -40,7 +40,7 @@ export interface PersonalGardenPlant {
     amountOfWater: string;
     wateringArray: Array<{ date: string; watered: boolean }>;
   };
-  image: any;
+  image: string;
 }
 
 export interface PersonalGardenWateringArrayType {
