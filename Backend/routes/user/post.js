@@ -74,7 +74,7 @@ router.post('/add-user', upload.none(), async (req, res, next) => {
 
 
 const generatAccessToken = (username) => {
-    return jwt.sign({ username }, process.env.TOKEN_SECRET, {expiresIn: "7d"});
+    return jwt.sign({ username }, process.env.TOKEN_SECRET, {expiresIn: "30d"});
 }
 
 router.post('/generate-token', upload.none(), async (req, res, next) => {
