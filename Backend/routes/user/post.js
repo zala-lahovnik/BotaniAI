@@ -9,6 +9,8 @@ const fs = require('fs');
 const admin = require('firebase-admin');
 const cron = require('node-cron');
 const { Expo } = require('expo-server-sdk');
+const jwt = require('jsonwebtoken');
+const authenticateToken = require('../../middleware/authMiddleware');
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -71,6 +73,25 @@ router.post('/add-user', upload.none(), async (req, res, next) => {
 });
 
 
+const generatAccessToken = (username) => {
+    return jwt.sign({ username }, process.env.TOKEN_SECRET, {expiresIn: "7d"});
+}
+
+router.post('/generate-token', upload.none(), async (req, res, next) => {
+    try {
+        const { userId } = req.body;
+
+        let token = generatAccessToken(userId);
+
+        res.status(200).json(token);
+
+    } catch(err) {
+      console.error('Failed generate token', err);
+      res.status(500).send('Failed generate token');
+    };
+});
+
+
 /**
  * Add a plant to personal garden
  * @swagger
@@ -119,7 +140,7 @@ router.post('/add-user', upload.none(), async (req, res, next) => {
  *       500:
  *         description: Failed to add plant to MongoDB
  */
-router.post('/add-personal-garden', upload.none(), async (req, res, next) => {
+router.post('/add-personal-garden', authenticateToken, upload.none(), async (req, res, next) => {
     try {
         const { userId, latin, common, customName, description, firstDay, numberOfDays, amountOfWater, wateringArray, image } = req.body;
 
@@ -193,7 +214,7 @@ router.post('/add-personal-garden', upload.none(), async (req, res, next) => {
  *       500:
  *         description: Failed to add plant to MongoDB
  */
-router.post('/add-history', upload.any(), async (req, res, next) => {
+router.post('/add-history', authenticateToken, upload.any(), async (req, res, next) => {
     try {
         const { userId, plantId, customName, date, result, latin, watering, image } = req.body;
 

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { ObjectId } = require("mongodb");
 const { getDB } = require("../../db/db");
+const authenticateToken = require("../../middleware/authMiddleware");
 
 /**
  * Get a specific user by ID
@@ -27,7 +28,7 @@ const { getDB } = require("../../db/db");
  *       500:
  *         description: Internal server error
  */
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", authenticateToken, async (req, res) => {
   const userId = req.params.userId;
 
   try {
@@ -73,7 +74,7 @@ router.get("/:userId", async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/:userId/personal-garden", async (req, res) => {
+router.get("/:userId/personal-garden", authenticateToken, async (req, res) => {
   const userId = req.userId;
   try {
     const db = getDB();
@@ -114,7 +115,7 @@ router.get("/:userId/personal-garden", async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-router.get("/:userId/history", async (req, res) => {
+router.get("/:userId/history", authenticateToken, async (req, res) => {
   const userId = req.params.userId;
 
   try {

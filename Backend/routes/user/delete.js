@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getDB } = require('../../db/db');
+const authenticateToken = require('../../middleware/authMiddleware');
 
 
 /**
@@ -33,7 +34,7 @@ const { getDB } = require('../../db/db');
  *       500:
  *         description: Failed to delete plant from personal garden
  */
-router.delete('/:userId/personal-garden/:plantId', async (req, res) => {
+router.delete('/:userId/personal-garden/:plantId', authenticateToken, async (req, res) => {
     try {
         const db = getDB();
         const userId = req.params.userId;
