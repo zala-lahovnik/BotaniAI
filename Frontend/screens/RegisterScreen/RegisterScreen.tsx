@@ -11,6 +11,8 @@ import { useNavigation } from '@react-navigation/native';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import { generateToken } from '../../api/_user';
+
 export const RegisterScreen = () => {
     const navigation = useNavigation() as NativeStackNavigationProp<any>;
     const [email, setEmail] = useState('');
@@ -75,7 +77,7 @@ export const RegisterScreen = () => {
         }
         setDisabled(true);
         createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredentials) => {
+            .then(async (userCredentials) => {
                 const user = userCredentials.user;
                 const newUser = {
                     name: first,
@@ -85,6 +87,7 @@ export const RegisterScreen = () => {
                     userId: user.uid,
                 };
                 addUser(newUser);
+                await generateToken(user.uid);
             })
             .then(() => {
                 setDisabled(false);

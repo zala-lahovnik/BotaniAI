@@ -1,6 +1,8 @@
 import { type User } from '../types/_user';
 import { instance } from './_axios_base_url';
 import { type HistoryPlant, type PersonalGardenPlant } from '../types/_plant';
+import { BACKEND_BASE_URI } from './backend';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const getUserById = async (userId: string) => {
   const response = await instance.get(`/user/${userId}`);
@@ -107,3 +109,21 @@ export const addPlantToPersonalGarden = async (data: PersonalGardenObject) => {
     throw error;
   }
 };
+
+
+export const generateToken = async (userId: string) => {
+  try {
+    let response = await instance.post(BACKEND_BASE_URI + '/user/generate-token', {
+      userId: userId
+    });
+    await saveToken(response.data);
+    instance.defaults.headers.common['Authorization'] = 'Bearer ' + response.data;
+  } catch(error) {
+    console.error('Error: ' + error);
+    throw error;
+  }
+}
+
+const saveToken = async (token: string) => {
+  await AsyncStorage.setItem('token', token);
+}
