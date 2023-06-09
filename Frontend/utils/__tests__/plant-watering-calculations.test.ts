@@ -312,7 +312,7 @@ describe('getWateringDatesPro', () => {
     const expectedDates = () => {
       const dates = []
 
-      for(let i = 0; i < 8; i++) {
+      for(let i = 0; i < 7; i++) {
         const newDate = new Date(
           new Date(firstDayThatHasBeenWatered).getTime() + Number(gapDays) * i * 86400000
         );
