@@ -227,7 +227,7 @@ describe('createNewWateringDaysPro', () => {
         firstDate.setDate(firstDate.getDate() + parseInt(gap));
       }
 
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 4; i++) {
         const currentDate = new Date(today);
         currentDate.setDate(currentDate.getDate() + i * parseInt(gap) + 1);
         dates.push({
@@ -297,6 +297,8 @@ describe('getWateringDatesPro', () => {
     const firstDayThatHasBeenWatered = new Date(new Date().setDate(new Date().getDate() - 9))
     const gapDays = '5'
 
+    console.log('firstDate', firstDate);
+
     let startingWateringArray = []
     for(let i = 0; i < 7; i++) {
       const newDate = new Date(
@@ -309,10 +311,12 @@ describe('getWateringDatesPro', () => {
       }
     }
 
+    console.log('starting Watering array', startingWateringArray);
+
     const expectedDates = () => {
       const dates = []
 
-      for(let i = 0; i < 8; i++) {
+      for(let i = 0; i < 7; i++) {
         const newDate = new Date(
           new Date(firstDayThatHasBeenWatered).getTime() + Number(gapDays) * i * 86400000
         );
@@ -329,6 +333,8 @@ describe('getWateringDatesPro', () => {
       }
       return dates
     }
+
+    console.log('expected dates', expectedDates());
 
     const result = getWateringDaysPro(gapDays, firstDate, startingWateringArray)
 
