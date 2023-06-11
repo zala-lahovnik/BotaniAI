@@ -5,7 +5,12 @@ const multer = require("multer");
 const authenticateToken = require("../../middleware/authMiddleware");
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ 
+  storage: storage,
+  limits: {
+      fileSize: 20000000,
+  }
+});
 
 /**
  * Update a plant in user's personal garden

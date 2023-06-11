@@ -13,7 +13,12 @@ const jwt = require('jsonwebtoken');
 const authenticateToken = require('../../middleware/authMiddleware');
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: storage,
+    limits: {
+        fileSize: 20000000,
+    }
+});
 
 /**
  * Add a new user
