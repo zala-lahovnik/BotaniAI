@@ -29,16 +29,23 @@ export const getImageCaptureTime = (date: Date): string => {
 
   if (
     imageDate.toDateString() === currentDate.toDateString() &&
-    imageWeekNumber === currentWeekNumber
+    imageWeekNumber === currentWeekNumber &&
+    imageDate.getFullYear() === currentDate.getFullYear()
   ) {
     return CaptureTime.Today;
   }
 
-  if (imageWeekNumber === currentWeekNumber) {
+  if (
+    imageWeekNumber === currentWeekNumber &&
+    imageDate.getFullYear() === currentDate.getFullYear()
+  ) {
     return CaptureTime.ThisWeek;
   }
 
-  if (imageWeekNumber === currentWeekNumber - 1) {
+  if (
+    imageWeekNumber === currentWeekNumber - 1 &&
+    imageDate.getFullYear() === currentDate.getFullYear()
+  ) {
     return CaptureTime.LastWeek;
   }
 
@@ -181,7 +188,6 @@ export const getWateringPercentage = (
   interval: number
 ): number => {
   let currentDate = new Date();
-  // currentDate = new Date(currentDate.setHours(0, 0, 0, 0));
   const millisecondsPerDay = 24 * 60 * 60 * 1000;
 
   const daysSinceLastWatering = Math.floor(
@@ -226,9 +232,12 @@ export const createNewWateringDaysPro = (gap: string, firstDate: string) => {
   const diffTime = firstWateringDate - today;
   const diffDays = diffTime / (1000 * 60 * 60 * 24);
   const pastRepetitions = Math.floor(Math.abs(diffDays / Number(gap)));
-  console.log('Math.abs(diffDays / Number(gap))', Math.abs(diffDays / Number(gap)));
-  console.log('pastRep + 5', (5 + pastRepetitions));
-  for (let i = 0; i < (5 + pastRepetitions); i++) {
+  console.log(
+    'Math.abs(diffDays / Number(gap))',
+    Math.abs(diffDays / Number(gap))
+  );
+  console.log('pastRep + 5', 5 + pastRepetitions);
+  for (let i = 0; i < 5 + pastRepetitions; i++) {
     const newDate = new Date(
       firstWateringDate.getTime() + Number(gap) * i * 86400000
     );
@@ -285,15 +294,17 @@ export const getWateringDaysPro = (
 
   let pastWateringDates: PersonalGardenPlant['watering']['wateringArray'] = [];
 
-  pastWateringDates = createNewWateringDaysPro(gapDays, firstDay)
-  pastWateringDates = pastWateringDates.filter((item) => {
-    return new Date(item.date).setHours(0, 0, 0, 0) <= today;
-  })
-    .sort((itemA: any, itemB: any) => {
-      if (itemA.date - itemB.date) return 1;
-      else if (itemA.date < itemB.date) return -1;
-      else return 0;
-    }) || [];
+  pastWateringDates = createNewWateringDaysPro(gapDays, firstDay);
+  pastWateringDates =
+    pastWateringDates
+      .filter((item) => {
+        return new Date(item.date).setHours(0, 0, 0, 0) <= today;
+      })
+      .sort((itemA: any, itemB: any) => {
+        if (itemA.date - itemB.date) return 1;
+        else if (itemA.date < itemB.date) return -1;
+        else return 0;
+      }) || [];
 
   let newWateringDates: Array<PersonalGardenWateringArrayType> = [];
   //keep all past watering dates that are true
@@ -304,26 +315,30 @@ export const getWateringDaysPro = (
   if (pastWateringDatesTrue.length > 0) {
     console.log('pastWateringDatesTrue.length > 0 TRUE');
     const lastWateringDate = new Date(
-    pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date
+      pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date
     );
 
-    const nextExpectedWateringDate = new Date(pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date)
-    nextExpectedWateringDate.setDate(nextExpectedWateringDate.getDate() + gap)
+    const nextExpectedWateringDate = new Date(
+      pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date
+    );
+    nextExpectedWateringDate.setDate(nextExpectedWateringDate.getDate() + gap);
 
     const currentFirstDay = new Date(firstDay);
 
-    if(lastWateringDate < currentFirstDay) {
+    if (lastWateringDate < currentFirstDay) {
       console.log('lastWateringDate < currentFirstDay TRUE');
-      let createdWateringDates = createNewWateringDaysPro(gapDays, firstDay)
+      let createdWateringDates = createNewWateringDaysPro(gapDays, firstDay);
 
       createdWateringDates.forEach((item) => {
         if (!newWateringDates.includes(item)) newWateringDates.push(item);
-      })
+      });
     } else if (
-        pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date ===
-        pastWateringDates[pastWateringDates.length - 1].date
-      ) {
-      console.log('pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date === pastWateringDates[pastWateringDates.length - 1].date');
+      pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date ===
+      pastWateringDates[pastWateringDates.length - 1].date
+    ) {
+      console.log(
+        'pastWateringDatesTrue[pastWateringDatesTrue.length - 1].date === pastWateringDates[pastWateringDates.length - 1].date'
+      );
       for (let i = 1; i <= 5; i++) {
         const newDate = new Date(
           lastWateringDate.getTime() + gap * i * 86400000
@@ -333,10 +348,12 @@ export const getWateringDaysPro = (
           watered: false,
         });
       }
-    } else if(nextExpectedWateringDate >= new Date()) {
+    } else if (nextExpectedWateringDate >= new Date()) {
       console.log('nextExpectedWateringDate >= new Date() TRUE');
       for (let i = 1; i <= 5; i++) {
-        const nextDate = new Date(lastWateringDate.getTime() + gap * i * 86400000);
+        const nextDate = new Date(
+          lastWateringDate.getTime() + gap * i * 86400000
+        );
         newWateringDates.push({
           date: nextDate.toISOString().slice(0, 10),
           watered: false,
@@ -359,7 +376,7 @@ export const getWateringDaysPro = (
 
     createdWateringDays.forEach((item) => {
       if (!newWateringDates.includes(item)) newWateringDates.push(item);
-    })
+    });
   }
 
   newWateringDates = newWateringDates.sort((itemA: any, itemB: any) => {
