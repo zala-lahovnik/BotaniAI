@@ -27,7 +27,8 @@ describe('getImageCaptureTime', () => {
       let thisWeek = new Date(
         today.getFullYear(),
         today.getMonth(),
-        today.getDate() - today.getDay() - 1
+        today.getDate() - 1,
+        2
       );
       expect(getImageCaptureTime(thisWeek)).toBe(CaptureTime.ThisWeek);
     }
@@ -64,7 +65,6 @@ describe('getImageCaptureTime', () => {
   });
 
   it('should return "Way back" for dates before this year', () => {
-    const currentDate = new Date();
     const previousYearDate = new Date('2022-06-06');
     expect(getImageCaptureTime(previousYearDate)).toBe('Way back');
   });
