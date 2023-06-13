@@ -14,6 +14,7 @@ import {
   RecentCaptures,
   RegisterScreen,
   WateringScreen,
+  ImagePickerScreen,
 } from './screens';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import BlankScreen from './screens/BlankScreen/BlankScreen';
@@ -51,6 +52,10 @@ export default function RootNavigation() {
           <Stack.Screen name={'Explore'} component={ExploringScreen} />
           <Stack.Screen name={'PlantDetails'} component={PlantDetailsScreen} />
           <Stack.Screen name={'BlankScreen'} component={BlankScreen} />
+          <Stack.Screen
+            name={'ImagePickerScreen'}
+            component={ImagePickerScreen}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

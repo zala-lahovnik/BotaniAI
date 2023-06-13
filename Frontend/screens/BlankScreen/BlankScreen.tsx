@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { CameraPreviewScreen } from '../CameraScreen/CameraPreviewScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -22,12 +22,6 @@ const BlankScreen = ({ navigation, route }: Props) => {
           route={route}
           photo={photo}
         />
-      </View>
-    );
-  } else {
-    return (
-      <View>
-        <Text>No Photo</Text>
       </View>
     );
   }

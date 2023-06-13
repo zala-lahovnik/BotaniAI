@@ -1,10 +1,7 @@
-import React, { PropsWithChildren, useRef } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { global } from '../../styles/globals';
-import * as ImagePicker from 'expo-image-picker';
-import { ImagePickerAsset } from 'expo-image-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { LoadingModal } from '../SignInLoadingModal/LoadingModal';
 
 type Props = PropsWithChildren &
   NativeStackScreenProps<any> & {
@@ -17,47 +14,14 @@ export const PhotoInputCard = ({
   navigation,
   route,
 }: Props) => {
-  const capturedImage = useRef<ImagePickerAsset | null>(null);
-  const [loading, setLoading] = React.useState(false);
-
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-
-    try {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        quality: 1,
-        base64: true,
-      });
-      setLoading(true);
-      if (!result.canceled) {
-        let filename = result?.assets[0].uri.substring(
-          result?.assets[0].uri.lastIndexOf('/') + 1,
-          result?.assets[0].uri.length
-        );
-
-        // @ts-ignore
-        delete result.cancelled;
-      }
-      if (result) {
-        navigation.navigate('BlankScreen', {
-          photo: result.assets![0],
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <>
-      {loading && <LoadingModal loading={loading} title={'Image Loading'} />}
       <TouchableOpacity
         style={[styles.container]}
         activeOpacity={0.8}
         onPress={
           text === 'Gallery'
-            ? pickImage
+            ? () => navigation.navigate('ImagePickerScreen')
             : () => navigation.navigate('CameraScreen')
         }
       >

@@ -12,3 +12,4 @@ export * from './RegisterScreen/RegisterScreen';
 export * from './PlantViewScreen/PlantViewScreen';
 export * from './ExploringScreen/ExploringScreen';
 export * from './IntroScreen/IntroScreen';
+export * from './ImagePickerScreen/ImagePickerScreen';
