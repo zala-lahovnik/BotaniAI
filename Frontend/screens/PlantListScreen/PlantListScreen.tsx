@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { ScrollView, View, Text } from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { ImageBackground, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -29,19 +29,14 @@ const text = 'Your plants';
 export const PlantListScreen = ({ navigation, route }: Props) => {
   const insets = useSafeAreaInsets();
 
-  const [selectedCategory, setSelectedCategory] = useState('All');
   const [search, setSearch] = useState('');
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const firstRender = React.useRef(true);
 
-  const { user, dispatch } = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   const [modalOpen, setModalOpen] = useState(user.notifications);
-
-  // const { isLoading, isError, data } = useQuery(['user_personal_garden'], () =>
-  //   getUserPersonalGarden('33xOgIFa2DOIfAw2fExTB9MPh8T2')
-  // );
 
   useCallback(() => {
     if (firstRender.current) {
@@ -51,27 +46,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
     setModalOpen(false);
   }, []);
 
-  {
-    /*  TODO: REMOVE THIS PART WHEN THERE IS NEW MONGO COLLECTION */
-  }
-  let personalGardenCopy = [...user.personalGarden];
-  let personalGarden: PersonalGardenPlant[] = [];
-
-  try {
-    personalGarden = user.personalGarden.map((plant) => {
-      return {
-        ...plant,
-        watering: {
-          ...plant.watering,
-          wateringArray: JSON.parse(`[${plant.watering.wateringArray}]`),
-        },
-      };
-    }) as PersonalGardenPlant[];
-  } catch (error) {
-    personalGarden = personalGardenCopy;
-  }
-
-  const sortedByWatering = sortPlantsByWateringStatus(personalGarden);
+  const sortedByWatering = sortPlantsByWateringStatus(user.personalGarden);
 
   return (
     <Drawer
@@ -120,17 +95,46 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
               },
             ]}
           >
-            <View
-              style={{
-                marginVertical: 10,
-              }}
-            ></View>
-            {user?.personalGarden && (
-              <PlantItemsList
-                navigation={navigation}
-                route={route}
-                plants={filterPlants(user.personalGarden, search)}
-              />
+            {user.personalGarden.length === 0 ? (
+              <View style={{}}>
+                <ImageBackground
+                  style={{
+                    width: '100%',
+                    height: '80%',
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                  }}
+                  resizeMode={'contain'}
+                  source={require('../../assets/empty-virtual-garden.png')}
+                >
+                  <Text
+                    style={{
+                      color: global.color.primary.backgroundColor,
+                      fontSize: 18,
+                      fontStyle: 'italic',
+                      textAlign: 'center',
+                      marginBottom: 20,
+                    }}
+                  >
+                    You don't have any plants in your virtual garden yet.
+                  </Text>
+                </ImageBackground>
+              </View>
+            ) : (
+              <>
+                <View
+                  style={{
+                    marginVertical: 10,
+                  }}
+                ></View>
+                {user?.personalGarden && (
+                  <PlantItemsList
+                    navigation={navigation}
+                    route={route}
+                    plants={filterPlants(user.personalGarden, search)}
+                  />
+                )}
+              </>
             )}
           </View>
         </View>

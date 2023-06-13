@@ -73,20 +73,22 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
     setFetchedPlantData(plantData);
 
     if (user.userId) {
-        try {
-          const uploadResult = await addPlantToHistory({
-            userId: user.userId,
-            plantId: plantData._id,
-            customName: plantData.common,
-            date: new Date().toISOString(),
-            result: result,
-            image: photo.base64,
-            latin: plantData.latin,
-            watering: plantData.watering
-          });
-          setCurrentImageName(uploadResult.imageName)
+      try {
+        const uploadResult = await addPlantToHistory({
+          userId: user.userId,
+          plantId: plantData._id,
+          customName: plantData.common,
+          date: new Date().toISOString(),
+          result: result,
+          image: photo.base64,
+          latin: plantData.latin,
+          watering: plantData.watering,
+        });
+        setCurrentImageName(uploadResult.imageName);
 
-          dispatch({ type: UserActionType.UPDATE_HISTORY, payload: {
+        dispatch({
+          type: UserActionType.UPDATE_HISTORY,
+          payload: {
             _id: uploadResult.addedId,
             plantId: plantData._id,
             customName: plantData.common,
@@ -94,20 +96,21 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
             result: result,
             image: uploadResult.imageName,
             latin: plantData.latin,
-            watering: plantData.watering
-          }})
-        } catch (err) {
-          setCurrentImageName('.')
-          Toast.show({
-            type: 'error',
-            text1: 'Error while saving',
-            text2: 'Couldn\'t save classification prediction',
-            position: "top",
-            visibilityTime: 5000,
-          })
-          console.log('Error while uploading image', err);
-        }
+            watering: plantData.watering,
+          },
+        });
+      } catch (err) {
+        setCurrentImageName('.');
+        Toast.show({
+          type: 'error',
+          text1: 'Error while saving',
+          text2: "Couldn't save classification prediction",
+          position: 'top',
+          visibilityTime: 5000,
+        });
+        console.log('Error while uploading image', err);
       }
+    }
   };
 
   const onPressOnContinueButton = () => {
@@ -124,7 +127,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         fertilization: fetchedPlantData.fertilization,
         toxicity: fetchedPlantData.toxicity,
         image: fetchedPlantData.image,
-        imageToSave: currentImageName || fetchedPlantData.image
+        imageToSave: currentImageName || fetchedPlantData.image,
       });
   };
 
@@ -133,7 +136,13 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
       <Header
         navigation={navigation}
         text={'Preview'}
-        leftAction={() => navigation.goBack()}
+        leftAction={() => {
+          if (route.name === 'BlankScreen') {
+            return navigation.navigate('PhotoInputScreen');
+          } else {
+            return navigation.goBack();
+          }
+        }}
         route={route}
       />
       <Toast />
@@ -183,7 +192,11 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
               <View style={previewStyles.photoButtonsContainer}>
                 <Pressable
                   onPress={() => {
-                    navigation.goBack();
+                    if (route.name === 'BlankScreen') {
+                      return navigation.navigate('PhotoInputScreen');
+                    } else {
+                      return navigation.goBack();
+                    }
                   }}
                   style={previewStyles.usePhotoButton}
                 >
@@ -223,7 +236,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
                     </Text>
                   </View>
                   <View style={previewStyles.continueButtonContainer}>
-                    {(user.userId ? currentImageName : fetchedPlantData) ?
+                    {(user.userId ? currentImageName : fetchedPlantData) ? (
                       <Pressable
                         style={previewStyles.continueButton}
                         onPress={onPressOnContinueButton}
@@ -233,13 +246,13 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
                           style={previewStyles.continueButtonImage}
                         />
                       </Pressable>
-                      :
+                    ) : (
                       <ActivityIndicator
                         size="large"
                         color="#124A3F"
                         style={{ marginBottom: '10%', marginTop: '20%' }}
                       />
-                    }
+                    )}
                   </View>
                 </View>
               </View>

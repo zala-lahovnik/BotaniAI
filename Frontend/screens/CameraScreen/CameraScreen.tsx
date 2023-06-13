@@ -1,22 +1,15 @@
 import { Camera, CameraType } from 'expo-camera';
 import { useEffect, useState } from 'react';
-import {
-  Animated,
-  Button,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Animated, Dimensions, TouchableOpacity, View } from 'react-native';
 // @ts-ignore
 import Scan from '../../assets/scan-rectangle.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import ArrowBack from 'react-native-vector-icons/Ionicons';
 import Camera_Icon from 'react-native-vector-icons/MaterialIcons';
 import { styles } from './CameraScreenStyles';
 import { CameraPreviewScreen } from './CameraPreviewScreen';
 import BackButton from '../../components';
+import { PermissionNeeded } from '../../components/PermissionCard/PermissionNeeded';
 
 const AnimatedBarCodeScanner = () => {
   const { width, height } = Dimensions.get('window');
@@ -82,18 +75,15 @@ export const CameraScreen = ({ navigation, route }: Props) => {
   }
 
   if (!permission) {
-    // Camera permissions are still loading
     return <View />;
   }
   if (!permission.granted) {
-    // Camera permissions are not granted yet
     return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
-      </View>
+      <PermissionNeeded
+        permission={'We need your permission to show the camera'}
+        navigation={navigation}
+        requestPermission={requestPermission}
+      />
     );
   }
 

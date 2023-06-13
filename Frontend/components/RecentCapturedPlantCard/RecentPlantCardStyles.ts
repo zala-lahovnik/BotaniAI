@@ -4,6 +4,10 @@ import { global } from '../../styles/globals';
 export const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
+    padding: 15,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -12,10 +16,6 @@ export const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    overflow: 'hidden',
   },
   rowLayout: {
     flexDirection: 'row',
