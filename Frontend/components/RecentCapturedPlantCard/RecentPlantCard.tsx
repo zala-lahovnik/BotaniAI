@@ -7,7 +7,7 @@ import { RecentPlantDetails } from './RecentPlantDetails';
 import { CaptureTime } from '../../utils/plant-watering-calculations';
 import { styles } from './RecentPlantCardStyles';
 
-type Props = NativeStackScreenProps<any> & {
+type Props = {
   plant: any;
   captureTime: string | null;
   date: Date;
@@ -17,9 +17,7 @@ type Props = NativeStackScreenProps<any> & {
 export const RecentPlantCard = ({
   plant,
   captureTime,
-  navigation,
   date,
-  route,
   classificationPercent,
 }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -28,8 +26,14 @@ export const RecentPlantCard = ({
   const time_or_date_of_capture =
     captureTime === CaptureTime.Today
       ? date.toLocaleTimeString().slice(0, 5)
-      : date.toLocaleDateString();
-
+      : date
+          .toLocaleDateString('en-US', {
+            day: '2-digit',
+            month: '2-digit',
+          })
+          .slice(0, 6) +
+        '\n' +
+        date.toLocaleTimeString('en-US', { year: 'numeric' }).slice(0, 4);
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
     Animated.timing(heightValue, {
@@ -47,11 +51,7 @@ export const RecentPlantCard = ({
   return (
     <View style={styles.container}>
       <View style={styles.rowLayout}>
-        <View
-          style={{
-            maxWidth: 60,
-          }}
-        >
+        <View>
           <Text style={styles.dateText}>{time_or_date_of_capture}</Text>
         </View>
         <View style={{ flex: 1, overflow: 'hidden' }}>

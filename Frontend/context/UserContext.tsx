@@ -43,6 +43,7 @@ export const initialState: Omit<
 const clearUserAsyncStorage = async () => {
   try {
     await AsyncStorage.removeItem('@user');
+    await AsyncStorage.removeItem('token');
   } catch (e) {
     console.log('Error while clearing user from async storage');
   }

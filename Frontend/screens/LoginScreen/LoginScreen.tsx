@@ -32,6 +32,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoadingModal } from '../../components';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
+import { generateToken } from '../../api/_user';
 
 type Props = NativeStackScreenProps<any>;
 export const LoginScreen = ({ navigation }: Props) => {
@@ -64,9 +65,10 @@ export const LoginScreen = ({ navigation }: Props) => {
 
   function handleLogin() {
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredentials: { user: any }) => {
+      .then(async (userCredentials: { user: any }) => {
         const user = userCredentials.user;
         handleUserLogin(user.uid);
+        await generateToken(user.uid);
       })
       .then(() => navigation.navigate('PlantListScreen'))
       .catch((error: { message: any }) =>
@@ -138,9 +140,11 @@ export const LoginScreen = ({ navigation }: Props) => {
       const user = await response.json();
       const googleCredential = GoogleAuthProvider.credential(null, accessToken);
       signInWithCredential(auth, googleCredential)
-        .then((userCredential) => {
+        .then(async (userCredential) => {
           setLoading(true);
           const user = userCredential.user;
+
+          await generateToken(user.uid);
 
           if (auth.currentUser) {
             const displayName = auth.currentUser.displayName;

@@ -2,9 +2,15 @@ const express = require("express");
 const router = express.Router();
 const { getDB } = require("../../db/db");
 const multer = require("multer");
+const authenticateToken = require("../../middleware/authMiddleware");
 
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ 
+  storage: storage,
+  limits: {
+      fileSize: 20000000,
+  }
+});
 
 /**
  * Update a plant in user's personal garden
@@ -64,7 +70,8 @@ const upload = multer({ storage: storage });
  *         description: Failed to update plant attributes
  */
 router.put(
-  "/:userId/personal-garden/:plantId",
+  "/:userId/personal-garden/:plantId", 
+  authenticateToken,
   upload.none(),
   async (req, res) => {
     try {
@@ -151,7 +158,7 @@ router.put(
  *       500:
  *         description: Failed to update notifications
  */
-router.put("/:userId", upload.none(), async (req, res) => {
+router.put("/:userId", authenticateToken, upload.none(), async (req, res) => {
   try {
     const db = getDB();
     const userId = req.params.userId;

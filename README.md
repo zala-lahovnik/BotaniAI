@@ -110,7 +110,10 @@ Follow these steps to seamlessly set up the backend of the project:
 5. **Firebase Service Account File:**
    - Save the downloaded `firebase_service_account.json` file into the Backend folder.
 
-6. **Environment Configuration:**
+6. **jwtToken Secret:**
+   - Unleash your creativity and generate a unique token secret that will safeguard the power of authentication. Or, if you prefer, let your imagination run wild and come up with a secret that truly reflects your project. Embrace the excitement of secrecy and add it to the .env file to fortify your application's security. Keep the key to the kingdom in your hands! 🔑
+
+7. **Environment Configuration:**
    - Create an `.env` file inside the `Backend` directory.
    - Paste the MongoDB connection link, Storage bucket info, Firebase database URL and the name of the `firebase_service_account.json` file, as shown below:
 ```
@@ -118,6 +121,7 @@ DATABASE_URI=mongodb://username:password@localhost:27017/database_name
 FIREBASE_DATABASE_URL=YOUR_DATABASE_URL
 STORAGE_BUCKET=STORAGE_BUCKET_VALUE
 SERVICE_ACCOUNT=firebase_service_account.json
+TOKEN_SECRET=YOUR_TOKEN_SECRET_VALUE
 ```
 
 7. **Install Dependencies:**
