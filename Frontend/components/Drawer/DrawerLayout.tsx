@@ -24,6 +24,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { updateUserNotifications } from '../../api/_user';
 import * as Notifications from 'expo-notifications';
 import { registerForPushNotifications } from '../../utils/NotificationHandler';
+import { InternetConnectionContext } from '../../context/InternetConnectionContext';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -33,14 +34,12 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export const DrawerLayout = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<any>) => {
+export const DrawerLayout = ({ navigation }: NativeStackScreenProps<any>) => {
   const { user, dispatch } = useContext(UserContext);
   const [checked, setChecked] = useState(user.notifications);
   const [modalVisible, setModalVisible] = useState(false);
   const isFirstRender = useRef(true);
+  const { isConnected } = useContext(InternetConnectionContext);
 
   const handleChange = useCallback(async (value: boolean): Promise<any> => {
     try {
@@ -67,15 +66,12 @@ export const DrawerLayout = ({
     return () => clearTimeout(timeout);
   }, [checked, handleChange]);
 
-
   function handleLogout() {
-    setModalVisible(!modalVisible)
+    setModalVisible(!modalVisible);
 
     dispatch({ type: UserActionType.CLEAR_USER });
     navigation.navigate('LoginScreen');
-
   }
-
 
   useEffect(() => {
     if (checked) {
@@ -95,7 +91,9 @@ export const DrawerLayout = ({
           <>
             <Text style={styles.headerText}>SIGN OUT</Text>
             <TouchableOpacity
-              onPress={() => { setModalVisible(!modalVisible); }}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
               style={{}}
               activeOpacity={0.8}
             >
@@ -184,6 +182,7 @@ export const DrawerLayout = ({
           <Switch
             value={checked}
             onValueChange={(value) => setChecked(value)}
+            disabled={!isConnected}
             trackColor={{
               true: global.color.secondary.color,
               false: global.color.heading.color,
@@ -195,17 +194,43 @@ export const DrawerLayout = ({
           Get notified when plants need water
         </Text>
       </View>
-      <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => { setModalVisible(!modalVisible); }}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={{ fontWeight: 'bold', fontSize: 24 }} >Logout?</Text>
-            <Text style={{ paddingBottom: 20, paddingTop: 10, fontSize: 18 }}>Are you sure you want to logout</Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Logout?</Text>
+            <Text style={{ paddingBottom: 20, paddingTop: 10, fontSize: 18 }}>
+              Are you sure you want to logout
+            </Text>
             <View style={{ flexDirection: 'row', marginVertical: 5 }}>
-              <Pressable style={[{ backgroundColor: '#B00020', padding: 10 }, styles.modalText]} onPress={handleLogout}><Text style={{ color: 'white', textAlign: 'center' }}>Yes</Text></Pressable>
-              <Pressable style={[{ backgroundColor: '#124A3F' }, styles.modalText]} onPress={() => setModalVisible(!modalVisible)}><Text style={{ color: 'white', textAlign: 'center' }}> Cancel</Text></Pressable>
+              <Pressable
+                style={[
+                  { backgroundColor: '#B00020', padding: 10 },
+                  styles.modalText,
+                ]}
+                onPress={handleLogout}
+              >
+                <Text style={{ color: 'white', textAlign: 'center' }}>Yes</Text>
+              </Pressable>
+              <Pressable
+                style={[{ backgroundColor: '#124A3F' }, styles.modalText]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={{ color: 'white', textAlign: 'center' }}>
+                  {' '}
+                  Cancel
+                </Text>
+              </Pressable>
             </View>
           </View>
-        </View></Modal>
+        </View>
+      </Modal>
     </View>
   );
 };

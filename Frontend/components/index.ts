@@ -18,3 +18,4 @@ export * from './ModalPlantCard/ModalPlantCard';
 export * from './ExplorePlantCard/ExplorePlantCard';
 export * from './NotLoggedIn/NotLoggedIn';
 export * from './SignInLoadingModal/LoadingModal';
+export * from './OfflineBanner/OfflineBanner';

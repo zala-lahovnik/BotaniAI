@@ -20,7 +20,7 @@ export const IntroScreen = ({ navigation, route }: Props) => {
   const [loading, setLoading] = useState(true);
   const [viewOnboarding, setViewOnboarding] = useState(false);
 
-  const { user: loggedUser, dispatch } = useContext(UserContext);
+  const { user: loggedUser } = useContext(UserContext);
 
   useEffect(() => {
     (async () => {
