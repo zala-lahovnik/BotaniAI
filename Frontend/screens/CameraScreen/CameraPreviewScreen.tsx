@@ -20,6 +20,7 @@ import { global } from '../../styles/globals';
 import { addPlantToHistory } from '../../api/_user';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import Toast from 'react-native-toast-message';
+import { InternetConnectionContext } from '../../context/InternetConnectionContext';
 
 type Props = NativeStackScreenProps<any> & {
   photo: CameraCapturedPicture;
@@ -33,6 +34,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
   const [fetchedPlantData, setFetchedPlantData] = useState<Plant | null>(null);
   const [currentImageName, setCurrentImageName] = useState<string>('');
   const { user, dispatch } = useContext(UserContext);
+  const { isConnected } = useContext(InternetConnectionContext);
 
   async function onPressOnUsePhotoButton() {
     setShowClassResultView(false);
@@ -57,7 +59,6 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
         setPredictionPercent((maxPrediction * 100).toFixed(2));
 
         setShowClassResultView(true);
-        setLoading(false);
         saveIntoUserHistory(
           predictedClass,
           Number((maxPrediction * 100).toFixed(0))
@@ -65,6 +66,16 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
       })
       .catch((err: any) => {
         console.log(err);
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Something went wrong. Please try again.',
+          position: 'bottom',
+          visibilityTime: 1500,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
@@ -210,6 +221,7 @@ export const CameraPreviewScreen = ({ navigation, photo, route }: Props) => {
                   </Text>
                 </Pressable>
                 <Pressable
+                  disabled={!isConnected}
                   onPress={onPressOnUsePhotoButton}
                   style={previewStyles.usePhotoButton}
                 >
