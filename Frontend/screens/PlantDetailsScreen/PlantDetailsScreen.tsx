@@ -166,7 +166,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             gap: 15,
           }}
         >
-          {toxicity && (
+          {toxicity !== '' && (
             <View style={styles.plantCategoryPill}>
               <Text
                 style={{

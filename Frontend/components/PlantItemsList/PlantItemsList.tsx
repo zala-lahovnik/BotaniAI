@@ -1,9 +1,9 @@
 import React from 'react';
-import { Animated, ScrollView, View } from 'react-native';
+import { Animated } from 'react-native';
 import { PlantItemCard } from '../PlantItemCard/PlantItemCard';
-import FlatList = Animated.FlatList;
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { PersonalGardenPlant } from '../../types/_plant';
+import FlatList = Animated.FlatList;
 
 type Props = NativeStackScreenProps<any> & {
   plants: PersonalGardenPlant[];
@@ -32,7 +32,6 @@ export const PlantItemsList = ({ navigation, route, plants }: Props) => {
           setIsVerticalScroll={setIsVerticalScroll}
           isVerticalScroll={isVerticalScroll}
           props={item}
-          onSwipeLeft={() => console.log('swipped')}
         />
       )}
       showsVerticalScrollIndicator={false}

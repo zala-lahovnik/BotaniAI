@@ -43,5 +43,3 @@ export const global: Record<
     },
   },
 };
-
-// export type global = typeof global;

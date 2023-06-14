@@ -1,15 +1,27 @@
-import { Text, View, TextInput, Alert, Pressable, TouchableWithoutFeedback, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../firebase/firebase';
 import { styles } from './ChangePasswordScreenStyles';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-export const ChangePasswordScreen = () => {
-  const navigation = useNavigation() as NativeStackNavigationProp<any>;
+
+export const ChangePasswordScreen = ({
+  navigation,
+}: NativeStackScreenProps<any>) => {
   const [email, setEmail] = useState('');
+
   function handleReset() {
     sendPasswordResetEmail(auth, email)
       .then(() => {
@@ -19,9 +31,11 @@ export const ChangePasswordScreen = () => {
       })
       .catch((error) => alert(error.message));
   }
+
   function handleBack() {
     navigation.goBack();
   }
+
   if (auth.currentUser?.email) {
     console.log(auth.currentUser?.email);
     navigation.navigate('PlantListScreen');
@@ -29,7 +43,8 @@ export const ChangePasswordScreen = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}>
+      style={{ flex: 1 }}
+    >
       <StatusBar style="auto" />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>

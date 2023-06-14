@@ -58,7 +58,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
     [date: string]: { selected: boolean; selectedColor: string };
   }>({});
   const minDate: string = moment().startOf('isoWeek').format('YYYY-MM-DD');
-  const [dates, setDates] = useState<{ date: string; watered: boolean }[]>(
+  const [_, setDates] = useState<{ date: string; watered: boolean }[]>(
     plant.watering?.wateringArray
   );
   const { user: loggedUser, dispatch } = useContext(UserContext);
@@ -222,7 +222,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         visibilityTime: 3000,
       });
       return;
-    } else if (!(parseInt(water) > 0)) {
+    } else if (parseInt(water) <= 0) {
       Toast.show({
         type: 'error',
         text1: 'Error with details',
@@ -231,7 +231,7 @@ export const PlantViewScreen = ({ navigation, route }: Props) => {
         visibilityTime: 3000,
       });
       return;
-    } else if (!(parseInt(days) > 0)) {
+    } else if (parseInt(days) <= 0) {
       Toast.show({
         type: 'error',
         text1: 'Error with details',

@@ -26,13 +26,12 @@ import {
   GOOGLE_EXPO,
   GOOGLE_IOS,
 } from '../../firebase/firebase-config';
-import { addUser, getUserById } from '../../api/_user';
+import { addUser, generateToken, getUserById } from '../../api/_user';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoadingModal } from '../../components';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
-import { generateToken } from '../../api/_user';
 
 type Props = NativeStackScreenProps<any>;
 export const LoginScreen = ({ navigation }: Props) => {
@@ -76,7 +75,7 @@ export const LoginScreen = ({ navigation }: Props) => {
           type: 'error',
           text1: 'Error',
           text2: 'Error during log in.',
-          position: "bottom",
+          position: 'bottom',
           visibilityTime: 1500,
         })
       );
@@ -106,7 +105,7 @@ export const LoginScreen = ({ navigation }: Props) => {
   };
 
   WebBrowser.maybeCompleteAuthSession();
-  const [request, response, promptAsync] = Google.useAuthRequest({
+  const [_, __, promptAsync] = Google.useAuthRequest({
     androidClientId: GOOGLE_ANDROID,
     iosClientId: GOOGLE_IOS,
     expoClientId: GOOGLE_EXPO,
@@ -123,7 +122,7 @@ export const LoginScreen = ({ navigation }: Props) => {
           type: 'error',
           text1: 'Error',
           text2: 'Error during google sign in.',
-          position: "bottom",
+          position: 'bottom',
           visibilityTime: 1500,
         });
         setLoading(false);
@@ -137,7 +136,6 @@ export const LoginScreen = ({ navigation }: Props) => {
         'https://www.googleapis.com/userinfo/v2/me',
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
-      const user = await response.json();
       const googleCredential = GoogleAuthProvider.credential(null, accessToken);
       signInWithCredential(auth, googleCredential)
         .then(async (userCredential) => {
@@ -280,7 +278,8 @@ export const LoginScreen = ({ navigation }: Props) => {
             </Text>
           </Pressable>
         </View>
-      </TouchableWithoutFeedback><Toast />
+      </TouchableWithoutFeedback>
+      <Toast />
     </KeyboardAvoidingView>
   );
 };

@@ -1,5 +1,5 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import React, { useCallback, useEffect, useImperativeHandle } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import React, { useCallback, useImperativeHandle } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Extrapolate,

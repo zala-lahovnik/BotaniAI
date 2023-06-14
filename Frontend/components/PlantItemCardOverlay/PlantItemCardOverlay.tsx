@@ -10,8 +10,7 @@ import {
 } from 'react-native';
 import { global } from '../../styles/globals';
 import Svg, { Circle, G } from 'react-native-svg';
-import WaterIcon from 'react-native-vector-icons/Ionicons';
-import OpenSvg from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './PlantItemCardOverlayStyles';
@@ -127,7 +126,7 @@ const WateringInformation = ({
           />
         </G>
       </Svg>
-      <WaterIcon
+      <Icon
         name="water"
         size={21}
         color={global.color.primary.backgroundColor}
@@ -172,8 +171,6 @@ export const PlantItemCardOverlay = ({
   isVerticalScroll,
   setIsVerticalScroll,
 }: Props) => {
-  const [expanded, _] = useState(false);
-
   const pan = useRef(new Animated.Value(0)).current;
 
   const { isConnected } = useContext(InternetConnectionContext);
@@ -230,7 +227,7 @@ export const PlantItemCardOverlay = ({
         activeOpacity={0.8}
       >
         <View style={styles.showPlantButton__button}>
-          <OpenSvg
+          <Icon
             name={'md-open-outline'}
             size={25}
             color={global.color.primary.backgroundColor}
@@ -238,7 +235,7 @@ export const PlantItemCardOverlay = ({
         </View>
       </TouchableOpacity>
 
-      <ExpandedCardIndicator expanded={expanded} />
+      <ExpandedCardIndicator />
     </Animated.View>
   );
 };
