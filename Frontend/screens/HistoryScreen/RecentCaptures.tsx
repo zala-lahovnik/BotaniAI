@@ -30,7 +30,11 @@ export const RecentCaptures = ({ navigation, route }: Props) => {
         text={'Recent Captures'}
         leftAction={() => navigation.goBack()}
       />
-      {user.userId ? <></> : <NotLoggedIn />}
+      {user.userId ? (
+        <></>
+      ) : (
+        <NotLoggedIn route={route} navigation={navigation} />
+      )}
       {user.history.length === 0 ? (
         <View style={{ flex: 1, alignItems: 'center', marginHorizontal: 20 }}>
           <ImageBackground

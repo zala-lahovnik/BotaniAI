@@ -52,9 +52,7 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
     <Drawer
       open={drawerOpen}
       onOpen={() => (user.userId ? setDrawerOpen(true) : setDrawerOpen(false))}
-      onClose={() =>
-        user.userId ? setDrawerOpen(false) : setDrawerOpen(false)
-      }
+      onClose={() => setDrawerOpen(false)}
       renderDrawerContent={() => {
         return <DrawerLayout navigation={navigation} route={route} />;
       }}
@@ -78,12 +76,15 @@ export const PlantListScreen = ({ navigation, route }: Props) => {
             setDrawerOpen(true);
           }}
         />
-        {user.userId ? <></> : <NotLoggedIn />}
+        {user.userId ? (
+          <></>
+        ) : (
+          <NotLoggedIn route={route} navigation={navigation} />
+        )}
         <View
           style={[global.spacing.container, { flex: 1, marginVertical: 20 }]}
         >
           <SearchInputField
-            search={search}
             setSearch={setSearch}
             plants={user.personalGarden as PersonalGardenPlant[]}
           />

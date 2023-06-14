@@ -32,12 +32,12 @@ export const RecentPlantDetails = ({
           <Text style={styles.plantDetailsHeader}>Matching</Text>
           <Text style={styles.plantDetailsText}>{classificationPercent}%</Text>
         </View>
-        {watering &&
+        {watering !== '' && (
           <View style={styles.plantDetailsRow}>
             <Text style={styles.plantDetailsHeader}>Watering</Text>
             <Text style={styles.plantDetailsText}>{watering}</Text>
           </View>
-        }
+        )}
       </View>
     </View>
   );

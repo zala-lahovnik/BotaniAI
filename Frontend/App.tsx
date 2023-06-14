@@ -11,9 +11,10 @@ import NetInfo from '@react-native-community/netinfo';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { InternetConnectionContext } from './context/InternetConnectionContext';
 import { NoInternetConnection } from './screens';
+import { LogBox } from 'react-native';
 
 const queryClient = new QueryClient();
-
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 export default function App() {
   const [loggedUser, setLoggedUser] = useState<Omit<
     User & { profilePicture: string; userId: string },
@@ -32,7 +33,6 @@ export default function App() {
         NetInfo.addEventListener((state) => {
           if (!state.isConnected) {
             setIsConnected(false);
-            return;
           } else {
             firstRender.current = false;
             setIsConnected(true);

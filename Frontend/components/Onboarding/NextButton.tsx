@@ -9,11 +9,10 @@ import {
 import Svg, { Circle, G } from 'react-native-svg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const NextButton = ({ percentage, scrollTo, length }: any) => {
-  const navigation = useNavigation() as NativeStackNavigationProp<any>;
+  const navigation = useNavigation();
   const size = 100;
   const strokeWidth = 2;
   const center = size / 2;

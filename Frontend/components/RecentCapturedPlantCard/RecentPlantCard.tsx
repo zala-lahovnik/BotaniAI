@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Down from 'react-native-vector-icons/AntDesign';
 import { Divider } from 'react-native-elements';
 import { RecentPlantDetails } from './RecentPlantDetails';

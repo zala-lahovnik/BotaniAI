@@ -10,8 +10,7 @@ import { Divider } from 'react-native-elements';
 import { PlantImage } from '../PlantItemCardOverlay/PlantItemCardOverlay';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Watering from 'react-native-vector-icons/Entypo';
-import Water from 'react-native-vector-icons/Ionicons';
-import Checkmark from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Calender from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './PlantWateringInfoCardStyles';
 import {
@@ -185,7 +184,7 @@ export const PlantWateringInfoCard = ({
                 parseInt(plant.watering.numberOfDays)
               )}%`}
             >
-              <Water name={'water-sharp'} size={16} color={'#000'} />
+              <Icon name={'water-sharp'} size={16} color={'#000'} />
             </PlantWateringInfo>
             <PlantWateringInfo
               text={(plant.watering.amountOfWater || '0') + 'ml'}
@@ -244,7 +243,7 @@ export const PlantWateringInfoCard = ({
             }}
           >
             <Text style={styles.wateredButtonText}>Watered</Text>
-            <Checkmark
+            <Icon
               name={'checkmark'}
               size={28}
               color={global.color.heading.color}

@@ -12,7 +12,7 @@ import BackButton from '../../components';
 import { PermissionNeeded } from '../../components/PermissionCard/PermissionNeeded';
 
 const AnimatedBarCodeScanner = () => {
-  const { width, height } = Dimensions.get('window');
+  const { width } = Dimensions.get('window');
 
   const scaleValue = new Animated.Value(1);
 
@@ -57,7 +57,7 @@ let camera: Camera | null = null;
 
 type Props = NativeStackScreenProps<any>;
 export const CameraScreen = ({ navigation, route }: Props) => {
-  const [type, setType] = useState(CameraType.back);
+  const [type, _] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [previewVisible, setPreviewVisible] = useState(false);
   const [capturedImage, setCapturedImage] = useState<any>(null);
