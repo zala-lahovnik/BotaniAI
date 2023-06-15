@@ -2,7 +2,6 @@
 export * from './BottomNavigationBar/BottomNavigationBar';
 export * from './Header/Header';
 export * from './SearchInputField/SearchInputField';
-export * from './PlantsFilterOptions/FilterOptions';
 export * from './PlantItemsList/PlantItemsList';
 export * from './PlantItemCard/PlantItemCard';
 export * from './PlantItemCardOverlay/PlantItemCardOverlay';
@@ -18,3 +17,4 @@ export * from './ModalPlantCard/ModalPlantCard';
 export * from './ExplorePlantCard/ExplorePlantCard';
 export * from './NotLoggedIn/NotLoggedIn';
 export * from './SignInLoadingModal/LoadingModal';
+export * from './OfflineBanner/OfflineBanner';

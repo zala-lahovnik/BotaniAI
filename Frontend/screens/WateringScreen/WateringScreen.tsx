@@ -36,7 +36,11 @@ export const WateringScreen = ({ navigation, route }: Props) => {
         text={'Watering'}
         leftAction={() => navigation.navigate('PlantListScreen')}
       />
-      {user.userId ? <></> : <NotLoggedIn />}
+      {user.userId ? (
+        <></>
+      ) : (
+        <NotLoggedIn route={route} navigation={navigation} />
+      )}
       {user.personalGarden.length === 0 ? (
         <View style={{ flex: 1, alignItems: 'center', marginHorizontal: 20 }}>
           <ImageBackground

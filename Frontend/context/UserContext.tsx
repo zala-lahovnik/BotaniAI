@@ -59,13 +59,11 @@ const userReducer = (
         ...state,
         ...action.payload,
       };
-      break;
     case UserActionType.UPDATE_PERSONAL_GARDEN:
       return {
         ...state,
         personalGarden: action.payload as PersonalGardenPlant[],
       };
-      break;
     case UserActionType.DELETE_PLANT_FROM_PERSONAL_GARDEN:
       return {
         ...state,
@@ -73,17 +71,14 @@ const userReducer = (
           (plant) => plant._id !== action.payload
         ),
       };
-      break;
     case UserActionType.UPDATE_HISTORY:
       return {
         ...state,
         history: [action.payload, ...state.history],
       };
-      break;
     case UserActionType.CLEAR_USER:
       clearUserAsyncStorage();
       return initialState;
-      break;
     default:
       return state;
   }

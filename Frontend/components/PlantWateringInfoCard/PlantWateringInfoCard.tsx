@@ -10,8 +10,7 @@ import { Divider } from 'react-native-elements';
 import { PlantImage } from '../PlantItemCardOverlay/PlantItemCardOverlay';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Watering from 'react-native-vector-icons/Entypo';
-import Water from 'react-native-vector-icons/Ionicons';
-import Checkmark from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Calender from 'react-native-vector-icons/MaterialCommunityIcons';
 import { styles } from './PlantWateringInfoCardStyles';
 import {
@@ -24,6 +23,7 @@ import { global } from '../../styles/globals';
 import { PersonalGardenPlant } from '../../types/_plant';
 import { UserActionType, UserContext } from '../../context/UserContext';
 import { updatePlant, type UpdatePlant } from '../../api/_user';
+import { InternetConnectionContext } from '../../context/InternetConnectionContext';
 
 const PlantWateringInfo = ({
   children,
@@ -57,8 +57,6 @@ type Props = NativeStackScreenProps<any> & {
 };
 
 export const PlantWateringInfoCard = ({
-  navigation,
-  route,
   plant,
   wateringToday,
   wateringMissed,
@@ -70,6 +68,7 @@ export const PlantWateringInfoCard = ({
   const showWateredButton = wateringToday || wateringMissed;
 
   const { user, dispatch } = React.useContext(UserContext);
+  const { isConnected } = React.useContext(InternetConnectionContext);
 
   const lastWateredIndex = getLastWateredDateIndex(
     plant.watering.wateringArray
@@ -185,7 +184,7 @@ export const PlantWateringInfoCard = ({
                 parseInt(plant.watering.numberOfDays)
               )}%`}
             >
-              <Water name={'water-sharp'} size={16} color={'#000'} />
+              <Icon name={'water-sharp'} size={16} color={'#000'} />
             </PlantWateringInfo>
             <PlantWateringInfo
               text={(plant.watering.amountOfWater || '0') + 'ml'}
@@ -193,7 +192,9 @@ export const PlantWateringInfoCard = ({
               <Watering name={'water'} size={16} color={'#000'} />
             </PlantWateringInfo>
             <PlantWateringInfo
-              text={`${getNumberBetweenDates(lastWateredDate)} day${getNumberBetweenDates(lastWateredDate) > 1 ? 's' : ''} ago`}
+              text={`${getNumberBetweenDates(lastWateredDate)} day${
+                getNumberBetweenDates(lastWateredDate) > 1 ? 's' : ''
+              } ago`}
             >
               <Calender name={'calendar-clock'} size={16} color={'#000'} />
             </PlantWateringInfo>
@@ -212,6 +213,7 @@ export const PlantWateringInfoCard = ({
           <TouchableOpacity
             style={styles.wateredButtonTouchable}
             activeOpacity={0.8}
+            disabled={!isConnected}
             onPress={() => {
               let wateringArray = plant.watering.wateringArray;
               let today = new Date().toISOString().split('T')[0];
@@ -241,7 +243,7 @@ export const PlantWateringInfoCard = ({
             }}
           >
             <Text style={styles.wateredButtonText}>Watered</Text>
-            <Checkmark
+            <Icon
               name={'checkmark'}
               size={28}
               color={global.color.heading.color}

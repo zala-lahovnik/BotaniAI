@@ -47,16 +47,28 @@ const PlantNextWatering = ({
             fontStyle: 'italic',
           }}
         >
-          {waterNeededInDays < 0 ? '' : (waterNeededInDays === 0 || waterNeededInDays === 1) ? '' : 'In '}
+          {waterNeededInDays < 0
+            ? ''
+            : waterNeededInDays === 0 || waterNeededInDays === 1
+            ? ''
+            : 'In '}
           <Text
             style={{
               fontWeight: 'bold',
               fontSize: 16,
             }}
           >
-            {waterNeededInDays === 0 ? 'Today' : waterNeededInDays === 1 ? 'Tomorrow' : Math.abs(waterNeededInDays)}
+            {waterNeededInDays === 0
+              ? 'Today'
+              : waterNeededInDays === 1
+              ? 'Tomorrow'
+              : Math.abs(waterNeededInDays)}
           </Text>
-          {waterNeededInDays < 0 ? ' days ago' : (waterNeededInDays === 0 || waterNeededInDays === 1 ) ? '' : ' days'}
+          {waterNeededInDays < 0
+            ? ' days ago'
+            : waterNeededInDays === 0 || waterNeededInDays === 1
+            ? ''
+            : ' days'}
         </Text>
         <Divider
           style={{ width: '50%' }}
@@ -72,25 +84,11 @@ const PlantNextWatering = ({
 export const PlantItemCard = ({
   navigation,
   route,
-  onSwipeLeft,
   setIsVerticalScroll,
   isVerticalScroll,
   props,
 }: Props) => {
   let { _id, latin, common, customName, image, description, watering } = props;
-
-  // TODO: FIX WATERING ARRAY FROM {} TO []
-
-  const wateringCopy = watering;
-
-  try {
-    watering = {
-      ...watering,
-      wateringArray: JSON.parse(`[${watering.wateringArray}]`),
-    };
-  } catch (e) {
-    watering = wateringCopy;
-  }
 
   const lastWateredIndex = getLastWateredDateIndex(watering.wateringArray);
   const lastWateredDate = new Date(
@@ -107,8 +105,8 @@ export const PlantItemCard = ({
 
   return (
     <View style={[global.color.primary, styles.plantItemCard__container]}>
-      {[1, 2].map((_, index) => (
-        <PlantNextWatering key={index} waterNeededInDays={nextWatering} />
+      {[{ id: 1 }, { id: 2 }].map((item) => (
+        <PlantNextWatering key={item.id} waterNeededInDays={nextWatering} />
       ))}
       <PlantItemCardOverlay
         plantId={_id}

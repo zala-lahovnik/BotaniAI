@@ -20,7 +20,7 @@ export const PhotoInputScreen = ({ navigation, route }: Props) => {
       <Header
         navigation={navigation}
         route={route}
-        text={'How would you like to add a photo?'}
+        text={'Capture or choose photo'}
         leftAction={() => navigation.goBack()}
       />
       <View

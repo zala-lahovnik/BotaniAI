@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Animated,
-  Dimensions,
   Image,
   ImageSourcePropType,
   PanResponder,
@@ -11,13 +10,12 @@ import {
 } from 'react-native';
 import { global } from '../../styles/globals';
 import Svg, { Circle, G } from 'react-native-svg';
-import WaterIcon from 'react-native-vector-icons/Ionicons';
-import OpenSvg from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { styles } from './PlantItemCardOverlayStyles';
-import { UserContext } from '../../context/UserContext';
 import { getOnlineImageUri } from '../../firebase/firebase';
+import { InternetConnectionContext } from '../../context/InternetConnectionContext';
 
 type Props = NativeStackScreenProps<any> & {
   plantId: string;
@@ -39,17 +37,21 @@ export const PlantImage = ({
   imageSrc: string;
   small?: boolean;
 }) => {
-  const [image, setImage] = useState(imageSrc || '')
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [image, setImage] = useState(imageSrc || '');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    getOnlineImageUri(imageSrc).then((result) => {
-      setImage(result)
-      setTimeout(() => {
-        setIsLoaded(true)
-      }, 1000)
-    }).catch((err) => { console.log(err) })
-  }, [imageSrc])
+    getOnlineImageUri(imageSrc)
+      .then((result) => {
+        setImage(result);
+        setTimeout(() => {
+          setIsLoaded(true);
+        }, 1000);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [imageSrc]);
 
   return (
     <View
@@ -61,18 +63,15 @@ export const PlantImage = ({
     >
       <View style={styles.plantImage__topLeftShadow} />
       <View style={styles.plantImage__bottomRightShadow} />
-      {isLoaded ?
-        <Image
-          source={{ uri: image }}
-          style={styles.plantImage__image}
-        />
-        :
+      {isLoaded ? (
+        <Image source={{ uri: image }} style={styles.plantImage__image} />
+      ) : (
         <ActivityIndicator
           size="large"
           color="#124A3F"
           style={{ marginBottom: '10%', marginTop: '20%' }}
         />
-      }
+      )}
     </View>
   );
 };
@@ -127,7 +126,7 @@ const WateringInformation = ({
           />
         </G>
       </Svg>
-      <WaterIcon
+      <Icon
         name="water"
         size={21}
         color={global.color.primary.backgroundColor}
@@ -141,7 +140,7 @@ const WateringInformation = ({
   );
 };
 
-const ExpandedCardIndicator = ({ expanded }: { expanded: boolean }) => {
+const ExpandedCardIndicator = () => {
   return (
     <View style={styles.expandedCard__container}>
       <Svg width={30} height={20}>
@@ -169,15 +168,12 @@ export const PlantItemCardOverlay = ({
   plantDescription,
   plantWaterPercent,
   navigation,
-  route,
   isVerticalScroll,
   setIsVerticalScroll,
 }: Props) => {
-  const [expanded, setExpanded] = useState(false);
-
   const pan = useRef(new Animated.Value(0)).current;
 
-  const { user } = useContext(UserContext);
+  const { isConnected } = useContext(InternetConnectionContext);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -188,10 +184,7 @@ export const PlantItemCardOverlay = ({
         }
         pan.setValue(gestureState.dx);
       },
-      onPanResponderRelease: (evt, gestureState) => {
-        const screenWidth = Dimensions.get('window').width;
-        const threshold = 0.2 * screenWidth;
-
+      onPanResponderRelease: () => {
         Animated.spring(pan, {
           toValue: 0,
           useNativeDriver: true,
@@ -218,6 +211,7 @@ export const PlantItemCardOverlay = ({
       <WateringInformation plantWaterPercent={plantWaterPercent} />
       <TouchableOpacity
         style={styles.showPlantButton__container}
+        disabled={!isConnected}
         onPress={() =>
           navigation.navigate('PlantViewScreen', {
             _id: plantId,
@@ -233,7 +227,7 @@ export const PlantItemCardOverlay = ({
         activeOpacity={0.8}
       >
         <View style={styles.showPlantButton__button}>
-          <OpenSvg
+          <Icon
             name={'md-open-outline'}
             size={25}
             color={global.color.primary.backgroundColor}
@@ -241,7 +235,7 @@ export const PlantItemCardOverlay = ({
         </View>
       </TouchableOpacity>
 
-      <ExpandedCardIndicator expanded={expanded} />
+      <ExpandedCardIndicator />
     </Animated.View>
   );
 };

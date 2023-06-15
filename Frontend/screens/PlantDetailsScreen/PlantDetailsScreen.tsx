@@ -21,6 +21,7 @@ import Calender from 'react-native-vector-icons/AntDesign';
 import { Plant } from '../../types/_plant';
 import { UserContext } from '../../context/UserContext';
 import { getOnlineImageUri } from '../../firebase/firebase';
+import { InternetConnectionContext } from '../../context/InternetConnectionContext';
 
 type Props = NativeStackScreenProps<any>;
 
@@ -68,8 +69,6 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
     sunlight,
     plantingTime,
     soil,
-    wateringDetail,
-    fertilization,
     toxicity,
     image,
     imageToSave,
@@ -82,6 +81,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
   const { user } = useContext(UserContext);
   const [imageUri, setImageUri] = useState(image || '');
   const [isLoaded, setIsLoaded] = useState(false);
+  const { isConnected } = useContext(InternetConnectionContext);
 
   const handleExpand = () => {
     setExpanded(!expanded);
@@ -166,7 +166,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
             gap: 15,
           }}
         >
-          {toxicity && (
+          {toxicity !== '' && (
             <View style={styles.plantCategoryPill}>
               <Text
                 style={{
@@ -266,6 +266,7 @@ export const PlantDetailsScreen = ({ navigation, route }: Props) => {
         </ScrollView>
         {user.userId !== '' && (
           <Pressable
+            disabled={!isConnected}
             onPress={() =>
               navigation.navigate('PlantViewScreen', {
                 latin: latin,
